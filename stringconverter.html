@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META content="text/html; charset=ISO-8859-2"
+http-equiv="content-type">
+<meta name="robots" content="index,follow">
+<META NAME="Keywords" CONTENT="C++ escaping, C++ special characters, C++ text escaping">  
+<META NAME="Author" CONTENT="Tomasz Ostrowski">
+<META name="description" content="Text -> C/C++ string converter (special characters escaping).">  
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../css/main.css">
+<script type="text/javascript" src="../tree.js"></script>
+<title>Text -> C/C++ string converter</title>  
+</head>
+<body>
+
+<div id="wrap">
+<div id="header">
+
+
+<a href="../bot-trap/">
+  <img src="../images/pixel.gif" border="0" alt=" " width="1" height="1">
+</a>
+     
+
+<script type="text/javascript">
+<!--
+
+function insertAtCursor(myField, myValue)
+    {
+    //IE support
+    if (document.selection) 
+        {
+        myField.focus();
+        sel = document.selection.createRange();
+        sel.text = myValue;
+        }
+    
+    //MOZILLA/NETSCAPE support
+    else if (myField.selectionStart || myField.selectionStart == '0') 
+        {
+        var startPos = myField.selectionStart;
+        var endPos = myField.selectionEnd;
+        restoreTop = myField.scrollTop;
+        
+        myField.value = myField.value.substring(0, startPos) + myValue + myField.value.substring(endPos, myField.value.length);
+        
+        myField.selectionStart = startPos + myValue.length; 
+        myField.selectionEnd = startPos + myValue.length;
+        
+        if (restoreTop>0)
+            {
+            myField.scrollTop = restoreTop;
+            }
+        } 
+    else 
+        {
+        myField.value += myValue;
+        }
+    }
+
+    function interceptTabs(evt, control)
+        {
+        key = evt.keyCode ? evt.keyCode : evt.which ? evt.which : evt.charCode;
+        if (key==9)
+            {
+            insertAtCursor(control, '\t');
+            return false; 
+            }
+        else
+            {
+            return key;
+            }
+        }
+
+    function cstr_encode(input) {
+        var output = "";
+        var splitLines = document.frmConvert.chbSplitLines.checked;
+        for (i = 0; i < input.length; i++) {
+            switch (input[i]) {
+            case '\t':
+              break;
+            case '\n':
+              break;
+            case '\r':
+              break;
+            case ' ':
+			  if(i<input.length-1){
+				if(input[i+1]==' ')
+					break;
+			  }
+            default:
+              output += input[i];
+              break;	     
+            }                       
+        }
+        return output;
+    } 
+    
+    function Convert() {
+        var output = cstr_encode(document.frmConvert.ed_input.value);
+        document.frmConvert.ed_output.value = output;
+    } 
+
+//-->
+</script>
+
+
+<div id="main">
+<h3>Text -> C/C++ string converter</h3>
+      <form name="frmConvert" action="">
+				<p>Source text:</p>
+			    <p><textarea onkeydown="return interceptTabs(event, this);" name="ed_input" rows="10" cols="67" style="width: 550px;"></textarea></p>
+        <p>Options:</p>
+          <p><input type="checkbox" name="chbSplitLines" value="split" checked="yes">split output into multiple lines</p>			  
+			  <p>
+			    <button type=button name="btnConvert"
+            onclick="Convert()">
+            Convert
+          </button>
+			  </p>
+				<p>C/C++ string</p>
+			    <p>
+            <textarea name="ed_output" rows="10" cols="67" style="width: 550px;"></textarea>          
+          </p> 
+			</form>
+  </div>
+
+
+
+</body>
+</html>
+
