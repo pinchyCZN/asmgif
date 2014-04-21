@@ -90,15 +90,7 @@ SOURCE=.\gifhead.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\gifsave89.c
-# End Source File
-# Begin Source File
-
 SOURCE=.\main.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\null.c
 # End Source File
 # End Group
 # Begin Group "Header Files"
