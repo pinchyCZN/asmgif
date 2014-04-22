@@ -1,15 +1,23 @@
-#include <windows.h>
-#include <commctrl.h>
-#include "resource.h"
-
 #include "gifhead.h"
 #include "vgapal.h"
+
 int frame_count=0;
 unsigned char buffers[64*W*H];
 Palette P;
 Buffer B;
 
+#ifdef _WIN32
+#include "gui.h"
+#endif
 
+extern "C"{
+	void	*newgif ( void **gifimage, int width, int height,
+	int *colors, int bgindex );
+	int	animategif ( void *gs, int nrepetitions,
+		int delay, int tcolor, int disposal );
+	int	putgif ( void *gs, void *pixels );
+	int	endgif ( void *gs );
+};
 
 void SaveFrame(bool clear)
 {
@@ -24,110 +32,6 @@ void SaveFrame(bool clear)
 
 
 
-int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
-{
-	static int current_frame=0;
-	static int timer;
-	static int pause=TRUE;
-	switch(msg){
-	case WM_INITDIALOG:
-		timer=SetTimer(hwnd,1337,20,NULL);
-		SendDlgItemMessage(hwnd,IDC_SLIDER,TBM_SETRANGE,TRUE,MAKELONG(0,100));
-		break;
-	case WM_TIMER:
-		InvalidateRect(hwnd,0,FALSE);
-		if(!pause){
-			current_frame=(current_frame+1)%64;
-
-		}
-		break;
-	case WM_PAINT:
-		{
-			HDC hdc,hdcMem;
-			PAINTSTRUCT ps;
-			BITMAPINFO bmi;
-			unsigned char *frame;
-			char buffer[W*H*3];
-			char flip[W*H*3];
-			int i,j;
-			frame=buffers+(current_frame*W*H);
-			for(i=0;i<W*H;i++){
-				unsigned char r,g,b;
-				unsigned char *tmp=P[frame[i]];
-				r=tmp[0];
-				g=tmp[1];
-				b=tmp[2];
-				flip[i*3]=b;
-				flip[i*3+1]=g;
-				flip[i*3+2]=r;
-			}
-			for(i=0;i<H;i++){
-				for(j=0;j<W*3;j++){
-					buffer[(H-i-1)*W*3+j]=flip[i*W*3+j];
-				}
-
-			}			
-
-			hdc=BeginPaint(hwnd,&ps);
-			memset(&bmi,0,sizeof(BITMAPINFO));
-			bmi.bmiHeader.biBitCount=24;
-			bmi.bmiHeader.biWidth=W;
-			bmi.bmiHeader.biHeight=H;
-			bmi.bmiHeader.biPlanes=1;
-			bmi.bmiHeader.biSize=sizeof(bmi);
-			SetDIBitsToDevice(hdc,0,30,W,H,0,0,0,H,buffer,&bmi,DIB_RGB_COLORS);
-			EndPaint(hwnd,&ps);
-			char str[80];
-			sprintf(str,"%i",current_frame);
-			SetDlgItemText(hwnd,IDC_TEXT,str);
-		}
-		break;
-	case WM_HSCROLL:
-		printf("scroll, %08X %08X\n",wparam,lparam);
-		break;
-	case WM_MOUSEMOVE:
-		{
-			static lastx=0;
-			int x=LOWORD(lparam);
-			int delta;
-			//printf("key=%08X %08X\n",wparam,lparam);
-			if(!pause)
-				break;
-			delta=x-lastx;
-			if(delta>2)
-				delta=2;
-			else if(delta<-2)
-				delta=-2;
-			current_frame+=delta;
-			if(current_frame<0)
-				current_frame=0;
-			else if(current_frame>=64)
-				current_frame=63;
-			lastx=x;
-		}
-		break;
-	case WM_COMMAND:
-		switch(LOWORD(wparam)){
-		case IDC_ANIMATE:
-			if(IsDlgButtonChecked(hwnd,IDC_ANIMATE))
-				pause=FALSE;
-			else
-				pause=TRUE;
-			break;
-		case IDC_SLIDER:
-			current_frame=(current_frame+1)%64;
-			break;
-		case IDOK:
-			EndDialog(hwnd,0);
-			break;
-		case IDCANCEL:
-			EndDialog(hwnd,0);
-			break;
-		}
-		break;
-	}
-	return 0;
-}
 int test()
 {
  I f,i,s,x,y;for(f=0;f<60;f++,C){static D t,a,b,w[S*9]={W/2,H/2};w[2]=70+cos(f*PI/15)*20;D *d=w,*n=w+3,*e;for(s=0;s<5;s++)for(e=n;d<e;d+=3){t=d[2];for(a=0;a<2*PI;a+=PI/4,n+=3){b=a+f*PI/30;n[0]=d[0]+cos(b)*t;n[1]=d[1]+sin(b)*t;n[2]=d[2]*(0.05*sin(f*PI/15)+0.25);}B(d[1],d[0])=32+s*3;}}
@@ -170,10 +74,43 @@ int main()
 	}
 
 
+	if(0)
+	if(frame_count>0)
+	{
+		static void *gifimage=0;
+		static void *gsdata=0;
+		unsigned char *tmp=P.Get();
+		int ctable[256*3];
+		int i;
+		for(i=0;i<256;i++){
+			ctable[i*3]=tmp[i*3];
+			ctable[i*3+1]=tmp[i*3+1];
+			ctable[i*3+2]=tmp[i*3+2];
+		}
+		gifimage=0;
+		gsdata=newgif(&gifimage,W,H,ctable,0);
+		if(gsdata!=0){
+			int i;
+			int glen;
+			FILE *f;
+			char *fname="c:\\temp\\temp.gif";
+			animategif(gsdata,0,5,0,2);
+			for(i=0;i<frame_count;i++){
+				putgif(gsdata,buffers+(i*H*W));
+			}
+			glen=endgif(gsdata);
+			f=fopen(fname,"wb");
+			if(f){
+				fwrite(gifimage,1,glen,f);
+				fclose(f);
+				printf("wrote %i frames to %s\n",frame_count,fname);
+			}
+		}
+	}
 
 
-
+#ifdef _WIN32
 	DialogBox(0,(LPSTR)IDD_DIALOG1,0,dlg);
-
+#endif
 	return 0;
 }
