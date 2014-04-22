@@ -2,6 +2,7 @@
 #include "resource.h"
 
 #include "gifhead.h"
+#include "vgapal.h"
 int frame_count=0;
 unsigned char buffers[64*W*H];
 Palette P;
@@ -45,7 +46,8 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 			BITMAPINFO bmi;
 			unsigned char *frame;
 			char buffer[W*H*3];
-			int i;
+			char flip[W*H*3];
+			int i,j;
 			frame=buffers+(current_frame*W*H);
 			for(i=0;i<W*H;i++){
 				unsigned char r,g,b;
@@ -53,20 +55,25 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 				r=tmp[0];
 				g=tmp[1];
 				b=tmp[2];
-				buffer[i*3]=r;
-				buffer[i*3+1]=g;
-				buffer[i*3+2]=b;
+				flip[i*3]=b;
+				flip[i*3+1]=g;
+				flip[i*3+2]=r;
 			}
-			
+			for(i=0;i<H;i++){
+				for(j=0;j<W*3;j++){
+					buffer[(H-i-1)*W*3+j]=flip[i*W*3+j];
+				}
+
+			}			
 
 			hdc=BeginPaint(hwnd,&ps);
 			memset(&bmi,0,sizeof(BITMAPINFO));
 			bmi.bmiHeader.biBitCount=24;
-			bmi.bmiHeader.biWidth=H;
-			bmi.bmiHeader.biHeight=W;
+			bmi.bmiHeader.biWidth=W;
+			bmi.bmiHeader.biHeight=H;
 			bmi.bmiHeader.biPlanes=1;
 			bmi.bmiHeader.biSize=sizeof(bmi);
-			SetDIBitsToDevice(hdc,0,30,H,W,0,0,0,W,buffer,&bmi,DIB_RGB_COLORS);
+			SetDIBitsToDevice(hdc,0,30,W,H,0,0,0,H,buffer,&bmi,DIB_RGB_COLORS);
 			EndPaint(hwnd,&ps);
 			char str[80];
 			sprintf(str,"%i",current_frame);
@@ -81,7 +88,7 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 			//printf("key=%08X %08X\n",wparam,lparam);
 			if(!pause)
 				break;
-			delta=lastx-x;
+			delta=x-lastx;
 			if(delta>2)
 				delta=2;
 			else if(delta<-2)
@@ -113,15 +120,37 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 	}
 	return 0;
 }
+int test()
+{
+ I f,i,s,x,y;for(f=0;f<60;f++,C){static D t,a,b,w[S*9]={W/2,H/2};w[2]=70+cos(f*PI/15)*20;D *d=w,*n=w+3,*e;for(s=0;s<5;s++)for(e=n;d<e;d+=3){t=d[2];for(a=0;a<2*PI;a+=PI/4,n+=3){b=a+f*PI/30;n[0]=d[0]+cos(b)*t;n[1]=d[1]+sin(b)*t;n[2]=d[2]*(0.05*sin(f*PI/15)+0.25);}B(d[1],d[0])=32+s*3;}}
+return 0;
+}
+
+int vga()
+{
+	int i;
+	for (i=0;i<256;i++){
+		unsigned char *p=P.Get();
+		int o=i*3;
+		p[o]=vgapal[o];
+		p[o+1]=vgapal[o+1];
+		p[o+2]=vgapal[o+2];
+	}
+	return 0;
+}
 int main()
 {
-	PG;
+	vga();
+
+
 	I i,j,k,s[100*3];
 	for(i=0;i<100;i++){
 		s[i*3]=rand()%H;
 		s[i*3+1]=rand()%W;
 		s[i*3+2]=rand()%255;
 	}
+	//test();
+	
 	for(k=0;k<64;k++){
 		for(i=0;i<100;i++){
 			B(s[i*3],s[i*3+1])=s[i*3+1];
@@ -130,8 +159,9 @@ int main()
 				d=2;
 			s[i*3+1]=(s[i*3+1]+d)%H;
 		}
-		F;
+		C;
 	}
+
 
 
 
