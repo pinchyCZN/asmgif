@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <commctrl.h>
 #include "resource.h"
 
 #include "gifhead.h"
@@ -13,12 +14,12 @@ Buffer B;
 void SaveFrame(bool clear)
 {
 	unsigned char *b=B.Get();
-	memcpy(buffers+(frame_count*W*H),b,W*H);
-	if(clear)
-		memset(b,0,W*H);
-	frame_count++;
-	if(frame_count>=64)
-		frame_count=63;
+	if(frame_count<64){
+		memcpy(buffers+(frame_count*W*H),b,W*H);
+		if(clear)
+			memset(b,0,W*H);
+		frame_count++;
+	}
 }
 
 
@@ -31,6 +32,7 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 	switch(msg){
 	case WM_INITDIALOG:
 		timer=SetTimer(hwnd,1337,20,NULL);
+		SendDlgItemMessage(hwnd,IDC_SLIDER,TBM_SETRANGE,TRUE,MAKELONG(0,100));
 		break;
 	case WM_TIMER:
 		InvalidateRect(hwnd,0,FALSE);
@@ -77,8 +79,11 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 			EndPaint(hwnd,&ps);
 			char str[80];
 			sprintf(str,"%i",current_frame);
-			SetDlgItemText(hwnd,IDC_FRAME,str);
+			SetDlgItemText(hwnd,IDC_TEXT,str);
 		}
+		break;
+	case WM_HSCROLL:
+		printf("scroll, %08X %08X\n",wparam,lparam);
 		break;
 	case WM_MOUSEMOVE:
 		{
@@ -103,10 +108,13 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 		break;
 	case WM_COMMAND:
 		switch(LOWORD(wparam)){
-		case IDC_PAUSE:
-			pause=!pause;
+		case IDC_ANIMATE:
+			if(IsDlgButtonChecked(hwnd,IDC_ANIMATE))
+				pause=FALSE;
+			else
+				pause=TRUE;
 			break;
-		case IDC_NEXT:
+		case IDC_SLIDER:
 			current_frame=(current_frame+1)%64;
 			break;
 		case IDOK:
