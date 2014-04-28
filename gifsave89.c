@@ -142,6 +142,7 @@ standard headers...
 //#include <stdint.h>
 typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
+#ifndef __MINGW32__
 void * popen(char *a,char*b)
 {
 	return 0;
@@ -150,6 +151,7 @@ int pclose(void*a)
 {
 	return 0;
 }
+#endif
 
 #include <string.h>
 #include <ctype.h>
@@ -756,7 +758,7 @@ GIFCOMMENT {
  * --------------------------------------------------------------------------
  * Returns:	( void * )	newgif() returns a ptr that must be passed
  *				as the first argument to every subsequent
- *				gifsave89 function called, 
+ *				gifsave89 function called,
  *		( void * )	makegif() returns (unsigned char *)gifimage
  *				or both return NULL for any error.
  *		( int )		putgif() returns current #bytes in gifimage,
@@ -1373,7 +1375,7 @@ while ( (locol=hicol+1) < gs->width )	/*start where prev segment left off*/
         } /* --- end-of-if/else(format==1) --- */
       } /* --- end-of-for(ipix) --- */
     /* --- display completed scan line --- */
-    fprintf(fp,"%.*s\n",scan_width*(format==1?1:3),scanline);	
+    fprintf(fp,"%.*s\n",scan_width*(format==1?1:3),scanline);
     } /* --- end-of-for(irow) --- */
   } /* --- end-of-while(hicol<gs->width) --- */
 /* -------------------------------------------------------------------------
@@ -1921,7 +1923,7 @@ return ( putblkbytes(bk,thisword,2) );	/* store word */
  *		putsubbytes   ( SB *sb, int bytes, int nbytes )
  *		flushsubblock ( SB *sb )
  * Purpose:	Bitwise operations to construct gif subblocks...
- *		
+ *
  * --------------------------------------------------------------------------
  * Arguments:	sb (I/O)	(SB *) to SUBBLOCK data struct
  *		bits (I)	int whose low-order bits

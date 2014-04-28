@@ -1,6 +1,8 @@
 #include "gifhead.h"
 #include "vgapal.h"
+#include <setjmp.h>
 
+jmp_buf jb;
 int frame_count=0;
 unsigned char buffers[64*W*H];
 Palette P;
@@ -28,15 +30,18 @@ void SaveFrame(bool clear)
 			memset(b,0,W*H);
 		frame_count++;
 	}
+	if(frame_count>=64)
+		longjmp(jb,1);
 }
 
 
-
+/*===============================================*/
 int test()
 {
  I f,i,s,x,y;for(f=0;f<60;f++,C){static D t,a,b,w[S*9]={W/2,H/2};w[2]=70+cos(f*PI/15)*20;D *d=w,*n=w+3,*e;for(s=0;s<5;s++)for(e=n;d<e;d+=3){t=d[2];for(a=0;a<2*PI;a+=PI/4,n+=3){b=a+f*PI/30;n[0]=d[0]+cos(b)*t;n[1]=d[1]+sin(b)*t;n[2]=d[2]*(0.05*sin(f*PI/15)+0.25);}B(d[1],d[0])=32+s*3;}}
 return 0;
 }
+/*===============================================*/
 
 int vga()
 {
@@ -50,11 +55,15 @@ int vga()
 	}
 	return 0;
 }
-int main()
+int main(int argc,char **argv)
 {
 	vga();
+	memset(buffers,0,sizeof(buffers));
 
+	if(setjmp(jb)!=0)
+		goto frame_limit;
 
+/*===============================================*/
 	PG;
 	I i,j,k,s[100*3];
 	for(i=0;i<100;i++){
@@ -62,7 +71,7 @@ int main()
 		s[i*3+1]=rand()%W;
 		s[i*3+2]=rand()%255;
 	}
-	for(k=0;k<64;k++){
+	for(k=0;k<4;k++){
 		for(i=0;i<100;i++){
 			B(s[i*3],s[i*3+1])=s[i*3+2];
 			I d=s[i*3+2]/10;
@@ -73,7 +82,9 @@ int main()
 		C;
 	}
 
+/*===============================================*/
 
+frame_limit:
 	if(0)
 	if(frame_count>0)
 	{
@@ -108,9 +119,12 @@ int main()
 		}
 	}
 
-
+#ifdef USEWX
+wxEntry(0,0,0,SW_SHOWNORMAL);
+#else
 #ifdef _WIN32
 	DialogBox(0,(LPSTR)IDD_DIALOG1,0,dlg);
 #endif
+#endif // USEWX
 	return 0;
 }
