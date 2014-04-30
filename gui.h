@@ -44,7 +44,7 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 					buffer[(H-i-1)*W*3+j]=flip[i*W*3+j];
 				}
 
-			}			
+			}
 
 			hdc=BeginPaint(hwnd,&ps);
 			memset(&bmi,0,sizeof(BITMAPINFO));
@@ -148,3 +148,97 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 	}
 	return 0;
 }
+
+//#define USEWX
+#ifdef USEWX
+#include <wx/wx.h>
+#include <wx/app.h>
+#include <wx/button.h>
+#include <wx/statline.h>
+#include <wx/rawbmp.h>
+
+
+class MyApp : public wxApp
+{
+    DECLARE_EVENT_TABLE()
+public:
+	wxDialog *dialog;
+	wxButton *animate;
+	wxButton *quit;
+	wxSlider *slider;
+	wxStaticText *info;
+	wxBitmap *bitmap;
+	wxPaintDC *dc;
+    virtual bool OnInit();
+    void OnPaint(wxPaintEvent& event);
+
+};
+IMPLEMENT_APP(MyApp)
+
+BEGIN_EVENT_TABLE( MyApp, wxApp )
+    EVT_PAINT( MyApp::OnPaint )
+END_EVENT_TABLE()
+
+int fill_bitmap(wxBitmap *bitmap)
+{
+    int x,y;
+    int w,h;
+    w=bitmap->GetWidth();
+    h=bitmap->GetHeight();
+
+   wxAlphaPixelData bmdata(*bitmap);
+   bmdata.UseAlpha();
+   wxAlphaPixelData::Iterator dst(bmdata);
+
+   for(int y=0; y<h; y++) {
+      dst.MoveTo(bmdata, 0, y);
+      for(int x=0; x<w; x++) {
+         // wxBitmap contains rgb values pre-multiplied with alpha
+         unsigned char a=rand();
+         unsigned char r,g,b;
+         r=g=b=rand();
+         dst.Red()=r;
+         dst.Green()=g;
+         dst.Blue()=b;
+         dst.Alpha()=a;
+         dst++;
+      }
+   }
+   return TRUE;
+}
+
+void MyApp::OnPaint(wxPaintEvent& event)
+{
+   if(bitmap){
+       if(bitmap->Ok())
+       {
+           int i;
+//           fill_bitmap(bitmap);
+          dc->DrawBitmap(*bitmap, 0, 0);
+       }
+   }
+}
+
+bool MyApp::OnInit()
+{
+    dialog = new wxDialog((wxFrame *)NULL, wxID_ANY, _T("#asm gif animation tool"),
+                                 wxDefaultPosition, wxSize(500, 400),
+                                 wxDEFAULT_FRAME_STYLE);
+
+	slider = new wxSlider();
+
+	animate= new wxButton();
+	quit=new wxButton();
+	info = new wxStaticText();
+	dc=new wxPaintDC();
+	bitmap=new wxBitmap(320, 240, 32);
+
+    dialog->Show(true);
+
+    SetTopWindow(dialog);
+
+    return true;
+}
+
+
+#endif // USEWX

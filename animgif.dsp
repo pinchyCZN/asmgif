@@ -90,12 +90,20 @@ SOURCE=.\gifhead.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\gifsave89.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\main.cpp
 # End Source File
 # End Group
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=.\gui.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\vgapal.h
