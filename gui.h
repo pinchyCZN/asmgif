@@ -1,3 +1,5 @@
+#ifndef USEWX
+
 #include <windows.h>
 #include <commctrl.h>
 #include "resource.h"
@@ -5,7 +7,7 @@
 int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 {
 	static int current_frame=0;
-	static int frame_delay=10;
+	static int frame_delay=66;
 	static int timer;
 	static int animate=FALSE;
 	static int max_delay=150;
@@ -17,6 +19,8 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 		InvalidateRect(hwnd,0,FALSE);
 		if(animate){
 			current_frame=(current_frame+1)%64;
+			if(current_frame>=frame_count)
+				current_frame=0;
 		}
 		break;
 	case WM_PAINT:
@@ -148,8 +152,8 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 	}
 	return 0;
 }
+#endif // USEWX
 
-//#define USEWX
 #ifdef USEWX
 #include <wx/wx.h>
 #include <wx/app.h>
@@ -203,7 +207,7 @@ BEGIN_EVENT_TABLE( MyApp, wxApp )
     EVT_TIMER(TIMER_ANI,MyApp::OnTimer)
 END_EVENT_TABLE()
 
-int fill_bitmap(wxBitmap *bitmap,char *buffer)
+int fill_bitmap(wxBitmap *bitmap,unsigned char *buffer)
 {
     int x,y;
     int w,h;
@@ -237,8 +241,11 @@ void MyApp::OnTimer(wxTimerEvent& event)
     if(animate){
         char str[80];
         current_frame=(current_frame+1)%64;
+        if(current_frame>=frame_count)
+			current_frame=0;
         sprintf(str,"frame=%i delay=%i ms",current_frame,frame_delay);
         info->SetLabel(str);
+        dialog->Refresh(0);
     }
 }
 void MyApp::OnKey(wxKeyEvent& event)
@@ -249,16 +256,18 @@ void MyApp::OnKey(wxKeyEvent& event)
 void MyApp::OnAnimate(wxCommandEvent& event)
 {
     animate=!animate;
-    if(timer){
-        if(animate){
-            timer->Start(frame_delay);
-            slider->SetValue(frame_delay);
-        }
-        else{
-            timer->Stop();
-            slider->SetValue(current_frame);
-        }
-    }
+	if(animate){
+		if(timer)
+			timer->Start(frame_delay);
+		slider->SetRange(0,max_delay);
+		slider->SetValue(frame_delay);
+	}
+	else{
+		if(timer)
+			timer->Stop();
+		slider->SetRange(0,63);
+		slider->SetValue(current_frame);
+	}
 }
 void MyApp::OnQuit(wxCommandEvent& event)
 {
@@ -283,7 +292,7 @@ void MyApp::OnSlide(wxScrollEvent& event)
             current_frame=0;
         else if(current_frame>63)
             current_frame=63;
-        dialog->Refresh();
+        dialog->Refresh(0);
         last_scroll=scroll;
         {
             char str[80];
@@ -299,10 +308,8 @@ void MyApp::OnPaint(wxPaintEvent& event)
        if(bitmap->Ok())
        {
            {
-			unsigned char *frame;
-			char buffer[W*H*3];
-			char flip[W*H*3];
-			int i,j;
+			unsigned char *frame,buffer[W*H*3];
+			int i;
 			frame=buffers+(current_frame*W*H);
 			for(i=0;i<W*H;i++){
 				unsigned char r,g,b;
@@ -310,14 +317,9 @@ void MyApp::OnPaint(wxPaintEvent& event)
 				r=tmp[0];
 				g=tmp[1];
 				b=tmp[2];
-				flip[i*3]=b;
-				flip[i*3+1]=g;
-				flip[i*3+2]=r;
-			}
-			for(i=0;i<H;i++){
-				for(j=0;j<W*3;j++){
-					buffer[(H-i-1)*W*3+j]=flip[i*W*3+j];
-				}
+				buffer[i*3]=b;
+				buffer[i*3+1]=g;
+				buffer[i*3+2]=r;
 			}
             fill_bitmap(bitmap,buffer);
            }
@@ -347,7 +349,7 @@ bool MyApp::OnInit()
 
     current_frame=0;
 	animate=FALSE;
-	frame_delay=10;
+	frame_delay=66;
 	max_delay=150;
 
     slider->SetValue(current_frame);
