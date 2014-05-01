@@ -67,7 +67,18 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 			int scroll;
 			printf("scroll, %08X %08X\n",wparam,lparam);
 			scroll=SendDlgItemMessage(hwnd,IDC_SLIDER,TBM_GETPOS,0,0);
-			if(!animate){
+			if(animate){
+				frame_delay=scroll;
+				if(frame_delay<10)
+					frame_delay=10;
+				else if(frame_delay>max_delay)
+					frame_delay=max_delay;
+				if(timer)
+					KillTimer(hwnd,timer);
+				timer=SetTimer(hwnd,1337,frame_delay,NULL);
+				printf("delay=%i\n",frame_delay);
+			}
+			else{
 				static int last_scroll=0;
 				if(GetKeyState(VK_RBUTTON)&0x8000){
 					if(scroll>last_scroll)
@@ -88,17 +99,6 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 					sprintf(str,"frame=%i",current_frame);
 					SetDlgItemText(hwnd,IDC_TEXT,str);
 				}
-			}
-			else{
-				frame_delay=scroll;
-				if(frame_delay<10)
-					frame_delay=10;
-				else if(frame_delay>max_delay)
-					frame_delay=max_delay;
-				if(timer)
-					KillTimer(hwnd,timer);
-				timer=SetTimer(hwnd,1337,frame_delay,NULL);
-				printf("delay=%i\n",frame_delay);
 			}
 		}
 		break;
@@ -157,29 +157,53 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 #include <wx/statline.h>
 #include <wx/rawbmp.h>
 
+#define BUTTON_QUIT 1
+#define BUTTON_ANIMATE 2
+#define TIMER_ANI 1000
 
 class MyApp : public wxApp
 {
     DECLARE_EVENT_TABLE()
 public:
+	int current_frame;
+	int frame_delay;
+	int animate;
+	int max_delay;
+
 	wxDialog *dialog;
-	wxButton *animate;
-	wxButton *quit;
+	wxButton *button_animate;
+	wxButton *button_quit;
 	wxSlider *slider;
 	wxStaticText *info;
 	wxBitmap *bitmap;
+	wxImage *image;
 	wxPaintDC *dc;
+    wxBoxSizer* sizer1;
+    wxTimer *timer;
     virtual bool OnInit();
+    void OnClose(wxCloseEvent& event);
     void OnPaint(wxPaintEvent& event);
+    void OnSlide(wxScrollEvent& event);
+    void OnQuit(wxCommandEvent& event);
+    void OnAnimate(wxCommandEvent& event);
+    void OnKey(wxKeyEvent& event);
+    void OnTimer(wxTimerEvent& event);
 
 };
 IMPLEMENT_APP(MyApp)
 
 BEGIN_EVENT_TABLE( MyApp, wxApp )
     EVT_PAINT( MyApp::OnPaint )
+    EVT_CLOSE(MyApp::OnClose)
+    EVT_SCROLL_CHANGED(MyApp::OnSlide)
+    EVT_SCROLL_THUMBTRACK(MyApp::OnSlide)
+    EVT_BUTTON(BUTTON_QUIT,MyApp::OnQuit)
+    EVT_BUTTON(BUTTON_ANIMATE,MyApp::OnAnimate)
+    EVT_KEY_DOWN(MyApp::OnKey)
+    EVT_TIMER(TIMER_ANI,MyApp::OnTimer)
 END_EVENT_TABLE()
 
-int fill_bitmap(wxBitmap *bitmap)
+int fill_bitmap(wxBitmap *bitmap,char *buffer)
 {
     int x,y;
     int w,h;
@@ -194,9 +218,11 @@ int fill_bitmap(wxBitmap *bitmap)
       dst.MoveTo(bmdata, 0, y);
       for(int x=0; x<w; x++) {
          // wxBitmap contains rgb values pre-multiplied with alpha
-         unsigned char a=rand();
+         unsigned char a=0xFF;
          unsigned char r,g,b;
-         r=g=b=rand();
+         r=buffer[x*3+(y*3*W)];
+         g=buffer[x*3+(y*3*W)+1];
+         b=buffer[x*3+(y*3*W)+2];
          dst.Red()=r;
          dst.Green()=g;
          dst.Blue()=b;
@@ -206,37 +232,139 @@ int fill_bitmap(wxBitmap *bitmap)
    }
    return TRUE;
 }
-
+void MyApp::OnTimer(wxTimerEvent& event)
+{
+    if(animate){
+        char str[80];
+        current_frame=(current_frame+1)%64;
+        sprintf(str,"frame=%i delay=%i ms",current_frame,frame_delay);
+        info->SetLabel(str);
+    }
+}
+void MyApp::OnKey(wxKeyEvent& event)
+{
+    if(event.GetKeyCode()==WXK_ESCAPE)
+        exit(0);
+}
+void MyApp::OnAnimate(wxCommandEvent& event)
+{
+    animate=!animate;
+    if(timer){
+        if(animate){
+            timer->Start(frame_delay);
+            slider->SetValue(frame_delay);
+        }
+        else{
+            timer->Stop();
+            slider->SetValue(current_frame);
+        }
+    }
+}
+void MyApp::OnQuit(wxCommandEvent& event)
+{
+    exit(0);
+}
+void MyApp::OnSlide(wxScrollEvent& event)
+{
+    int scroll=event.GetPosition();
+    if(animate){
+        frame_delay=scroll;
+        if(frame_delay<10)
+            frame_delay=10;
+        else if(frame_delay>max_delay)
+            frame_delay=max_delay;
+        timer->Start(frame_delay);
+        printf("delay=%i\n",frame_delay);
+    }
+    else{
+        static int last_scroll=0;
+        current_frame=scroll;
+        if(current_frame<0)
+            current_frame=0;
+        else if(current_frame>63)
+            current_frame=63;
+        dialog->Refresh();
+        last_scroll=scroll;
+        {
+            char str[80];
+            sprintf(str,"frame=%i",current_frame);
+            info->SetLabel(str);
+        }
+    }
+}
 void MyApp::OnPaint(wxPaintEvent& event)
 {
+   wxPaintDC dc(dialog);
    if(bitmap){
        if(bitmap->Ok())
        {
-           int i;
-//           fill_bitmap(bitmap);
-          dc->DrawBitmap(*bitmap, 0, 0);
+           {
+			unsigned char *frame;
+			char buffer[W*H*3];
+			char flip[W*H*3];
+			int i,j;
+			frame=buffers+(current_frame*W*H);
+			for(i=0;i<W*H;i++){
+				unsigned char r,g,b;
+				unsigned char *tmp=P[frame[i]];
+				r=tmp[0];
+				g=tmp[1];
+				b=tmp[2];
+				flip[i*3]=b;
+				flip[i*3+1]=g;
+				flip[i*3+2]=r;
+			}
+			for(i=0;i<H;i++){
+				for(j=0;j<W*3;j++){
+					buffer[(H-i-1)*W*3+j]=flip[i*W*3+j];
+				}
+			}
+            fill_bitmap(bitmap,buffer);
+           }
+          dc.DrawBitmap(*bitmap, 0, 30);
        }
    }
+   event.Skip();
 }
-
+void MyApp::OnClose(wxCloseEvent& event)
+{
+    exit(0);
+}
 bool MyApp::OnInit()
 {
     dialog = new wxDialog((wxFrame *)NULL, wxID_ANY, _T("#asm gif animation tool"),
                                  wxDefaultPosition, wxSize(500, 400),
                                  wxDEFAULT_FRAME_STYLE);
 
-	slider = new wxSlider();
+    sizer1 = new wxBoxSizer(wxBOTH);
 
-	animate= new wxButton();
-	quit=new wxButton();
-	info = new wxStaticText();
-	dc=new wxPaintDC();
+	button_animate= new wxButton(dialog,BUTTON_ANIMATE,"Animate");
+	button_quit=new wxButton(dialog,BUTTON_QUIT,"quit");
+	slider = new wxSlider(dialog,wxID_ANY,0,0,63);
+	info = new wxStaticText(dialog,wxID_ANY,wxT("info"));
+	timer = new wxTimer(dialog,TIMER_ANI);
 	bitmap=new wxBitmap(320, 240, 32);
+
+    current_frame=0;
+	animate=FALSE;
+	frame_delay=10;
+	max_delay=150;
+
+    slider->SetValue(current_frame);
+
+
+
+	sizer1->Add(slider);
+	sizer1->Add(button_animate);
+	sizer1->Add(button_quit);
+	sizer1->Add(info);
+
+    dialog->SetSizer(sizer1);
+    dialog->Layout();
 
     dialog->Show(true);
 
     SetTopWindow(dialog);
-
     return true;
 }
 
