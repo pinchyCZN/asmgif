@@ -14,6 +14,7 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 	switch(msg){
 	case WM_INITDIALOG:
 		SendDlgItemMessage(hwnd,IDC_SLIDER,TBM_SETRANGE,TRUE,MAKELONG(0,63));
+		SendDlgItemMessage(hwnd,IDC_ANIMATE,BM_CLICK,0,0);
 		break;
 	case WM_TIMER:
 		InvalidateRect(hwnd,0,FALSE);

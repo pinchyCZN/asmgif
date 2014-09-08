@@ -7,22 +7,20 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Win32 Release">
-				<Option output="C:/DEV/MSVC_Projects/animgif/Release/animgif" prefix_auto="1" extension_auto="1" />
+				<Option output="Debug/animgif" prefix_auto="1" extension_auto="1" />
 				<Option object_output="Release" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-O2" />
 					<Add option="-W" />
 					<Add option="-fexceptions" />
+					<Add option="-O2" />
 					<Add option="-DWIN32" />
 					<Add option="-DNDEBUG" />
 					<Add option="-D_CONSOLE" />
 					<Add option="-D_MBCS" />
-					<Add directory="c:/dev/MSVC_Projects/wxWidgets/lib/gcc_lib/msw/" />
 				</Compiler>
 				<Linker>
-					<Add library="libwxmsw28.a" />
 					<Add library="kernel32" />
 					<Add library="user32" />
 					<Add library="gdi32" />
@@ -35,13 +33,10 @@
 					<Add library="uuid" />
 					<Add library="odbc32" />
 					<Add library="odbccp32" />
-					<Add library="comctl32" />
-					<Add directory="c:/dev/MSVC_Projects/wxWidgets/lib/gcc_lib/" />
 				</Linker>
 			</Target>
 			<Target title="Win32 Debug">
-				<Option output="C:/DEV/MSVC_Projects/animgif/Debug/animgif" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="c:/dev/MSVC_Projects/wxWidgets/src/common/" />
+				<Option output="Debug/animgif" prefix_auto="1" extension_auto="1" />
 				<Option object_output="Debug" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -54,7 +49,7 @@
 					<Add option="-D_CONSOLE" />
 					<Add option="-D_MBCS" />
 					<Add directory="./" />
-					<Add directory="c:/dev/MSVC_Projects/wxWidgets/lib/gcc_lib/mswd/" />
+					<Add directory="e:/DEV/MSVC_Projects/wxWidgets/lib/gcc_lib/msw" />
 				</Compiler>
 				<Linker>
 					<Add library="libwxmsw28d.a" />
@@ -71,15 +66,17 @@
 					<Add library="odbc32" />
 					<Add library="odbccp32" />
 					<Add library="comctl32" />
-					<Add directory="c:/dev/MSVC_Projects/wxWidgets/lib/gcc_lib/" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-DUSEWX" />
-			<Add directory="c:/dev/MSVC_Projects/wxWidgets/include" />
-			<Add directory="c:/dev/MSVC_Projects/wxWidgets/contrib/include" />
+			<Add directory="e:/DEV/MSVC_Projects/wxWidgets/include" />
+			<Add directory="e:/DEV/MSVC_Projects/wxWidgets/contrib/include" />
 		</Compiler>
+		<Linker>
+			<Add directory="e:/DEV/MSVC_Projects/wxWidgets/lib/gcc_lib/" />
+		</Linker>
 		<Unit filename="gifhead.h" />
 		<Unit filename="gifsave89.c">
 			<Option compilerVar="CC" />
