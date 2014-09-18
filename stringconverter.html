@@ -1,55 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-<head>
 
+<head>
 <title>Text -> C/C++ string converter</title>  
 </head>
+
 <body>
 
-<div id="wrap">
-<div id="header">
-
-
-     
-
 <script type="text/javascript">
-
-function insertAtCursor(myField, myValue) {
-	//IE support
-	if (document.selection) {
-		myField.focus();
-		sel = document.selection.createRange();
-		sel.text = myValue;
-	}
-
-	//MOZILLA/NETSCAPE support
-	else if (myField.selectionStart || myField.selectionStart == '0') {
-		var startPos = myField.selectionStart;
-		var endPos = myField.selectionEnd;
-		restoreTop = myField.scrollTop;
-
-		myField.value = myField.value.substring(0, startPos) + myValue + myField.value.substring(endPos, myField.value.length);
-
-		myField.selectionStart = startPos + myValue.length;
-		myField.selectionEnd = startPos + myValue.length;
-
-		if (restoreTop > 0) {
-			myField.scrollTop = restoreTop;
-		}
-	} else {
-		myField.value += myValue;
-	}
-}
-
-function interceptTabs(evt, control) {
-	key = evt.keyCode ? evt.keyCode : evt.which ? evt.which : evt.charCode;
-	if (key == 9) {
-		insertAtCursor(control, '\t');
-		return false;
-	} else {
-		return key;
-	}
-}
 
 function iswhite(c){
 	if(c==' ' || c=='\t' || c=='\r' || c=='\n')
@@ -144,7 +102,7 @@ function Convert() {
 	document.frmConvert.ed_output.value = output;
 	var gifstr='!gif '+output;
 	document.frmConvert.gif_output.value = gifstr;
-	document.getElementById('stringlen').innerHTML=gifstr.length;
+	document.getElementById('stringlen').innerHTML="gif string length="+gifstr.length;
 }
 
 </script>
@@ -165,11 +123,11 @@ function Convert() {
 		<p>
 			<textarea name="ed_output" rows="10" cols="67" style="width: 550px;"></textarea>          
 		</p>
-		<p>gif string</p>
+		<p id="stringlen">gif string</p>
 		<p>
 			<textarea name="gif_output" rows="10" cols="67" style="width: 550px;"></textarea>          
 		</p>
-		<span>Length=</span><span id="stringlen"></span>
+		<span></span>
 	</form>
 </div>
 
