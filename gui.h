@@ -36,7 +36,7 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 			frame=buffers+(current_frame*W*H);
 			for(i=0;i<W*H;i++){
 				unsigned char r,g,b;
-				unsigned char *tmp=P[frame[i]];
+				unsigned char *tmp=anim_palette+(768*current_frame)+(frame[i]*3);
 				r=tmp[0];
 				g=tmp[1];
 				b=tmp[2];

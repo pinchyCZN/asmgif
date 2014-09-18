@@ -8,6 +8,8 @@ unsigned char buffers[64*W*H];
 Palette P;
 Buffer B;
 
+unsigned char anim_palette[768*64];
+
 #ifdef _WIN32
 #include "gui.h"
 #endif
@@ -18,14 +20,17 @@ extern "C"{
 	int	animategif ( void *gs, int nrepetitions,
 		int delay, int tcolor, int disposal );
 	int	putgif ( void *gs, void *pixels );
+	int	fputgif ( void *gs, int left, int top, int width, int height,	void *pixels, int *colors );
 	int	endgif ( void *gs );
 };
 
 void SaveFrame(bool clear)
 {
-	unsigned char *b=B.Get();
 	if(frame_count<64){
+		unsigned char *b=B.Get();
+		unsigned char *p=P.Get();
 		memcpy(buffers+(frame_count*W*H),b,W*H);
+		memcpy(anim_palette+(frame_count*768),p,768);
 		if(clear)
 			memset(b,0,W*H);
 		frame_count++;
@@ -74,52 +79,52 @@ int rotate_3d(float *x,float *y,float *z,float *rx,float *ry,float *rz)
 
 int test()
 {
-#if 1
-I c,i,y,x,j,k,l,s,q;
-D p[16],*z,t,f,d,u,v,w,o,g,e;
-for(c=0; c<60; ++c) {
-    f=c*0.104;
-    z=p;
-    for(i=0; i<4; ++i) {
-        d=f*2+i*20;
-        v=3+sin(d)+sin(f*2);
-        w=cos(f)/v;
-        o=sin(f)/v;
-        u=cos(d);
-        v=u*o;
-        u*=w;
-        *z++=u+o;
-        *z++=v-w;
-        *z++=u-o;
-        *z++=v+w;
-    }
-    for(s=0; s<W*H; ++s) {
-        x=s%W;
-        y=s/W;
-        u=2*x/D(W)-1;
-        v=1-2*y/D(H);
-        B[y][x]=0;
-        t=1;
-        for(q=0; q<18;) {
-            k=q/3;
-            i=q%3;
-            l=(i+k)*2;
-            j=(++q%3+k)*2;
-            w=p[j]-p[l];
-            g=u-p[l];
-            o=v-p[++l];
-            e=p[j+1]-p[l];
-            w=o*w-g*e;
-            w*=k&1?-1:1;
-            t*=w>0?w:0;
-            if(i>1) {
-                if(t>0)B[y][x]=k+1;
-                t=1;
-            }
+#if 0
+/*
+int i,j,S=500,W=320,H=240,k=0;
+float D=S,x,y,z,f,e;
+for(; k++<16;) {
+    for(j=1; j++<D;) {
+        e=j/D;
+        z=log(2*e);
+        for(i=0; i++<S;) {
+            f=2*M_PI*i/S;
+            x=W*e*cos(f)+160;
+            y=-25*z+H*e*sin(f)+60;
+            x=x<0?0:x>(W-1)?W-1:x;
+            y=y<0?0:y>(H-1)?H-1:y;
+            B[(int)y][(int)x]=((j/2+k)&15)*16+((i/8+k)&0xfff);
         }
     }
     F;
 }
+*/
+I f,i,x,y;
+D t=0;
+i=0;
+
+for(f=0; f<64; f++){
+	for(x=0; x<H; x++) {
+		for(y=0; y<W; y++) {
+			D a,b,d;
+			a=x-H/2;
+			b=y-W/2;
+			d=sqrt(a*a+b*b);
+			d=d-t;
+			//if(d>-10 && d<10)
+				B[x][y]=(int)(sin(d/6)*255);
+
+		}
+	}
+	t+=3;
+	for(i=0;i<0xFF;i++){
+		P[i][0]=i;
+		P[i][1]=0;
+		P[i][2]=0;
+	}
+	C;
+}
+
 #else
 //	PG;D i,j,k,t=0,q=0;for(i=0;i<64;i++){t+=PI/8;for(j=0;j<200;j++){q+=.06;for(k=0;k<200;k++){D x,y,z;y=j*2;x=sin(q+t+k/20)*30+100;z=k+200;if(z>0){x=x*256/z;y=y*256/z;I c;z/=2;if(z>255)c=255;else c=z;B(x,y)=c;}}}C;}
 
@@ -130,8 +135,10 @@ for(c=0; c<60; ++c) {
 //int i,x,y;for(float f=1;f>0;f-=0.1) {;for(y=0;y<H;y++) for(x=0;x<W;x++) { std::complex<double> c(-0.1011-f+(2*f*x)/W,0.9563-f+(2*f*y)/H),z(0,0); for(i=50;i>0 && std::abs(z) < 2;--i) z=z*z+c; if (i) B[y][x]=i; }F;memset(B,0,S);}
 //PG;I i,j,k,s[100*3];for(i=0;i<100;i++){s[i*3]=rand()%H;s[i*3+1]=rand()%W;s[i*3+2]=rand()%255;}for(k=0;k<4;k++){for(i=0;i<100;i++){B(s[i*3],s[i*3+1])=s[i*3+2];I d=s[i*3+2]/10;if(d==0)d=2;s[i*3+1]=(s[i*3+1]+d)%W;}C;}
 //I c,i,y,x,j,k,l,s,q;D p[16],*z,t,f,d,u,v,w,o,g,e;for(c=0;c<60;++c){f=c*0.104;z=p;for(i=0;i<4;++i){d=f*2+i*4.18;v=3+sin(d)+sin(f*2)*1.3;w=cos(f)/v;o=sin(f)/v;u=cos(d);v=u*o;u*=w;*z++=u+o;*z++=v-w;*z++=u-o;*z++=v+w;}for(s=0;s<W*H;++s){x=s%W;y=s/W;u=2*x/D(W)-1;v=1-2*y/D(H);B[y][x]=0;t=1;for(q=0;q<18;){k=q/3;i=q%3;l=(i+k)*2;j=(++q%3+k)*2;w=p[j]-p[l];g=u-p[l];o=v-p[++l];e=p[j+1]-p[l];w=o*w-g*e;w*=k&1?-1:1;t*=w>0?w:0;if(i>1){if(t>0)B[y][x]=k+1;t=1;}}}F;}
-#endif
 //#define ct 200000 PG;static I i,j,k,s[ct];D rx=0,ry=0,rz=0,scl=300;for(i=0;i<ct;i++){s[i]=W/2-rand()%W;}for(k=0;k<64;k++){for(i=0;i<ct/3;i+=3){D cx,cy,cz,sx,sy,sz,tx,ty,tz;I x,y,z;x=s[i];y=s[i+1];z=s[i+2];cx=cos(rx);cy=cos(ry);cz=cos(rz);sx=sin(rx);sy=sin(ry);sz=sin(rz);tx=x*cy*cz+y*cy*sz-z*sy;ty=x*(sx*sy*cz-cx*sz)+y*(sx*sy*sz+cx*cz)+z*sx*cy;tz=x*(cx*sy*cz+sx*sz)+y*(cx*sy*sz-sx*cz)+z*cx*cy+1000;if(tz>0)B(tx*scl/tz+H/2,ty*scl/tz+W/2)=(1+cos(tz/W/5*PI))*180;}rz+=PI/32;ry+=PI/32;rx+=PI/32;C;}
+//I t,f,i,x,y;for(x=0;x<W;x++){i=0;for(y=0;y<H;y++){if(!i) t=i=15+rand()%32;if(!y) i-=rand()%t;B[y][x]=(i-- *255)/t;}}for(f=0;f<16;f++,F)for(i=0;i<256;i++){P=i+f*16;P=P=0;}
+I f,i,x,y;D t=0;i=0;for(f=0;f<64;f++){for(x=0;x<H;x++){for(y=0;y<W;y++){D a,b,d;a=x-H/2;b=y-W/2;d=sqrt(a*a+b*b);d=d-t;B[x][y]=(int)(sin(d/6)*255);}}t+=3;for(i=0;i<0xFF;i++){P[i][0]=i;P[i][1]=0;P[i][2]=0;}C;}
+#endif
 
 return 0;
 }
@@ -176,7 +183,7 @@ frame_limit:
 	{
 		static void *gifimage=0;
 		static void *gsdata=0;
-		unsigned char *tmp=P.Get();
+		unsigned char *tmp=anim_palette;
 		int ctable[256*3];
 		int i;
 		for(i=0;i<256;i++){
@@ -193,7 +200,14 @@ frame_limit:
 			char *fname="c:\\temp\\temp.gif";
 			animategif(gsdata,0,5,0,2);
 			for(i=0;i<frame_count;i++){
-				putgif(gsdata,buffers+(i*H*W));
+				int j;
+				tmp=anim_palette+(i*768);
+				for(j=0;j<256;j++){
+					ctable[j*3]=tmp[j*3];
+					ctable[j*3+1]=tmp[j*3+1];
+					ctable[j*3+2]=tmp[j*3+2];
+				}
+				fputgif(gsdata,0,0,W,H,buffers+(i*H*W),ctable);
 			}
 			glen=endgif(gsdata);
 			f=fopen(fname,"wb");
