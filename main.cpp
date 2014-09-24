@@ -39,38 +39,66 @@ void SaveFrame(bool clear)
 		longjmp(jb,1);
 }
 /*
+//rotate by z
 cx=1
 cy=1
-cz=cos(*rz/(57.2957795));
+cz=cos(rz/(57.2957795));
 
 sx=0
 sy=0
-sz=sin(*rz/(57.2957795));
+sz=sin(rz/(57.2957795));
 
-tx=(*x)*cz+(*y)*sz;
-ty=(*x)*(-sz)+(*y)*(cz);
-tz=(*z);
-int rotate_3d(float *x,float *y,float *z,float *rx,float *ry,float *rz)
+tx=x*cz+y*sz;
+ty=x*(-sz)+y*(cz);
+tz=z;
+
+//rotate by x
+cx=cos(rx/(57.2957795));
+cy=1
+cz=1
+
+sx=sin(rx/(57.2957795));
+sy=0
+sz=0
+
+tx=x;
+ty=y*cx+z*sx;
+tz=y*(-sx)+z*cx;
+
+//rotate by y
+cx=1
+cy=cos(ry/(57.2957795));
+cz=1
+
+sx=0
+sy=sin(ry/(57.2957795));
+sz=0
+
+tx=x*cy-z*sy;
+ty=y;
+tz=x*sy+z*cy;
+
+int rotate_3d(float x,float y,float z,float rx,float ry,float rz)
 {
 	float cx,cy,cz,sx,sy,sz;
 	float tx,ty,tz;
 #define RID 57.2957795
-	cx=cos(*rx/(RID));
-	cy=cos(*ry/(RID));
-	cz=cos(*rz/(RID));
-	sx=sin(*rx/(RID));
-	sy=sin(*ry/(RID));
-	sz=sin(*rz/(RID));
-	tx=(*x)*cy*cz+(*y)*cy*sz-(*z)*sy;
-	ty=(*x)*(sx*sy*cz-cx*sz)+(*y)*(sx*sy*sz+cx*cz)+(*z)*sx*cy;
-	tz=(*x)*(cx*sy*cz+sx*sz)+(*y)*(cx*sy*sz-sx*cz)+(*z)*cx*cy;
-	*x=tx;
-	*y=ty;
-	*z=tz;
+	cx=cos(rx/(RID));
+	cy=cos(ry/(RID));
+	cz=cos(rz/(RID));
+	sx=sin(rx/(RID));
+	sy=sin(ry/(RID));
+	sz=sin(rz/(RID));
+	tx=x*cy*cz+y*cy*sz-z*sy;
+	ty=x*(sx*sy*cz-cx*sz)+y*(sx*sy*sz+cx*cz)+z*sx*cy;
+	tz=x*(cx*sy*cz+sx*sz)+y*(cx*sy*sz-sx*cz)+z*cx*cy;
+	x=tx;
+	y=ty;
+	z=tz;
 	return TRUE;
 }
-		x1=(*x)*scale/(z1);
-		y1=(*y)*scale/(z1);
+		x1=x*scale/(z1);
+		y1=y*scale/(z1);
 		x1+=BUF_WIDTH/2;
 		y1+=BUF_HEIGHT/2;
 */
@@ -99,29 +127,39 @@ for(; k++<16;) {
     F;
 }
 */
-I f,i,x,y;
-D t=0;
-i=0;
-
+D a,f,i,x,y,t=0,r=0,d=0;
+a=i=0;
+PG;
+t=56*4*PI/360;
 for(f=0; f<64; f++){
-	for(x=0; x<H; x++) {
-		for(y=0; y<W; y++) {
-			D a,b,d;
-			a=x-H/2;
-			b=y-W/2;
-			d=sqrt(a*a+b*b);
-			d=d-t;
-			//if(d>-10 && d<10)
-				B[x][y]=(int)(sin(d/6)*255);
-
+	for(x=0;x<H;x++){
+		for(y=0;y<W;y++){
+			D cy,sy,tx,ty,tz,z=10*sin(a)*sin(x/8+r)*cos(y/8);
+			cy=cos(t);
+			sy=sin(t);
+			tx=(x+d)*cy-z*sy;
+			ty=y;
+			tz=(x+d)*sy+z*cy;
+			tz+=50;
+			if(tz!=0){
+				I i,j;
+				//printf("%f\n",tz);
+				i=tx*400/tz+H;
+				j=ty*400/tz+0*W/8;
+				tz=-tz+200;
+				if(tz>255)
+					tz=255;
+				else if(tz<0)
+					tz=0;
+				B(i,j)=tz;
+			}
 		}
 	}
-	t+=3;
-	for(i=0;i<0xFF;i++){
-		P[i][0]=i;
-		P[i][1]=0;
-		P[i][2]=0;
-	}
+	r+=12*PI/360;
+	//d-=5;
+	a+=PI/360*25;
+	t+=2*PI/360;
+	//t=0;
 	C;
 }
 
@@ -137,7 +175,8 @@ for(f=0; f<64; f++){
 //I c,i,y,x,j,k,l,s,q;D p[16],*z,t,f,d,u,v,w,o,g,e;for(c=0;c<60;++c){f=c*0.104;z=p;for(i=0;i<4;++i){d=f*2+i*4.18;v=3+sin(d)+sin(f*2)*1.3;w=cos(f)/v;o=sin(f)/v;u=cos(d);v=u*o;u*=w;*z++=u+o;*z++=v-w;*z++=u-o;*z++=v+w;}for(s=0;s<W*H;++s){x=s%W;y=s/W;u=2*x/D(W)-1;v=1-2*y/D(H);B[y][x]=0;t=1;for(q=0;q<18;){k=q/3;i=q%3;l=(i+k)*2;j=(++q%3+k)*2;w=p[j]-p[l];g=u-p[l];o=v-p[++l];e=p[j+1]-p[l];w=o*w-g*e;w*=k&1?-1:1;t*=w>0?w:0;if(i>1){if(t>0)B[y][x]=k+1;t=1;}}}F;}
 //#define ct 200000 PG;static I i,j,k,s[ct];D rx=0,ry=0,rz=0,scl=300;for(i=0;i<ct;i++){s[i]=W/2-rand()%W;}for(k=0;k<64;k++){for(i=0;i<ct/3;i+=3){D cx,cy,cz,sx,sy,sz,tx,ty,tz;I x,y,z;x=s[i];y=s[i+1];z=s[i+2];cx=cos(rx);cy=cos(ry);cz=cos(rz);sx=sin(rx);sy=sin(ry);sz=sin(rz);tx=x*cy*cz+y*cy*sz-z*sy;ty=x*(sx*sy*cz-cx*sz)+y*(sx*sy*sz+cx*cz)+z*sx*cy;tz=x*(cx*sy*cz+sx*sz)+y*(cx*sy*sz-sx*cz)+z*cx*cy+1000;if(tz>0)B(tx*scl/tz+H/2,ty*scl/tz+W/2)=(1+cos(tz/W/5*PI))*180;}rz+=PI/32;ry+=PI/32;rx+=PI/32;C;}
 //I t,f,i,x,y;for(x=0;x<W;x++){i=0;for(y=0;y<H;y++){if(!i) t=i=15+rand()%32;if(!y) i-=rand()%t;B[y][x]=(i-- *255)/t;}}for(f=0;f<16;f++,F)for(i=0;i<256;i++){P=i+f*16;P=P=0;}
-I f,i,x,y;D t=0;i=0;for(f=0;f<64;f++){for(x=0;x<H;x++){for(y=0;y<W;y++){D a,b,d;a=x-H/2;b=y-W/2;d=sqrt(a*a+b*b);d=d-t;B[x][y]=(int)(sin(d/6)*255);}}t+=3;for(i=0;i<0xFF;i++){P[i][0]=i;P[i][1]=0;P[i][2]=0;}C;}
+D a,f,i,x,y,t=0,r=0,d=0;a=i=0;PG;t=56*4*PI/360;for(f=0;f<64;f++){for(x=0;x<H;x++){for(y=0;y<W;y++){D cy,sy,tx,ty,tz,z=10*sin(a)*sin(x/8+r)*cos(y/8);cy=cos(t);sy=sin(t);tx=(x+d)*cy-z*sy;ty=y;tz=(x+d)*sy+z*cy;tz+=50;if(tz!=0){I i,j;i=tx*400/tz+H;j=ty*400/tz+0*W/8;tz=-tz+200;if(tz>255)tz=255;else if(tz<0)tz=0;B(i,j)=tz;}}}r+=12*PI/360;a+=PI/360*25;t+=2*PI/360;C;}
+
 #endif
 
 return 0;
