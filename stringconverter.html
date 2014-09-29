@@ -77,7 +77,7 @@ function cstr_encode(input) {
 			default:
 				skip=false;
 				if(i>0){
-					if(input[i-1]=='\r' || input[i-1]=='\n'){
+					if(input[i-1]=='\r' || input[i-1]=='\n' || input[i-1]=='\t' || input[i-1]==' '){
 						if(isalpha(c) && isalpha(lastchar)){
 							if(!blockcomment)
 								if(!linecomment)

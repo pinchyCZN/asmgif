@@ -107,7 +107,6 @@ int rotate_3d(float x,float y,float z,float rx,float ry,float rz)
 
 int test()
 {
-#if 1
 /*
 int i,j,S=500,W=320,H=240,k=0;
 float D=S,x,y,z,f,e;
@@ -163,44 +162,43 @@ for(f=0; f<64; f++){
 	C;
 }
 */
-D x,y,f,t=0,d=0;
-I i,j,c;
-PG;
-for(f=0;f<64;f++){
-	for(x=0;x<H;x++){
-		for(y=0;y<W;y++){
-			if(x<8 && y<8*5){
-			i=((int)x)&7;
-			j=1<<(7-(((int)y)&7));
-			c=((((char*)0xFFA6E)["EBOLA"[(int)y/8]*8+i]));
-				if(c&j){
-					//B[(int)y][(int)x]=0xff;
+#if 0
 
-					D cy,sy,tx,ty,tz,z=0;//10*sin(a)*sin(x/8+r)*cos(y/8);
-					cy=cos(t);
-					sy=sin(t);
-					tx=(x+d)*cy-z*sy;
-					ty=y;
-					tz=(x+d)*sy+z*cy;
-					tz+=50;
-					if(tz!=0){
-						I i,j;
-						//printf("%f\n",tz);
-						i=tx*400/tz+H/2;
-						j=ty*400/tz;
-						tz=-tz+200;
-						if(tz>255)
-							tz=255;
-						else if(tz<0)
-							tz=0;
-						B(i,j)=tz;
-					}
-				}
+I i,j,k,c,x,y,z;
+PG;
+FILE *fi;
+system("dir >e:\\t.txt");
+fi=fopen("e:\\t.txt","r");
+char t[0x10000]={0},*tmp,*l;
+fread(t,1,sizeof(t),fi);
+fclose(fi);
+tmp=t;
+for(z=0;z<64;z++){
+	i=x=y=0;
+	l=0;
+	while(tmp[i]!=0){
+		if(tmp[i]=='\n'){
+			x=0;y+=8;
+			if(l==0)
+				l=tmp+i+1;
+		}
+		else if(tmp[i]>=' ')
+		for(j=0;j<8;j++){
+			for(k=0;k<8;k++){
+				c=((((char*)0xFFA6E)[(tmp[i]*8)+j]));
+				if(c&(1<<(7-k)))
+					c=0xFF;
+				else
+					c=0;
+				B(y+j,x+k)=c;
 			}
 		}
+		x+=8;
+		i++;
 	}
-	t+=64*PI/360;
 	C;
+	if(l)
+		tmp=l;
 }
 
 
@@ -217,8 +215,8 @@ for(f=0;f<64;f++){
 //#define ct 200000 PG;static I i,j,k,s[ct];D rx=0,ry=0,rz=0,scl=300;for(i=0;i<ct;i++){s[i]=W/2-rand()%W;}for(k=0;k<64;k++){for(i=0;i<ct/3;i+=3){D cx,cy,cz,sx,sy,sz,tx,ty,tz;I x,y,z;x=s[i];y=s[i+1];z=s[i+2];cx=cos(rx);cy=cos(ry);cz=cos(rz);sx=sin(rx);sy=sin(ry);sz=sin(rz);tx=x*cy*cz+y*cy*sz-z*sy;ty=x*(sx*sy*cz-cx*sz)+y*(sx*sy*sz+cx*cz)+z*sx*cy;tz=x*(cx*sy*cz+sx*sz)+y*(cx*sy*sz-sx*cz)+z*cx*cy+1000;if(tz>0)B(tx*scl/tz+H/2,ty*scl/tz+W/2)=(1+cos(tz/W/5*PI))*180;}rz+=PI/32;ry+=PI/32;rx+=PI/32;C;}
 //I t,f,i,x,y;for(x=0;x<W;x++){i=0;for(y=0;y<H;y++){if(!i) t=i=15+rand()%32;if(!y) i-=rand()%t;B[y][x]=(i-- *255)/t;}}for(f=0;f<16;f++,F)for(i=0;i<256;i++){P=i+f*16;P=P=0;}
 //D a,f,i,x,y,t=0,r=0,d=0;a=i=0;PG;t=56*4*PI/360;for(f=0;f<64;f++){for(x=0;x<H;x++){for(y=0;y<W;y++){D cy,sy,tx,ty,tz,z=10*sin(a)*sin(x/8+r)*cos(y/8);cy=cos(t);sy=sin(t);tx=(x+d)*cy-z*sy;ty=y;tz=(x+d)*sy+z*cy;tz+=50;if(tz!=0){I i,j;i=tx*400/tz+H;j=ty*400/tz+0*W/8;tz=-tz+200;if(tz>255)tz=255;else if(tz<0)tz=0;B(i,j)=tz;}}}r+=12*PI/360;a+=PI/360*25;t+=2*PI/360;C;}
-int x,y,z;uint8_t w,BB[H][W];memset(BB,0,S);for(x=y=0;x<256;x++,y+=4){P=x<64?y:255;P=x>63?x<128?y:255:0;P=x>127?x<192?y:255:0;}for(z=0;z<800;z++){for(x=0;x<W;x++)BB[239][x]=rand()&255;for(y=80;y<239;y++)for(x=0;x<W;x++,w=x==W?0:1){w=(BB[y][x]+BB[y][x+w]+BB[y+1][x]+BB[y+1][x+w]+BB[y+1][x]+BB[y+1][x+w])/6;if(!(y&7))w--;BB[y][x]=w&128?0:w;B[y][x]=((((char*)0xFFA6E)["Lorem ipsum dolor sit amet edipisc elit"[x/8]*8+(y&7)]<<(x&7))&128)?BB[y][x]:0;}if(!(z&3))F;}
-
+//int x,y,z;uint8_t w,BB[H][W];memset(BB,0,S);for(x=y=0;x<256;x++,y+=4){P=x<64?y:255;P=x>63?x<128?y:255:0;P=x>127?x<192?y:255:0;}for(z=0;z<800;z++){for(x=0;x<W;x++)BB[239][x]=rand()&255;for(y=80;y<239;y++)for(x=0;x<W;x++,w=x==W?0:1){w=(BB[y][x]+BB[y][x+w]+BB[y+1][x]+BB[y+1][x+w]+BB[y+1][x]+BB[y+1][x+w])/6;if(!(y&7))w--;BB[y][x]=w&128?0:w;B[y][x]=((((char*)0xFFA6E)["Lorem ipsum dolor sit amet edipisc elit"[x/8]*8+(y&7)]<<(x&7))&128)?BB[y][x]:0;}if(!(z&3))F;}
+I i,j,k,c,x,y,z;PG;FILE *fi;system("dir >e:\\t.txt");fi=fopen("e:\\t.txt","r");char t[0x10000]={0},*tmp,*l;fread(t,1,sizeof(t),fi);fclose(fi);tmp=t;for(z=0;z<64;z++){i=x=y=0;l=0;while(tmp[i]!=0){if(tmp[i]=='\n'){x=0;y+=8;if(l==0)l=tmp+i+1;}else if(tmp[i]>=' ')for(j=0;j<8;j++){for(k=0;k<8;k++){c=((((char*)DOSCHAR)[(tmp[i]*8)+j]));if(c&(1<<(7-k)))c=0xFF;else c=0;B(y+j,x+k)=c;}}x+=8;i++;}C;if(l)tmp=l;}
 #endif
 
 return 0;
