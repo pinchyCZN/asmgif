@@ -162,46 +162,45 @@ for(f=0; f<64; f++){
 	C;
 }
 */
-#if 0
-
-I i,j,k,c,x,y,z;
-PG;
-FILE *fi;
-system("dir >e:\\t.txt");
-fi=fopen("e:\\t.txt","r");
-char t[0x10000]={0},*tmp,*l;
-fread(t,1,sizeof(t),fi);
-fclose(fi);
-tmp=t;
-for(z=0;z<64;z++){
-	i=x=y=0;
-	l=0;
-	while(tmp[i]!=0){
-		if(tmp[i]=='\n'){
-			x=0;y+=8;
-			if(l==0)
-				l=tmp+i+1;
-		}
-		else if(tmp[i]>=' ')
-		for(j=0;j<8;j++){
-			for(k=0;k<8;k++){
-				c=((((char*)0xFFA6E)[(tmp[i]*8)+j]));
-				if(c&(1<<(7-k)))
-					c=0xFF;
+/*
+ Octants:
+  \2|1/
+  3\|/0
+ ---+---
+  4/|\7
+  /5|6\
+*/
+#if 1
+//D t,a,b,x,y;int i;const int SZ=20;D cx[SZ],cy[SZ],r[SZ];for(a=0;a<256;a++){P=255*sin(PI/2*256.0/(a+.01));P=255*sin(PI/2*256.0/((a/2)+.01));P=0;}for(i=0;i<SZ;i++){cx[i]=rand()%W;cy[i]=rand()%H;r[i]=((D)(rand()%6283))/1000.0;}for(t=0;t<64;t++){for(i=0;i<SZ;i++){for(x=0;x<W;x++){for(y=0;y<H;y++){a=sin(r[i])*40;b=pow(x-cx[i],2)+pow(y-cy[i],2);if(a>0 && b<=(a*a)){a=cos((a-b)/(a*a))*0xFF;B(y,x)=a;}}}}for(i=0;i<SZ;i++){r[i]+=PI/20;} C;}
+//D t,a,b,x,y;int i,j;for(i=0;i<256;i++){P=i;P=0;P=0;}for(t=0;t<64;t++){for(x=0;x<W;x++){if(rand()&1)i=rand()%300;if(i>255)i=255;B(H-1,x)=i;}for(x=0;x<W;x++){for(y=0;y<H;y++){i=B(y-1,x);i+=B(y,x-1);i+=B(y,x+1);i+=B(y+1,x);i/=4;for(j=1;j<=5;j++)B(y-j,x)=i;}}F;}
+//const int T=40; D t,a,b,x,y,z,c[T];int i,j;z=2;for(i=0;i<T;i++)c[i]=rand()%H;for(t=0;t<32;t++){for(j=0;j<T;j++){for(a=0;a<30;a++){for(x=0;x<z;x++){y=50*sin(c[j]/100+x/10)+a+c[j]+H/4;B(y,x)=c[j];y=50*sin(c[j]/100+(W-x)/10)+a+c[j]+H/4;B(y,W-x)=c[j];}}}z+=20;if(z>W/2){for(x=0;x<z-W/2;x++)for(y=0;y<H;y++){a=W/2-(z-W/2)/2+x;B(y,a)=55;}}F;}
+//const int T=100;int i,t,a,x,y,c[T],dx[T],dy[T];D vx[T],vy[T];for(i=0;i<T;i++){c[i]=rand()%(H/2);dx[i]=rand()%H;dy[i]=rand()%H;vx[i]=(rand()%8)-4;vy[i]=(rand()%8)-4;}for(t=0;t<64;t++){for(i=0;i<T;i++){for(x=0;x<c[i];x++){for(y=0;y<c[i];y++){a=B(y+dy[i],x+dx[i])+c[i];B(y+dy[i],x+dx[i])=a%255;}}}for(i=0;i<T;i++){dx[i]+=vx[i];dy[i]+=vy[i];}C;}
+//int i,j,t;D a,b,c,d,x,y,f[40];for(t=0;t<64;t++){for(j=0;j<H;j++){for(i=0;i<40;i++)f[i]=((D)(rand()%(1000+t*2))+1)/10.0;for(x=0;x<W;x++){d=0;for(i=0;i<40;i++){if(i&1)d+=sin(f[i]+x/f[i]);else d+=cos(f[i]+x/f[i]);}y=d*2+j*4;B(y,x)=t+j;}}C;}
+	{
+int i,j,t;
+D a,b,c,d,x,y,f[40];
+for(t=0;t<64;t++){
+	for(j=0;j<H;j++){
+		for(i=0;i<40;i++)
+			f[i]=((D)(rand()%(1000+t*2))+1)/10.0;
+		for(x=0;x<W;x++){
+			d=0;
+			for(i=0;i<40;i++){
+				if(i&1)
+					d+=sin(f[i]+x/f[i]);
 				else
-					c=0;
-				B(y+j,x+k)=c;
+					d+=cos(f[i]+x/f[i]);
 			}
+			y=d*2+j*4;
+			B(y,x)=t+j;
 		}
-		x+=8;
-		i++;
 	}
 	C;
-	if(l)
-		tmp=l;
 }
 
 
+
+	}
 #else
 //	PG;D i,j,k,t=0,q=0;for(i=0;i<64;i++){t+=PI/8;for(j=0;j<200;j++){q+=.06;for(k=0;k<200;k++){D x,y,z;y=j*2;x=sin(q+t+k/20)*30+100;z=k+200;if(z>0){x=x*256/z;y=y*256/z;I c;z/=2;if(z>255)c=255;else c=z;B(x,y)=c;}}}C;}
 
@@ -216,7 +215,8 @@ for(z=0;z<64;z++){
 //I t,f,i,x,y;for(x=0;x<W;x++){i=0;for(y=0;y<H;y++){if(!i) t=i=15+rand()%32;if(!y) i-=rand()%t;B[y][x]=(i-- *255)/t;}}for(f=0;f<16;f++,F)for(i=0;i<256;i++){P=i+f*16;P=P=0;}
 //D a,f,i,x,y,t=0,r=0,d=0;a=i=0;PG;t=56*4*PI/360;for(f=0;f<64;f++){for(x=0;x<H;x++){for(y=0;y<W;y++){D cy,sy,tx,ty,tz,z=10*sin(a)*sin(x/8+r)*cos(y/8);cy=cos(t);sy=sin(t);tx=(x+d)*cy-z*sy;ty=y;tz=(x+d)*sy+z*cy;tz+=50;if(tz!=0){I i,j;i=tx*400/tz+H;j=ty*400/tz+0*W/8;tz=-tz+200;if(tz>255)tz=255;else if(tz<0)tz=0;B(i,j)=tz;}}}r+=12*PI/360;a+=PI/360*25;t+=2*PI/360;C;}
 //int x,y,z;uint8_t w,BB[H][W];memset(BB,0,S);for(x=y=0;x<256;x++,y+=4){P=x<64?y:255;P=x>63?x<128?y:255:0;P=x>127?x<192?y:255:0;}for(z=0;z<800;z++){for(x=0;x<W;x++)BB[239][x]=rand()&255;for(y=80;y<239;y++)for(x=0;x<W;x++,w=x==W?0:1){w=(BB[y][x]+BB[y][x+w]+BB[y+1][x]+BB[y+1][x+w]+BB[y+1][x]+BB[y+1][x+w])/6;if(!(y&7))w--;BB[y][x]=w&128?0:w;B[y][x]=((((char*)0xFFA6E)["Lorem ipsum dolor sit amet edipisc elit"[x/8]*8+(y&7)]<<(x&7))&128)?BB[y][x]:0;}if(!(z&3))F;}
-I i,j,k,c,x,y,z;PG;FILE *fi;system("dir >e:\\t.txt");fi=fopen("e:\\t.txt","r");char t[0x10000]={0},*tmp,*l;fread(t,1,sizeof(t),fi);fclose(fi);tmp=t;for(z=0;z<64;z++){i=x=y=0;l=0;while(tmp[i]!=0){if(tmp[i]=='\n'){x=0;y+=8;if(l==0)l=tmp+i+1;}else if(tmp[i]>=' ')for(j=0;j<8;j++){for(k=0;k<8;k++){c=((((char*)DOSCHAR)[(tmp[i]*8)+j]));if(c&(1<<(7-k)))c=0xFF;else c=0;B(y+j,x+k)=c;}}x+=8;i++;}C;if(l)tmp=l;}
+//I i,j,k,c,x,y,z;PG;FILE *fi;system("dir >e:\\t.txt");fi=fopen("e:\\t.txt","r");char t[0x10000]={0},*tmp,*l;fread(t,1,sizeof(t),fi);fclose(fi);tmp=t;for(z=0;z<64;z++){i=x=y=0;l=0;while(tmp[i]!=0){if(tmp[i]=='\n'){x=0;y+=8;if(l==0)l=tmp+i+1;}else if(tmp[i]>=' ')for(j=0;j<8;j++){for(k=0;k<8;k++){c=((((char*)DOSCHAR)[(tmp[i]*8)+j]));if(c&(1<<(7-k)))c=0xFF;else c=0;B(y+j,x+k)=c;}}x+=8;i++;}C;if(l)tmp=l;}
+PG;for(I c=0;c<64;++c){D k=c/64.0*6.28;for(I y=0;y<H;++y){for(I x=0;x<W;++x){D u=x/D(W)*2-1;D v=1-y/D(H)*2;D p=cos(k);D q=sin(k)*cos(k);D a=u-p;D b=v-q;D l=sqrt(a*a+b*b);a/=l;b/=l;D t = 0.0;for(int i=0;i<16;++i){D m=100.0;D h=p+a*t;D f=q+b*t;for(int j=0;j<3;++j){D g=j/3.0*6.28;D r=h-cos(g)*0.5;D s=f-sin(g)*0.5;D o=sqrt(r*r+s*s)-0.05;m=m<o?m:o;} if(m<0.1){t = 1000.0;break;} m=fabs(m)*0.1;t+=m;if(t>=l){break;} } B[y][x] = 255.0 / (1.0 + t*t);} } F;}
 #endif
 
 return 0;
