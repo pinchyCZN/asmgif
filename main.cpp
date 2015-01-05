@@ -178,21 +178,37 @@ for(f=0; f<64; f++){
 //int i,j,t;D a,b,c,d,x,y,f[40];for(t=0;t<64;t++){for(j=0;j<H;j++){for(i=0;i<40;i++)f[i]=((D)(rand()%(1000+t*2))+1)/10.0;for(x=0;x<W;x++){d=0;for(i=0;i<40;i++){if(i&1)d+=sin(f[i]+x/f[i]);else d+=cos(f[i]+x/f[i]);}y=d*2+j*4;B(y,x)=t+j;}}C;}
 	{
 int i,j,t;
-D a,b,c,d,x,y,f[40];
-for(t=0;t<64;t++){
-	for(j=0;j<H;j++){
-		for(i=0;i<40;i++)
-			f[i]=((D)(rand()%(1000+t*2))+1)/10.0;
-		for(x=0;x<W;x++){
-			d=0;
-			for(i=0;i<40;i++){
-				if(i&1)
-					d+=sin(f[i]+x/f[i]);
-				else
-					d+=cos(f[i]+x/f[i]);
+D a,b,c,d,r,x,y,z,lx,ly=-100;
+PG;
+for(t=0;t<32;t++){
+	lx=100*sin(t*PI/32);
+	for(x=-W/2;x<W/2;x++){
+		for(y=-H/2;y<H/2;y++){
+			for(z=1;z<50;z+=.2){
+				r=180;
+				a=x*z;b=y*z;c=15.0*(1-z);
+				c=-c-r-20;
+				a*=a;b*=b;c*=c;
+				d=sqrt(a+b+c);
+				if((d-r)<=0){
+					D q1,q2,q3;
+					a=x*z;b=y*z;c=15.0*(1-z);
+					q1=a-lx+b-ly;//15+r+20;
+					q1*=q1;
+					q2=a*a+b*b+(c+r)*(c+r);
+					q3=a*a+b*b+(c-15)*(c-15);
+					a=q2+q3-q1;
+					a*=a;
+					a=(1-a)/(4*q2*q3);
+					a*=-80;
+					if(a>255)
+						a=255;
+					else if(a<0)
+						a=0;
+					B(y+H/2,x+W/2)=a;
+					break;
+				}
 			}
-			y=d*2+j*4;
-			B(y,x)=t+j;
 		}
 	}
 	C;

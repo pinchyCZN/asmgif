@@ -15,6 +15,15 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 	case WM_INITDIALOG:
 		SendDlgItemMessage(hwnd,IDC_SLIDER,TBM_SETRANGE,TRUE,MAKELONG(0,63));
 		SendDlgItemMessage(hwnd,IDC_ANIMATE,BM_CLICK,0,0);
+		{
+			char title[200];
+			HANDLE hConWnd;
+			RECT rect={0};
+			GetWindowRect(hwnd,&rect);
+			GetConsoleTitle(title,sizeof(title));
+			hConWnd=FindWindow(NULL,title);
+			SetWindowPos((HWND)hConWnd,0,0,rect.bottom,800,800,SWP_NOZORDER);
+		}
 		break;
 	case WM_TIMER:
 		InvalidateRect(hwnd,0,FALSE);
