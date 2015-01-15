@@ -169,46 +169,59 @@ for(f=0; f<64; f++){
  ---+---
   4/|\7
   /5|6\
+
+
 */
+
 #if 1
 //D t,a,b,x,y;int i;const int SZ=20;D cx[SZ],cy[SZ],r[SZ];for(a=0;a<256;a++){P=255*sin(PI/2*256.0/(a+.01));P=255*sin(PI/2*256.0/((a/2)+.01));P=0;}for(i=0;i<SZ;i++){cx[i]=rand()%W;cy[i]=rand()%H;r[i]=((D)(rand()%6283))/1000.0;}for(t=0;t<64;t++){for(i=0;i<SZ;i++){for(x=0;x<W;x++){for(y=0;y<H;y++){a=sin(r[i])*40;b=pow(x-cx[i],2)+pow(y-cy[i],2);if(a>0 && b<=(a*a)){a=cos((a-b)/(a*a))*0xFF;B(y,x)=a;}}}}for(i=0;i<SZ;i++){r[i]+=PI/20;} C;}
 //D t,a,b,x,y;int i,j;for(i=0;i<256;i++){P=i;P=0;P=0;}for(t=0;t<64;t++){for(x=0;x<W;x++){if(rand()&1)i=rand()%300;if(i>255)i=255;B(H-1,x)=i;}for(x=0;x<W;x++){for(y=0;y<H;y++){i=B(y-1,x);i+=B(y,x-1);i+=B(y,x+1);i+=B(y+1,x);i/=4;for(j=1;j<=5;j++)B(y-j,x)=i;}}F;}
 //const int T=40; D t,a,b,x,y,z,c[T];int i,j;z=2;for(i=0;i<T;i++)c[i]=rand()%H;for(t=0;t<32;t++){for(j=0;j<T;j++){for(a=0;a<30;a++){for(x=0;x<z;x++){y=50*sin(c[j]/100+x/10)+a+c[j]+H/4;B(y,x)=c[j];y=50*sin(c[j]/100+(W-x)/10)+a+c[j]+H/4;B(y,W-x)=c[j];}}}z+=20;if(z>W/2){for(x=0;x<z-W/2;x++)for(y=0;y<H;y++){a=W/2-(z-W/2)/2+x;B(y,a)=55;}}F;}
 //const int T=100;int i,t,a,x,y,c[T],dx[T],dy[T];D vx[T],vy[T];for(i=0;i<T;i++){c[i]=rand()%(H/2);dx[i]=rand()%H;dy[i]=rand()%H;vx[i]=(rand()%8)-4;vy[i]=(rand()%8)-4;}for(t=0;t<64;t++){for(i=0;i<T;i++){for(x=0;x<c[i];x++){for(y=0;y<c[i];y++){a=B(y+dy[i],x+dx[i])+c[i];B(y+dy[i],x+dx[i])=a%255;}}}for(i=0;i<T;i++){dx[i]+=vx[i];dy[i]+=vy[i];}C;}
 //int i,j,t;D a,b,c,d,x,y,f[40];for(t=0;t<64;t++){for(j=0;j<H;j++){for(i=0;i<40;i++)f[i]=((D)(rand()%(1000+t*2))+1)/10.0;for(x=0;x<W;x++){d=0;for(i=0;i<40;i++){if(i&1)d+=sin(f[i]+x/f[i]);else d+=cos(f[i]+x/f[i]);}y=d*2+j*4;B(y,x)=t+j;}}C;}
+//int i,t;D a,b,x,y,s;PG;for(t=0;t<64;t++){for(i=0;i<20;i++){s=20+i*20;x=20*sin(t/8.+i/3.)-s/2;y=20*cos(t/8.+i/3.)-s/2;for(a=0;a<s;a++){for(b=0;b<s;b++){int f=a<s*.1;f|=a>s*.9;f|=b<s*.1;f|=b>s*.9;if(f)B(y+a+H/2,x+b+W/2)=s/1.8;}}}C;}
 	{
 int i,j,t;
-D a,b,c,d,r,x,y,z,lx,ly=-100;
+D a,d,x,y,z,x1,y1,z1,x2,y2,z2;
 PG;
-for(t=0;t<32;t++){
-	lx=100*sin(t*PI/32);
-	for(x=-W/2;x<W/2;x++){
-		for(y=-H/2;y<H/2;y++){
-			for(z=1;z<50;z+=.2){
-				r=180;
-				a=x*z;b=y*z;c=15.0*(1-z);
-				c=-c-r-20;
-				a*=a;b*=b;c*=c;
-				d=sqrt(a+b+c);
-				if((d-r)<=0){
-					D q1,q2,q3;
-					a=x*z;b=y*z;c=15.0*(1-z);
-					q1=a-lx+b-ly;//15+r+20;
-					q1*=q1;
-					q2=a*a+b*b+(c+r)*(c+r);
-					q3=a*a+b*b+(c-15)*(c-15);
-					a=q2+q3-q1;
-					a*=a;
-					a=(1-a)/(4*q2*q3);
-					a*=-80;
-					if(a>255)
-						a=255;
-					else if(a<0)
-						a=0;
-					B(y+H/2,x+W/2)=a;
+for(t=0;t<1;t++){
+	x1=0;y1=0;z1=-40;
+	for(i=-W/2;i<W/2;i++){
+		for(j=-H/2;j<H/2;j++){
+			if(j!=0)
+				continue;
+			if(i!=0)
+				continue;
+			for(a=1;a<100;a+=.01){
+				D x3,y3,z3,sd=20;
+				x2=i;
+				y2=j;
+				z2=0;
+				x=x2-x1;
+				y=y2-y1;
+				z=z2-z1;
+				x*=a;
+				y*=a;
+				z*=a;
+				z-=z1;
+				x3=0;
+				y3=0;
+				z3=80;
+				x2=x3-x;
+				y2=y3-y;
+				z2=z3-z;
+
+				d=sqrt(x2*x2+y2*y2+z2*z2);
+				if(d<sc){
+					d=x*x+y*y+z*z;
+					x2=d/(sqrt(x*x+y*y+z*z)*sqrt(x2*x2+y2*y2+z2*z2));
+					x2=acos(x2);
+					printf("%f\n",x2);
+					B(y+H/2,x+W/2)=255.*(1.-x2);
 					break;
 				}
 			}
+
 		}
 	}
 	C;
