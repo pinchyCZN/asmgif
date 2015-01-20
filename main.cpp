@@ -180,50 +180,25 @@ for(f=0; f<64; f++){
 //const int T=100;int i,t,a,x,y,c[T],dx[T],dy[T];D vx[T],vy[T];for(i=0;i<T;i++){c[i]=rand()%(H/2);dx[i]=rand()%H;dy[i]=rand()%H;vx[i]=(rand()%8)-4;vy[i]=(rand()%8)-4;}for(t=0;t<64;t++){for(i=0;i<T;i++){for(x=0;x<c[i];x++){for(y=0;y<c[i];y++){a=B(y+dy[i],x+dx[i])+c[i];B(y+dy[i],x+dx[i])=a%255;}}}for(i=0;i<T;i++){dx[i]+=vx[i];dy[i]+=vy[i];}C;}
 //int i,j,t;D a,b,c,d,x,y,f[40];for(t=0;t<64;t++){for(j=0;j<H;j++){for(i=0;i<40;i++)f[i]=((D)(rand()%(1000+t*2))+1)/10.0;for(x=0;x<W;x++){d=0;for(i=0;i<40;i++){if(i&1)d+=sin(f[i]+x/f[i]);else d+=cos(f[i]+x/f[i]);}y=d*2+j*4;B(y,x)=t+j;}}C;}
 //int i,t;D a,b,x,y,s;PG;for(t=0;t<64;t++){for(i=0;i<20;i++){s=20+i*20;x=20*sin(t/8.+i/3.)-s/2;y=20*cos(t/8.+i/3.)-s/2;for(a=0;a<s;a++){for(b=0;b<s;b++){int f=a<s*.1;f|=a>s*.9;f|=b<s*.1;f|=b>s*.9;if(f)B(y+a+H/2,x+b+W/2)=s/1.8;}}}C;}
+int i,j,k,t;D a,b,c,x,y,z,d,r=0;PG;for(t=0;t<20;t++){for(k=0;k<4;k++){a=sin(r+k*PI/2.);b=cos(r+k*PI/2.);c=5+120*sin(t*PI/20.);for(i=-W/2;i<W/2;i++){for(j=-H/2;j<H/2;j++){d=abs(a*i+b*j+c)/sqrt(a*a+b*b);if(d<1.2)B(j+H/2,i+W/2)=0xFF;}}}r+=PI/20.;C;}
 	{
-int i,j,t;
-D a,d,x,y,z,x1,y1,z1,x2,y2,z2;
+int i,j,k,t;
+D a,b,c,x,y,z,d,r=0;
 PG;
-for(t=0;t<1;t++){
-	x1=0;y1=0;z1=-40;
-	for(i=-W/2;i<W/2;i++){
-		for(j=-H/2;j<H/2;j++){
-			if(j!=0)
-				continue;
-			if(i!=0)
-				continue;
-			for(a=1;a<100;a+=.01){
-				D x3,y3,z3,sd=20;
-				x2=i;
-				y2=j;
-				z2=0;
-				x=x2-x1;
-				y=y2-y1;
-				z=z2-z1;
-				x*=a;
-				y*=a;
-				z*=a;
-				z-=z1;
-				x3=0;
-				y3=0;
-				z3=80;
-				x2=x3-x;
-				y2=y3-y;
-				z2=z3-z;
-
-				d=sqrt(x2*x2+y2*y2+z2*z2);
-				if(d<sc){
-					d=x*x+y*y+z*z;
-					x2=d/(sqrt(x*x+y*y+z*z)*sqrt(x2*x2+y2*y2+z2*z2));
-					x2=acos(x2);
-					printf("%f\n",x2);
-					B(y+H/2,x+W/2)=255.*(1.-x2);
-					break;
-				}
+for(t=0;t<20;t++){
+	for(k=0;k<4;k++){
+		a=sin(r+k*PI/2.);
+		b=cos(r+k*PI/2.);
+		c=5+120*sin(t*PI/20.);
+		for(i=-W/2;i<W/2;i++){
+			for(j=-H/2;j<H/2;j++){
+				d=abs(a*i+b*j+c)/sqrt(a*a+b*b);
+				if(d<1.2)
+					B(j+H/2,i+W/2)=0xFF;
 			}
-
 		}
 	}
+	r+=PI/20.;
 	C;
 }
 
