@@ -180,25 +180,39 @@ for(f=0; f<64; f++){
 //const int T=100;int i,t,a,x,y,c[T],dx[T],dy[T];D vx[T],vy[T];for(i=0;i<T;i++){c[i]=rand()%(H/2);dx[i]=rand()%H;dy[i]=rand()%H;vx[i]=(rand()%8)-4;vy[i]=(rand()%8)-4;}for(t=0;t<64;t++){for(i=0;i<T;i++){for(x=0;x<c[i];x++){for(y=0;y<c[i];y++){a=B(y+dy[i],x+dx[i])+c[i];B(y+dy[i],x+dx[i])=a%255;}}}for(i=0;i<T;i++){dx[i]+=vx[i];dy[i]+=vy[i];}C;}
 //int i,j,t;D a,b,c,d,x,y,f[40];for(t=0;t<64;t++){for(j=0;j<H;j++){for(i=0;i<40;i++)f[i]=((D)(rand()%(1000+t*2))+1)/10.0;for(x=0;x<W;x++){d=0;for(i=0;i<40;i++){if(i&1)d+=sin(f[i]+x/f[i]);else d+=cos(f[i]+x/f[i]);}y=d*2+j*4;B(y,x)=t+j;}}C;}
 //int i,t;D a,b,x,y,s;PG;for(t=0;t<64;t++){for(i=0;i<20;i++){s=20+i*20;x=20*sin(t/8.+i/3.)-s/2;y=20*cos(t/8.+i/3.)-s/2;for(a=0;a<s;a++){for(b=0;b<s;b++){int f=a<s*.1;f|=a>s*.9;f|=b<s*.1;f|=b>s*.9;if(f)B(y+a+H/2,x+b+W/2)=s/1.8;}}}C;}
-int i,j,k,t;D a,b,c,x,y,z,d,r=0;PG;for(t=0;t<20;t++){for(k=0;k<4;k++){a=sin(r+k*PI/2.);b=cos(r+k*PI/2.);c=5+120*sin(t*PI/20.);for(i=-W/2;i<W/2;i++){for(j=-H/2;j<H/2;j++){d=abs(a*i+b*j+c)/sqrt(a*a+b*b);if(d<1.2)B(j+H/2,i+W/2)=0xFF;}}}r+=PI/20.;C;}
+//int i,j,k,t;D a,b,c,x,y,z,d,r=0;PG;for(t=0;t<20;t++){for(k=0;k<4;k++){a=sin(r+k*PI/2.);b=cos(r+k*PI/2.);c=5+120*sin(t*PI/20.);for(i=-W/2;i<W/2;i++){for(j=-H/2;j<H/2;j++){d=abs(a*i+b*j+c)/sqrt(a*a+b*b);if(d<1.2)B(j+H/2,i+W/2)=0xFF;}}}r+=PI/20.;C;}
+//int i,j,k,t;D a,b,c,x,y,z,d,r=0;PG;for(t=0;t<64;t++){for(j=0;j<H;j++){for(i=0;i<W;i++){a=4*sin(i/4.+cos(j/40.)*20*sin(r/2.)+cos(t/2.+j/4.));if(abs(a)>2){B(j,i)=0xFF;}}}r+=PI/16.;C;}
+//int i,j,k,l,t;D a,b,c,x,y,z,d,r=0;PG;for(t=0;t<64;t++){for(k=0;k<6;k++){for(j=0;j<H;j++){for(i=0;i<W;i++){x=i-W/2+30*sin(r+k*PI);y=j-H/2+50*cos(r+k*PI/3.);b=abs(sin(r)*40)+40;d=sqrt(x*x+y*y)-b;a=abs(60*sin(r));if(d<0 && d>-a){d+=a;l=d+1;l=rand()%l/2;d+=l;if(d>a)d=a;a=255*cos(d*PI/2./a);B(j,i)=a;}else if(d<0)B(j,i)=255;}}}r+=PI/16.;C;}
 	{
-int i,j,k,t;
+int i,j,k,l,t;
 D a,b,c,x,y,z,d,r=0;
 PG;
-for(t=0;t<20;t++){
-	for(k=0;k<4;k++){
-		a=sin(r+k*PI/2.);
-		b=cos(r+k*PI/2.);
-		c=5+120*sin(t*PI/20.);
-		for(i=-W/2;i<W/2;i++){
-			for(j=-H/2;j<H/2;j++){
-				d=abs(a*i+b*j+c)/sqrt(a*a+b*b);
-				if(d<1.2)
-					B(j+H/2,i+W/2)=0xFF;
+for(t=0;t<64;t++){
+	for(k=0;k<6;k++){
+		for(j=0;j<H;j++){
+			for(i=0;i<W;i++){
+				x=i-W/2+30*sin(r+k*PI);
+				y=j-H/2+50*cos(r+k*PI/3.);
+				b=abs(sin(r)*40)+40;
+				d=sqrt(x*x+y*y)-b;
+				a=abs(60*sin(r));
+				if(d<0 && d>-a){
+					d+=a;
+					l=d+1;
+					l=rand()%l/2;
+					d+=l;
+					if(d>a)
+						d=a;
+					a=255*cos(d*PI/2./a);
+					B(j,i)=a;
+				}
+				else if(d<0)
+					B(j,i)=255;
+
 			}
 		}
 	}
-	r+=PI/20.;
+	r+=PI/16.;
 	C;
 }
 
