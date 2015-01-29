@@ -184,18 +184,37 @@ for(f=0; f<64; f++){
 //int i,j,k,t;D a,b,c,x,y,z,d,r=0;PG;for(t=0;t<64;t++){for(j=0;j<H;j++){for(i=0;i<W;i++){a=4*sin(i/4.+cos(j/40.)*20*sin(r/2.)+cos(t/2.+j/4.));if(abs(a)>2){B(j,i)=0xFF;}}}r+=PI/16.;C;}
 //int i,j,k,l,t;D a,b,c,x,y,z,d,r=0;PG;for(t=0;t<64;t++){for(k=0;k<6;k++){for(j=0;j<H;j++){for(i=0;i<W;i++){x=i-W/2+30*sin(r+k*PI);y=j-H/2+50*cos(r+k*PI/3.);b=abs(sin(r)*40)+40;d=sqrt(x*x+y*y)-b;a=abs(60*sin(r));if(d<0 && d>-a){d+=a;l=d+1;l=rand()%l/2;d+=l;if(d>a)d=a;a=255*cos(d*PI/2./a);B(j,i)=a;}else if(d<0)B(j,i)=255;}}}r+=PI/16.;C;}
 //int i,j,k,l,t,c,p,a,x,y,z,d,r=0;char *FNT=(char*)0xFFA6E;PG;for(t=0;t<64;t++){for(i=0;i<5;i++){c="DANK@"[i]+1;for(x=0;x<8;x++){for(y=0;y<8;y++){p=FNT[c*8+y];p&=0x80>>x;if(p){z=34;for(j=0;j<z;j++)for(k=0;k<z;k++)B(y*z+j,x*z+k+i*8*z-t*26+W)=0x7f;}}}}C;}
+//PG;D i,j,k,a,b,c,d,tj,r;Buffer bf;L if(ix>W/4 && ix<W*.75 && iy>H/4 && iy<H*.75)B(iy,ix)=0xFF;for(F,i=0;i<64;i++){tj=D(rand()%32)-16;for(x=0;x<W;x+=32){for(y=0;y<H;y+=32){for(j=0;j<32;j++){for(k=0;k<32;k++){a=x-W/2;b=y-H/2;r=PI/64.;c=a*cos(r)-b*sin(r);d=a*sin(r)+b*cos(r);a=c-a;b=d-b;bf(y+k+b+tj,x+j+a+tj)=B(y+k+tj,x+j+tj);}}}}L B(iy,ix)=bf(iy,ix);F;}
+D i,j,k,a,b,c,d,tj,r;static Buffer bf;L B(iy,ix)=(ix+iy)%255;for(i=0;i<64;i++){tj=D(rand()%32)-16;for(x=0;x<W;x+=32){for(y=0;y<H;y+=32){for(j=0;j<32;j++){for(k=0;k<32;k++){a=x-W/2;b=y-H/2;r=PI/64.;c=a*cos(r)-b*sin(r);d=a*sin(r)+b*cos(r);a=c-a;b=d-b;bf(y+k+b+tj,x+j+a+tj)=B(y+k+tj,x+j+tj);}}}}L B(iy,ix)=bf(iy,ix);F;}
 	{
-int i,j,k,l,t,c,p,a,x,y,z,d,r=0;
-PG;
-for(t=0;t<64;t++){
-	for(i=0;i<20;i++){
 
+D i,j,k,a,b,c,d,tj,r;
+static Buffer bf;
+L
+ B(iy,ix)=(ix+iy)%255;
+
+for(i=0;i<64;i++){
+	tj=D(rand()%32)-16;
+	for(x=0;x<W;x+=32){
+		for(y=0;y<H;y+=32){
+			for(j=0;j<32;j++){
+				for(k=0;k<32;k++){
+					a=x-W/2;
+					b=y-H/2;
+					r=PI/64.;
+					c=a*cos(r)-b*sin(r);
+					d=a*sin(r)+b*cos(r);
+					a=c-a;
+					b=d-b;
+					bf(y+k+b+tj,x+j+a+tj)=B(y+k+tj,x+j+tj);
+				}
+			}
+		}
 	}
-	C;
+	L
+	B(iy,ix)=bf(iy,ix);
+	F;
 }
-
-
-
 	}
 #else
 //	PG;D i,j,k,t=0,q=0;for(i=0;i<64;i++){t+=PI/8;for(j=0;j<200;j++){q+=.06;for(k=0;k<200;k++){D x,y,z;y=j*2;x=sin(q+t+k/20)*30+100;z=k+200;if(z>0){x=x*256/z;y=y*256/z;I c;z/=2;if(z>255)c=255;else c=z;B(x,y)=c;}}}C;}
