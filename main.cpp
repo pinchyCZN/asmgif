@@ -184,33 +184,49 @@ for(f=0; f<64; f++){
 //int i,j,k,t;D a,b,c,x,y,z,d,r=0;PG;for(t=0;t<64;t++){for(j=0;j<H;j++){for(i=0;i<W;i++){a=4*sin(i/4.+cos(j/40.)*20*sin(r/2.)+cos(t/2.+j/4.));if(abs(a)>2){B(j,i)=0xFF;}}}r+=PI/16.;C;}
 //int i,j,k,l,t;D a,b,c,x,y,z,d,r=0;PG;for(t=0;t<64;t++){for(k=0;k<6;k++){for(j=0;j<H;j++){for(i=0;i<W;i++){x=i-W/2+30*sin(r+k*PI);y=j-H/2+50*cos(r+k*PI/3.);b=abs(sin(r)*40)+40;d=sqrt(x*x+y*y)-b;a=abs(60*sin(r));if(d<0 && d>-a){d+=a;l=d+1;l=rand()%l/2;d+=l;if(d>a)d=a;a=255*cos(d*PI/2./a);B(j,i)=a;}else if(d<0)B(j,i)=255;}}}r+=PI/16.;C;}
 //int i,j,k,l,t,c,p,a,x,y,z,d,r=0;char *FNT=(char*)0xFFA6E;PG;for(t=0;t<64;t++){for(i=0;i<5;i++){c="DANK@"[i]+1;for(x=0;x<8;x++){for(y=0;y<8;y++){p=FNT[c*8+y];p&=0x80>>x;if(p){z=34;for(j=0;j<z;j++)for(k=0;k<z;k++)B(y*z+j,x*z+k+i*8*z-t*26+W)=0x7f;}}}}C;}
-D i,j,k,a,b,c,d,tj,r;static Buffer bf;L B(iy,ix)=(ix+iy)%255;for(i=0;i<64;i++){tj=D(rand()%32)-16;for(x=0;x<W;x+=32){for(y=0;y<H;y+=32){for(j=0;j<32;j++){for(k=0;k<32;k++){a=x-W/2;b=y-H/2;r=PI/64.;c=a*cos(r)-b*sin(r);d=a*sin(r)+b*cos(r);a=c-a;b=d-b;bf(y+k+b+tj,x+j+a+tj)=B(y+k+tj,x+j+tj);}}}}L B(iy,ix)=bf(iy,ix);F;}
+//D i,j,k,a,b,c,d,tj,r;static Buffer bf;L B(iy,ix)=(ix+iy)%255;for(i=0;i<64;i++){tj=D(rand()%32)-16;for(x=0;x<W;x+=32){for(y=0;y<H;y+=32){for(j=0;j<32;j++){for(k=0;k<32;k++){a=x-W/2;b=y-H/2;r=PI/64.;c=a*cos(r)-b*sin(r);d=a*sin(r)+b*cos(r);a=c-a;b=d-b;bf(y+k+b+tj,x+j+a+tj)=B(y+k+tj,x+j+tj);}}}}L B(iy,ix)=bf(iy,ix);F;}
+I i;D a,r,d,x,y,cx,cy,by=0;PG;U8 *p=P.Get();p[764]=0;p[763]=0;p[762]=255;cx=-60;cy=H/2;for(i=0;i<64;i++){{L B(iy,ix)=0x7f;}a=0;for(r=0;r<PI*120;r+=.1){for(i=0;i<4;i++){x=r*cos(a+i*2);y=r*sin(a+i*2);B(y+cy,x+cx)=0;}a+=.01;}L{x=ix-W/2;y=iy-H/2;d=sqrt(x*x+y*y);if(d<60)B(cy+y,cx+x)=0xFF;}if(cx<W/2)cx+=8;else{r=(rand()%10)+10;L{a=iy+r*sin(ix/20.+i/20.);if(a<by){B(iy,ix)=254;}}by+=4;}C;}
 	{
 
-I i,j,k;
-D a,b,c,d,q,p,r;
+I i;
+D a,r,d,x,y,cx,cy,by=0;
 PG;
-static int bz[100*3]={0};
-for(i=0;i<100;i+=3){
-	bz[i]=rand()%W;
-	bz[i+1]=rand()%30;
-	bz[i+2]=0;
-}
+U8 *p=P.Get();
+p[764]=0;
+p[763]=0;
+p[762]=255;
+cx=-60;
+cy=H/2;
 for(i=0;i<64;i++){
-	for(j=0;j<100;j+=3){
-		q=bz[j];
-		p=bz[j+1];
-		r=10;
-		L{
-			a=q-ix;
-			b=p-iy;
-			d=sqrt(a*a+b*b);
-			if(d<r)
-				B(iy,ix)=0xFF;
+	{L B(iy,ix)=0x7f;}
+	a=0;
+	for(r=0;r<PI*120;r+=.1)
+	{
+		for(i=0;i<4;i++){
+			x=r*cos(a+i*2);
+			y=r*sin(a+i*2);
+			B(y+cy,x+cx)=0;
 		}
-		bz[j+2]+=1;
-		bz[j+1]+=bz[j+2];
-
+		a+=.01;
+	}
+	L{
+		x=ix-W/2;
+		y=iy-H/2;
+		d=sqrt(x*x+y*y);
+		if(d<60)
+			B(cy+y,cx+x)=0xFF;
+	}
+	if(cx<W/2)
+		cx+=8;
+	else{
+		r=(rand()%10)+10;
+		L{
+			a=iy+r*sin(ix/20.+i/20.);
+			if(a<by){
+				B(iy,ix)=254;
+			}
+		}
+		by+=4;
 	}
 	C;
 }
