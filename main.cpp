@@ -185,51 +185,56 @@ for(f=0; f<64; f++){
 //int i,j,k,l,t;D a,b,c,x,y,z,d,r=0;PG;for(t=0;t<64;t++){for(k=0;k<6;k++){for(j=0;j<H;j++){for(i=0;i<W;i++){x=i-W/2+30*sin(r+k*PI);y=j-H/2+50*cos(r+k*PI/3.);b=abs(sin(r)*40)+40;d=sqrt(x*x+y*y)-b;a=abs(60*sin(r));if(d<0 && d>-a){d+=a;l=d+1;l=rand()%l/2;d+=l;if(d>a)d=a;a=255*cos(d*PI/2./a);B(j,i)=a;}else if(d<0)B(j,i)=255;}}}r+=PI/16.;C;}
 //int i,j,k,l,t,c,p,a,x,y,z,d,r=0;char *FNT=(char*)0xFFA6E;PG;for(t=0;t<64;t++){for(i=0;i<5;i++){c="DANK@"[i]+1;for(x=0;x<8;x++){for(y=0;y<8;y++){p=FNT[c*8+y];p&=0x80>>x;if(p){z=34;for(j=0;j<z;j++)for(k=0;k<z;k++)B(y*z+j,x*z+k+i*8*z-t*26+W)=0x7f;}}}}C;}
 //D i,j,k,a,b,c,d,tj,r;static Buffer bf;L B(iy,ix)=(ix+iy)%255;for(i=0;i<64;i++){tj=D(rand()%32)-16;for(x=0;x<W;x+=32){for(y=0;y<H;y+=32){for(j=0;j<32;j++){for(k=0;k<32;k++){a=x-W/2;b=y-H/2;r=PI/64.;c=a*cos(r)-b*sin(r);d=a*sin(r)+b*cos(r);a=c-a;b=d-b;bf(y+k+b+tj,x+j+a+tj)=B(y+k+tj,x+j+tj);}}}}L B(iy,ix)=bf(iy,ix);F;}
-I i;D a,r,d,x,y,cx,cy,by=0;PG;U8 *p=P.Get();p[764]=0;p[763]=0;p[762]=255;cx=-60;cy=H/2;for(i=0;i<64;i++){{L B(iy,ix)=0x7f;}a=0;for(r=0;r<PI*120;r+=.1){for(i=0;i<4;i++){x=r*cos(a+i*2);y=r*sin(a+i*2);B(y+cy,x+cx)=0;}a+=.01;}L{x=ix-W/2;y=iy-H/2;d=sqrt(x*x+y*y);if(d<60)B(cy+y,cx+x)=0xFF;}if(cx<W/2)cx+=8;else{r=(rand()%10)+10;L{a=iy+r*sin(ix/20.+i/20.);if(a<by){B(iy,ix)=254;}}by+=4;}C;}
+//I i;D a,r,d,x,y,cx,cy,by=0;PG;U8 *p=P.Get();p[764]=0;p[763]=0;p[762]=255;cx=-60;cy=H/2;for(i=0;i<64;i++){{L B(iy,ix)=0x7f;}a=0;for(r=0;r<PI*120;r+=.1){for(i=0;i<4;i++){x=r*cos(a+i*2);y=r*sin(a+i*2);B(y+cy,x+cx)=0;}a+=.01;}L{x=ix-W/2;y=iy-H/2;d=sqrt(x*x+y*y);if(d<60)B(cy+y,cx+x)=0xFF;}if(cx<W/2)cx+=8;else{r=(rand()%10)+10;L{a=iy+r*sin(ix/20.+i/20.);if(a<by){B(iy,ix)=254;}}by+=4;}C;}
+//I i,j,k,a,b,c;D d,x,y=0;for(i=0;i<64;i++){I p[4]={-20,30,12,30};D *z,q[8]={3,90,10,44,3,70,8,40};{L{B(iy,ix)=40;}}for(j=0;j<2;j++){a=p[j*2];b=p[j*2+1];for(k=0;k<2;k++){z=q+k*4;L{x=ix-W/2;y=iy-H/2;d=sqrt(x*x/z[0]+y*y/z[1]);if(d<z[2] && y<0)B(iy+b,ix+a)=z[3];}}}U8 *f=(U8*)0xFFA6E;char *t="LTTI9Z&";a=-200+i*16;if(a>99)a=99;x=a;y=190;j=0;while(t[j]){k=t[j++]-5;for(a=0;a<8;a++)for(b=0;b<8;b++)if(f[k*8+b]&(0x80>>a))B(y+b,x+a+j*8)=15;}C;}
+//I i,j,k,a,b,c;D d,x,y=0,s;for(i=0;i<32;i++){U8 *f=(U8*)DOSCHAR;for(j=0;j<40;j++){x=100+20*sin(j/PI*5.+i*PI/16.);y=32*4+H-20-j*32-i*4;s=(H-y)/80.;for(a=0;a<8*s;a++)for(b=0;b<8*s;b++)if(f['Z'*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+b,x+a)=15;}C;}
+I i,j,k,m,n,o;D a,b,c,x,y;for(i=0;i<32;i++){{L{x=ix-W/2;y=iy-H/2;a=sqrt(x*x+y*y);if(a<70)B(y+H/2,x+H/2)=44;}}{L{x=ix-W/2;y=iy-H/2;c=1.7;b=.2+.8*sin(i*PI/16);b*=b;a=sqrt(x*x/c+y*y/b);if(a<50 && y>0)B(y+H/2+10,x+H/2)=0;}}for(j=0;j<2;j++){L{x=ix-W/2;y=iy-H/2;a=sqrt(x*x+y*y);if(a<10)B(y+H/2-20,x+H/2-20+40*j)=0;}}j=0;x=y=10;while(o="IBIB"[j]){for(k=0;k<64;k++){m=k%8;n=k/8;if(((U8*)0xFFA6E)[(o-1)*8+n]&(0x80>>m))B(y+n,x+m+j*8)=15;}j++;}C;}
 	{
 
-I i;
-D a,r,d,x,y,cx,cy,by=0;
-PG;
-U8 *p=P.Get();
-p[764]=0;
-p[763]=0;
-p[762]=255;
-cx=-60;
-cy=H/2;
-for(i=0;i<64;i++){
-	{L B(iy,ix)=0x7f;}
-	a=0;
-	for(r=0;r<PI*120;r+=.1)
-	{
-		for(i=0;i<4;i++){
-			x=r*cos(a+i*2);
-			y=r*sin(a+i*2);
-			B(y+cy,x+cx)=0;
-		}
-		a+=.01;
-	}
+I i,j,k,m,n,o;
+D a,b,c,x,y;
+
+for(i=0;i<32;i++){
+	{L{
+		x=ix-W/2;
+		y=iy-H/2;
+		a=sqrt(x*x+y*y);
+		if(a<70)
+			B(y+H/2,x+H/2)=44;
+	}}
 	L{
 		x=ix-W/2;
 		y=iy-H/2;
-		d=sqrt(x*x+y*y);
-		if(d<60)
-			B(cy+y,cx+x)=0xFF;
+		c=1.7;
+		b=.2+.8*sin(i*PI/16);
+		b*=b;
+		a=sqrt(x*x/c+y*y/b);
+		if(a<50 && y>0)
+			B(y+H/2+10,x+H/2)=0;
 	}
-	if(cx<W/2)
-		cx+=8;
-	else{
-		r=(rand()%10)+10;
-		L{
-			a=iy+r*sin(ix/20.+i/20.);
-			if(a<by){
-				B(iy,ix)=254;
-			}
+	for(j=0;j<2;j++){
+	L{
+		x=ix-W/2;
+		y=iy-H/2;
+		a=sqrt(x*x+y*y);
+		if(a<10)
+			B(y+H/2-20,x+H/2-20+40*j)=0;
+	}}
+	j=0;x=y=10;
+	while(o="IBIB"[j]){
+		for(k=0;k<64;k++){
+			m=k%8;
+			n=k/8;
+			if(((U8*)0xFFA6E)[(o-1)*8+n]&(0x80>>m))
+				B(y+n,x+m+j*8)=15;
 		}
-		by+=4;
+		j++;
+
 	}
+
 	C;
 }
+
 	}
 #else
 //	PG;D i,j,k,t=0,q=0;for(i=0;i<64;i++){t+=PI/8;for(j=0;j<200;j++){q+=.06;for(k=0;k<200;k++){D x,y,z;y=j*2;x=sin(q+t+k/20)*30+100;z=k+200;if(z>0){x=x*256/z;y=y*256/z;I c;z/=2;if(z>255)c=255;else c=z;B(x,y)=c;}}}C;}

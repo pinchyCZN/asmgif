@@ -3,7 +3,59 @@
 #include <windows.h>
 #include <commctrl.h>
 #include "resource.h"
-
+int display_vga_pal(HWND hwnd,int mx,int my)
+{
+	extern unsigned char vgapal[];
+	HDC hdc;
+	PAINTSTRUCT ps;
+	BITMAPINFO bmi;
+	int i,j,k,x,y;
+	int yoffset=30;
+#define	size 16
+#define _height (size*16)
+#define _width (size*16)
+	static char buffer[size*size*256*3];
+	{
+		int c;
+		char str[80]={0};
+		x=mx/size;
+		y=(my-yoffset)/size;
+		i=x+y*size;
+		c=(vgapal[i*3]<<16)|(vgapal[i*3+1]<<8)|(vgapal[i*3+2]);
+		if(my>=yoffset && my<=yoffset+size*16 && mx<=size*16)
+			sprintf(str,"index=%i c=%06X %i,%i",i,c,mx,my);
+		else
+			str[0]=0;
+		SetDlgItemText(hwnd,IDC_TEXT,str);
+	}
+	x=y=0;
+	for(i=0;i<256;i++){
+		for(j=0;j<size;j++){
+			for(k=0;k<size;k++){
+				buffer[x*3+y*_width*3+j*3+k*_width*3]=vgapal[i*3+2];
+				buffer[x*3+y*_width*3+j*3+k*_width*3+1]=vgapal[i*3+1];
+				buffer[x*3+y*_width*3+j*3+k*_width*3+2]=vgapal[i*3+0];
+			}
+		}
+		x+=size;
+		if(x>=_width){
+			x=0;
+			y+=size;
+		}
+		if(y>=_height)
+			break;
+	}
+	hdc=BeginPaint(hwnd,&ps);
+	memset(&bmi,0,sizeof(BITMAPINFO));
+	bmi.bmiHeader.biBitCount=24;
+	bmi.bmiHeader.biWidth=_width;
+	bmi.bmiHeader.biHeight=-_height;
+	bmi.bmiHeader.biPlanes=1;
+	bmi.bmiHeader.biSize=sizeof(bmi);
+	SetDIBitsToDevice(hdc,0,yoffset,_width,_height,0,0,0,_height,buffer,&bmi,DIB_RGB_COLORS);
+	EndPaint(hwnd,&ps);
+	return 0;
+}
 int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 {
 	static int current_frame=0;
@@ -11,6 +63,8 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 	static int timer;
 	static int animate=FALSE;
 	static int max_delay=150;
+	static int show_vga_pal=FALSE;
+	static int mx=0,my=0;
 	switch(msg){
 	case WM_INITDIALOG:
 		SendDlgItemMessage(hwnd,IDC_SLIDER,TBM_SETRANGE,TRUE,MAKELONG(0,63));
@@ -26,8 +80,8 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 		}
 		break;
 	case WM_TIMER:
-		InvalidateRect(hwnd,0,FALSE);
 		if(animate){
+			InvalidateRect(hwnd,0,FALSE);
 			current_frame=(current_frame+1)%64;
 			if(current_frame>=frame_count)
 				current_frame=0;
@@ -35,44 +89,49 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 		break;
 	case WM_PAINT:
 		{
-			HDC hdc;
-			PAINTSTRUCT ps;
-			BITMAPINFO bmi;
-			unsigned char *frame;
-			char buffer[W*H*3];
-			char flip[W*H*3];
-			int i,j;
-			frame=buffers+(current_frame*W*H);
-			for(i=0;i<W*H;i++){
-				unsigned char r,g,b;
-				unsigned char *tmp=anim_palette+(768*current_frame)+(frame[i]*3);
-				r=tmp[0];
-				g=tmp[1];
-				b=tmp[2];
-				flip[i*3]=b;
-				flip[i*3+1]=g;
-				flip[i*3+2]=r;
+			if(show_vga_pal){
+				display_vga_pal(hwnd,mx,my);
 			}
-			for(i=0;i<H;i++){
-				for(j=0;j<W*3;j++){
-					buffer[(H-i-1)*W*3+j]=flip[i*W*3+j];
+			else{
+				HDC hdc;
+				PAINTSTRUCT ps;
+				BITMAPINFO bmi;
+				unsigned char *frame;
+				char buffer[W*H*3];
+				char flip[W*H*3];
+				int i,j;
+				frame=buffers+(current_frame*W*H);
+				for(i=0;i<W*H;i++){
+					unsigned char r,g,b;
+					unsigned char *tmp=anim_palette+(768*current_frame)+(frame[i]*3);
+					r=tmp[0];
+					g=tmp[1];
+					b=tmp[2];
+					flip[i*3]=b;
+					flip[i*3+1]=g;
+					flip[i*3+2]=r;
+				}
+				for(i=0;i<H;i++){
+					for(j=0;j<W*3;j++){
+						buffer[(H-i-1)*W*3+j]=flip[i*W*3+j];
+					}
+
 				}
 
-			}
-
-			hdc=BeginPaint(hwnd,&ps);
-			memset(&bmi,0,sizeof(BITMAPINFO));
-			bmi.bmiHeader.biBitCount=24;
-			bmi.bmiHeader.biWidth=W;
-			bmi.bmiHeader.biHeight=H;
-			bmi.bmiHeader.biPlanes=1;
-			bmi.bmiHeader.biSize=sizeof(bmi);
-			SetDIBitsToDevice(hdc,0,30,W,H,0,0,0,H,buffer,&bmi,DIB_RGB_COLORS);
-			EndPaint(hwnd,&ps);
-			if(animate){
-				char str[80];
-				sprintf(str,"frame=%i delay=%i ms",current_frame,frame_delay);
-				SetDlgItemText(hwnd,IDC_TEXT,str);
+				hdc=BeginPaint(hwnd,&ps);
+				memset(&bmi,0,sizeof(BITMAPINFO));
+				bmi.bmiHeader.biBitCount=24;
+				bmi.bmiHeader.biWidth=W;
+				bmi.bmiHeader.biHeight=H;
+				bmi.bmiHeader.biPlanes=1;
+				bmi.bmiHeader.biSize=sizeof(bmi);
+				SetDIBitsToDevice(hdc,0,30,W,H,0,0,0,H,buffer,&bmi,DIB_RGB_COLORS);
+				EndPaint(hwnd,&ps);
+				if(animate){
+					char str[80];
+					sprintf(str,"frame=%i delay=%i ms",current_frame,frame_delay);
+					SetDlgItemText(hwnd,IDC_TEXT,str);
+				}
 			}
 		}
 		break;
@@ -118,11 +177,23 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 		break;
 	case WM_MOUSEMOVE:
 		{
+			mx=LOWORD(lparam);
+			my=HIWORD(lparam);
+			if(show_vga_pal)
+				InvalidateRect(hwnd,0,0);
 			break;
 		}
 		break;
 	case WM_COMMAND:
 		switch(LOWORD(wparam)){
+		case IDC_VGA:
+			CheckDlgButton(hwnd,IDC_ANIMATE,BST_UNCHECKED);
+			PostMessage(hwnd,WM_COMMAND,MAKEWPARAM(IDC_ANIMATE,BN_UNPUSHED),0);
+			show_vga_pal=FALSE;
+			if(IsDlgButtonChecked(hwnd,IDC_VGA))
+				show_vga_pal=TRUE;
+			InvalidateRect(hwnd,0,TRUE);
+			break;
 		case IDC_ANIMATE:
 			if(IsDlgButtonChecked(hwnd,IDC_ANIMATE)){
 				char str[40];
