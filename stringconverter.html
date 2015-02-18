@@ -61,11 +61,28 @@ function cstr_encode(input) {
 				}
 				c=' ';
 			case ' ':
-				if (i > 0 && ( input[i - 1] == ';' 
-							|| input[i - 1] == ')')
-							) {
-					break;
-				} else if (i < input.length - 1) {
+				if (i > 0){
+					var tmpskip=false;
+					for(j=i-1;j>=0;j--){
+						tmpc=input[j];
+						if(iswhite(tmpc)){
+							tmpskip=true;
+							continue;
+						}
+						else if(tmpc==';' || tmpc==')' || tmpc==',' || tmpc=='=' || tmpc=='-' || tmpc=='+'
+								|| tmpc=='}' || tmpc=='{' || tmpc=='/'){
+							tmpskip=true;
+							break;
+						}
+						else{
+							tmpskip=false;
+							break;
+						}
+					}
+					if(tmpskip)
+						break;
+				}
+				if (i < input.length - 1) {
 					if (iswhite(input[i + 1])){
 						break;
 					}
