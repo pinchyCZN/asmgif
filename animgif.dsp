@@ -106,6 +106,10 @@ SOURCE=.\gui.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\helper.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\vgapal.h
 # End Source File
 # End Group
