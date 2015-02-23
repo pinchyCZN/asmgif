@@ -11,6 +11,7 @@ int display_vga_pal(HWND hwnd,int mx,int my)
 	BITMAPINFO bmi;
 	int i,j,k,x,y;
 	int yoffset=30;
+	int hover=0;
 #define	size 16
 #define _height (size*16)
 #define _width (size*16)
@@ -21,7 +22,7 @@ int display_vga_pal(HWND hwnd,int mx,int my)
 		x=mx/size;
 		y=(my-yoffset)/size;
 		i=x+y*size;
-		c=(vgapal[i*3]<<16)|(vgapal[i*3+1]<<8)|(vgapal[i*3+2]);
+		hover=c=(vgapal[i*3]<<16)|(vgapal[i*3+1]<<8)|(vgapal[i*3+2]);
 		if(my>=yoffset && my<=yoffset+size*16 && mx<=size*16)
 			sprintf(str,"index=%i c=%06X %i,%i",i,c,mx,my);
 		else
@@ -53,6 +54,18 @@ int display_vga_pal(HWND hwnd,int mx,int my)
 	bmi.bmiHeader.biPlanes=1;
 	bmi.bmiHeader.biSize=sizeof(bmi);
 	SetDIBitsToDevice(hdc,0,yoffset,_width,_height,0,0,0,_height,buffer,&bmi,DIB_RGB_COLORS);
+
+	{
+		int w=_width/2,h=_height/2;
+		for(i=0;i<w*h;i++){
+			buffer[i*3]=hover;
+			buffer[i*3+1]=hover>>8;
+			buffer[i*3+2]=hover>>16;
+		}
+		bmi.bmiHeader.biWidth=w;
+		bmi.bmiHeader.biHeight=h;
+		SetDIBitsToDevice(hdc,_width,yoffset,w,h,0,0,0,h,buffer,&bmi,DIB_RGB_COLORS);
+	}
 	EndPaint(hwnd,&ps);
 	return 0;
 }
