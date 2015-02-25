@@ -12,6 +12,7 @@ int display_vga_pal(HWND hwnd,int mx,int my)
 	int i,j,k,x,y;
 	int yoffset=30;
 	int hover=0;
+	int inside=FALSE;
 #define	size 16
 #define _height (size*16)
 #define _width (size*16)
@@ -23,8 +24,10 @@ int display_vga_pal(HWND hwnd,int mx,int my)
 		y=(my-yoffset)/size;
 		i=x+y*size;
 		hover=c=(vgapal[i*3]<<16)|(vgapal[i*3+1]<<8)|(vgapal[i*3+2]);
-		if(my>=yoffset && my<=yoffset+size*16 && mx<=size*16)
+		if(my>=yoffset && my<=yoffset+size*16 && mx<=size*16){
 			sprintf(str,"index=%i c=%06X %i,%i",i,c,mx,my);
+			inside=TRUE;
+		}
 		else
 			str[0]=0;
 		SetDlgItemText(hwnd,IDC_TEXT,str);
@@ -55,6 +58,7 @@ int display_vga_pal(HWND hwnd,int mx,int my)
 	bmi.bmiHeader.biSize=sizeof(bmi);
 	SetDIBitsToDevice(hdc,0,yoffset,_width,_height,0,0,0,_height,buffer,&bmi,DIB_RGB_COLORS);
 
+	if(inside)
 	{
 		int w=_width/2,h=_height/2;
 		for(i=0;i<w*h;i++){
