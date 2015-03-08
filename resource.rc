@@ -32,12 +32,11 @@ STYLE WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU |
 CAPTION "test"
 FONT 8, "MS Sans Serif"
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,0,227,50,14
     LTEXT           "",IDC_TEXT,223,210,114,12,SS_SUNKEN
     CONTROL         "Slider1",IDC_SLIDER,"msctls_trackbar32",TBS_BOTH | 
-                    TBS_NOTICKS | WS_TABSTOP,110,226,128,15
+                    TBS_NOTICKS | WS_TABSTOP,63,226,175,15
     CONTROL         "Animate",IDC_ANIMATE,"Button",BS_AUTOCHECKBOX | 
-                    BS_PUSHLIKE | WS_TABSTOP,57,229,51,12
+                    BS_PUSHLIKE | WS_TABSTOP,3,228,51,12
     CONTROL         "VGA pallete",IDC_VGA,"Button",BS_AUTOCHECKBOX | 
                     BS_PUSHLIKE | WS_TABSTOP,277,227,53,10
 END

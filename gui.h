@@ -55,6 +55,10 @@ int display_vga_pal(HWND hwnd,int mx,int my)
 	bmi.bmiHeader.biSize=sizeof(bmi);
 	SetDIBitsToDevice(hdc,0,yoffset,_width,_height,0,0,0,_height,buffer,&bmi,DIB_RGB_COLORS);
 
+	if(!(mx<_width && my<=_height+yoffset && my>=yoffset)){
+		hover=GetSysColor(COLOR_BTNFACE);
+		hover=((hover&0xFF)<<16)|(hover&0xFF00)|((hover>>16)&0xFF);
+	}
 	{
 		int w=_width/2,h=_height/2;
 		for(i=0;i<w*h;i++){
@@ -151,7 +155,6 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 	case WM_HSCROLL:
 		{
 			int scroll;
-			printf("scroll, %08X %08X\n",wparam,lparam);
 			scroll=SendDlgItemMessage(hwnd,IDC_SLIDER,TBM_GETPOS,0,0);
 			if(animate){
 				frame_delay=scroll;
@@ -162,7 +165,6 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 				if(timer)
 					KillTimer(hwnd,timer);
 				timer=SetTimer(hwnd,1337,frame_delay,NULL);
-				printf("delay=%i\n",frame_delay);
 			}
 			else{
 				static int last_scroll=0;
@@ -236,7 +238,8 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 			}
 			break;
 		case IDOK:
-			EndDialog(hwnd,0);
+			PostMessage(GetDlgItem(hwnd,IDC_ANIMATE),BM_CLICK,0,0);
+			//EndDialog(hwnd,0);
 			break;
 		case IDCANCEL:
 			EndDialog(hwnd,0);
