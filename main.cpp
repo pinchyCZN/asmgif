@@ -213,53 +213,31 @@ for(f=0; f<64; f++){
 //I j,k,l,m;D i,a,x,y,z,cx,sx,tx,ty,tz;PG;for(i=0;i<32;i++){I p[]={-1,-1,1,-1,-1,1,1,1};D *t[]={&x,&y,&z,&y,&x,&z,&z,&x,&y};for(m=0;m<3;m++){for(j=0;j<12;j++)for(a=0;a<20;a+=.2){k=j%4;l=(j/4)*3;t[l][0]=a-10;t[l+1][0]=10*p[k*2];t[l+2][0]=10*p[k*2+1];cx=cos(i*PI/16+m/7.);sx=sin(i*PI/16+m/7.);tx=x;ty=y*cx+z*sx;tz=y*(-sx)+z*(cx);tz+=30+8*sin(i*PI/16);x=tx*80/tz;y=ty*80/tz;tz=(tz=1400-tz*tz)>255?255:tz<0?0:tz;B(y+H/2,x+W/2)=tz;}}C;}
 	{
 
-I j,k,l,m;
-D i,a,x,y,z,cx,sx,cy,sy,cz,sz,tx,ty,tz,rx,rz;
+I j,k,l,m,x,y;
+D i,a,b,c,z,cx,sx,cy,sy,cz,sz,tx,ty,tz,rx,rz;
 PG;
-rx=PI/2;
-rz=0;
-for(i=0;i<8;i++){
-	for(x=-100;x<100;x+=.5){
-		for(y=-100;y<100;y+=.5){
-			for(z=-100;z<100;z+=.3){
-				a=x*x/20.+y*y/20.-z*z/20.;
-				if(a>.8 && a<1.1){
-					sx=sin(rx);
-					cx=cos(rx);
-					sz=sin(rz);
-					cz=cos(rz);
-					tx=x*cz+y*sz;
-					ty=x*(-cx*sz)+y*(cx*cz)+z*sx;
-					tz=x*(sx*sz)+y*(-sx*cz)+z*cx;
-					/*
-					tx=x;
-					ty=y*cx+z*sx;
-					tz=-sx*y+z*cx;
-					*/
-					tz+=150;
-					D scale=100;
-					tx=tx*scale/tz;
-					ty=ty*scale/tz;
-					tz-=50+255;
-					tz=-tz;
-					tz*=.7;
-					if(tz>255)
-						tz=255;
-					if(tz<0)
-						tz=0;
-					B(ty+H/2,tx+W/2)=tz;
+rx=0;
+rz=20;
+for(i=0;i<64;i++){
+#define AS {L{m=B(iy,ix);m-=4;if(m<0)m=0;B(iy,ix)=m;}}
+	for(rx=rz;rx<rz+10;rx++){
+		for(a=rx;a<rx+1;a+=.1){
+			b=80*sin(a/8.);
+			for(x=a-1;x<a+1;x++){
+				for(y=0;y<H;y++){
+					c=sqrt(pow(a-x,2)+pow(b+H/2-y,2));
+					if(c<8){
+						B(y,x)=255-c*30;
+					}
+					
 				}
 			}
 		}
 	}
-	/*
-	tx=x;
-	ty=y*cx+z*sx;
-	tz=y*(-sx)+z*cx;
-*/
-	C;
-	//rx+=PI/16;
-	rz+=PI/64;
+	rz+=5;
+	F;
+	AS;
+
 }
 
 	}
