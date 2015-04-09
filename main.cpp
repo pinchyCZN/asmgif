@@ -211,32 +211,51 @@ for(f=0; f<64; f++){
 //I i,j,k,a,b,c;D d,x,y=0,s;for(i=0;i<32;i++){U8 *f=(U8*)DOSCHAR;for(j=0;j<40;j++){x=100+20*sin(j/PI*5.+i*PI/16.);y=32*4+H-20-j*32-i*4;s=(H-y)/80.;for(a=0;a<8*s;a++)for(b=0;b<8*s;b++)if(f['Z'*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+b,x+a)=15;}C;}
 //I i,j,k,m,n,o;D a,b,c,x,y;for(i=0;i<32;i++){{L{x=ix-W/2;y=iy-H/2;a=sqrt(x*x+y*y);if(a<70)B(y+H/2,x+H/2)=44;}}{L{x=ix-W/2;y=iy-H/2;c=1.7;b=.2+.8*sin(i*PI/16);b*=b;a=sqrt(x*x/c+y*y/b);if(a<50 && y>0)B(y+H/2+10,x+H/2)=0;}}for(j=0;j<2;j++){L{x=ix-W/2;y=iy-H/2;a=sqrt(x*x+y*y);if(a<10)B(y+H/2-20,x+H/2-20+40*j)=0;}}j=0;x=y=10;while(o="IBIB"[j]){for(k=0;k<64;k++){m=k%8;n=k/8;if(((U8*)0xFFA6E)[(o-1)*8+n]&(0x80>>m))B(y+n,x+m+j*8)=15;}j++;}C;}
 //I j,k,l,m;D i,a,x,y,z,cx,sx,tx,ty,tz;PG;for(i=0;i<32;i++){I p[]={-1,-1,1,-1,-1,1,1,1};D *t[]={&x,&y,&z,&y,&x,&z,&z,&x,&y};for(m=0;m<3;m++){for(j=0;j<12;j++)for(a=0;a<20;a+=.2){k=j%4;l=(j/4)*3;t[l][0]=a-10;t[l+1][0]=10*p[k*2];t[l+2][0]=10*p[k*2+1];cx=cos(i*PI/16+m/7.);sx=sin(i*PI/16+m/7.);tx=x;ty=y*cx+z*sx;tz=y*(-sx)+z*(cx);tz+=30+8*sin(i*PI/16);x=tx*80/tz;y=ty*80/tz;tz=(tz=1400-tz*tz)>255?255:tz<0?0:tz;B(y+H/2,x+W/2)=tz;}}C;}
+//I j;D i,a,b,c,x,y,m,rx,rz,z,sz,t[]={30,32,65,67};PG;rx=0;rz=0;sz=20;for(i=0;i<23;i++){for(rx=rz;rx<rz+sz;rx++){z=0;for(j=0;j<4;j+=2){if(rx>=PI*t[j] && rx<=PI*t[j+1])z=1;}if(z){for(a=rx;a<rx+1;a+=.1){b=80*sin(a);for(x=a-1;x<a+1;x++){for(y=0;y<H;y++){c=sqrt(pow(a-x,2)+pow(b+H/2-y,2));if(c<3){B(y,x)=255-c*30;}}}}}else{B(H/2,rx)=0xFF;{L{m=B(iy,ix);m-=2;if(m<0)m=0;B(iy,ix)=m;}}}}rz+=sz;F;}
 	{
 
-I j,k,l,m,x,y;
-D i,a,b,c,z,cx,sx,cy,sy,cz,sz,tx,ty,tz,rx,rz;
-PG;
-rx=0;
-rz=20;
+I i,j,x,w,a,b;
+D m;
+
+for(i=0;i<256;i++){
+	P=149+i/10;
+	P=5+i/1.8;
+	P=0;
+}
+for(i=0;i<3;i++)
+	P[0][i]=0xFF;
 for(i=0;i<64;i++){
-#define AS {L{m=B(iy,ix);m-=4;if(m<0)m=0;B(iy,ix)=m;}}
-	for(rx=rz;rx<rz+10;rx++){
-		for(a=rx;a<rx+1;a+=.1){
-			b=80*sin(a/8.);
-			for(x=a-1;x<a+1;x++){
-				for(y=0;y<H;y++){
-					c=sqrt(pow(a-x,2)+pow(b+H/2-y,2));
-					if(c<8){
-						B(y,x)=255-c*30;
-					}
-					
-				}
-			}
+	{L{B(iy,ix)=0;}}
+	w=0;
+	/*
+	for(x=W/4;x<W*.75;x++){
+		if(x<W/2)
+			w+=2;
+		else
+			w-=2;
+		for(j=0;j<w;j++){
+			B(H/2-w/2+j,x)=w*1.5;
+		}
+	}*/
+	w=0;
+	m=W/1;
+	for(x=W/4+i;x<m;x++){
+		a=0;
+		if(x<m/2)
+			w+=2;
+		else{
+			w-=2;
+			a=1;
+		}
+		for(j=0;j<w;j++){
+			b=i;
+			if(a)
+				b=-i;
+			B(H/2-w/2+j+b,x)=w*1.5;
 		}
 	}
-	rz+=5;
+	
 	F;
-	AS;
 
 }
 
