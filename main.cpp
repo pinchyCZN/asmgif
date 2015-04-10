@@ -214,8 +214,7 @@ for(f=0; f<64; f++){
 //I j;D i,a,b,c,x,y,m,rx,rz,z,sz,t[]={30,32,65,67};PG;rx=0;rz=0;sz=20;for(i=0;i<23;i++){for(rx=rz;rx<rz+sz;rx++){z=0;for(j=0;j<4;j+=2){if(rx>=PI*t[j] && rx<=PI*t[j+1])z=1;}if(z){for(a=rx;a<rx+1;a+=.1){b=80*sin(a);for(x=a-1;x<a+1;x++){for(y=0;y<H;y++){c=sqrt(pow(a-x,2)+pow(b+H/2-y,2));if(c<3){B(y,x)=255-c*30;}}}}}else{B(H/2,rx)=0xFF;{L{m=B(iy,ix);m-=2;if(m<0)m=0;B(iy,ix)=m;}}}}rz+=sz;F;}
 	{
 
-I i,j,x,w,a,b;
-D m;
+I i,j,k,a,b,x,y,w;
 
 for(i=0;i<256;i++){
 	P=149+i/10;
@@ -225,36 +224,52 @@ for(i=0;i<256;i++){
 for(i=0;i<3;i++)
 	P[0][i]=0xFF;
 for(i=0;i<64;i++){
-	{L{B(iy,ix)=0;}}
 	w=0;
-	/*
+{L{B(iy,ix)=0;}}
+
 	for(x=W/4;x<W*.75;x++){
 		if(x<W/2)
 			w+=2;
 		else
 			w-=2;
 		for(j=0;j<w;j++){
-			B(H/2-w/2+j,x)=w*1.5;
-		}
-	}*/
-	w=0;
-	m=W/1;
-	for(x=W/4+i;x<m;x++){
-		a=0;
-		if(x<m/2)
-			w+=2;
-		else{
-			w-=2;
-			a=1;
-		}
-		for(j=0;j<w;j++){
-			b=i;
-			if(a)
-				b=-i;
-			B(H/2-w/2+j+b,x)=w*1.5;
+			B(H/2-w/2+j,x)=1+abs(j-w/2)*3.1;
 		}
 	}
-	
+	k=i;
+	if(k>41)k=41;
+	for(a=0;a<2;a++){
+		D b[]={-1,W/4,1,W*.745};
+		w=0;
+		for(x=0;x<W/4-k/1.1;x++){
+			w+=2;
+			for(j=0;j<w;j++){
+				B(H/2-w/2+j+k/2*b[a*2],b[1+a*2]-(x+k)*b[a*2])=x*(3+k/18.)+1;
+			}
+		}
+
+	}
+	j=0;x=100;y=10;
+	while(w="SORNY"[j]) {
+        for(k=0; k<64; k++) {
+            a=k%8;
+            b=k/8;
+            if(((U8*)DOSCHAR)[w*8+b]&(0x80>>a))B(y+b,x+a+j*8)=1;
+        }
+        j++;
+    }
+	/*
+	U8 *f=(U8*)DOSCHAR;
+	for(j=0;j<5;j++){
+	y=2;
+	x=100+j*20;
+	m=2.5;
+	for(a=0;a<8*m;a++)
+		for(b=0;b<8*m;b++)
+			if(f["SORNY"[j]*8+(I)(b/m)]&(0x80>>(I)(a/m)))
+				B(y+b,x+a)=1;
+	}
+	*/
 	F;
 
 }
