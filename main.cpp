@@ -212,87 +212,41 @@ for(f=0; f<64; f++){
 //I i,j,k,m,n,o;D a,b,c,x,y;for(i=0;i<32;i++){{L{x=ix-W/2;y=iy-H/2;a=sqrt(x*x+y*y);if(a<70)B(y+H/2,x+H/2)=44;}}{L{x=ix-W/2;y=iy-H/2;c=1.7;b=.2+.8*sin(i*PI/16);b*=b;a=sqrt(x*x/c+y*y/b);if(a<50 && y>0)B(y+H/2+10,x+H/2)=0;}}for(j=0;j<2;j++){L{x=ix-W/2;y=iy-H/2;a=sqrt(x*x+y*y);if(a<10)B(y+H/2-20,x+H/2-20+40*j)=0;}}j=0;x=y=10;while(o="IBIB"[j]){for(k=0;k<64;k++){m=k%8;n=k/8;if(((U8*)0xFFA6E)[(o-1)*8+n]&(0x80>>m))B(y+n,x+m+j*8)=15;}j++;}C;}
 //I j,k,l,m;D i,a,x,y,z,cx,sx,tx,ty,tz;PG;for(i=0;i<32;i++){I p[]={-1,-1,1,-1,-1,1,1,1};D *t[]={&x,&y,&z,&y,&x,&z,&z,&x,&y};for(m=0;m<3;m++){for(j=0;j<12;j++)for(a=0;a<20;a+=.2){k=j%4;l=(j/4)*3;t[l][0]=a-10;t[l+1][0]=10*p[k*2];t[l+2][0]=10*p[k*2+1];cx=cos(i*PI/16+m/7.);sx=sin(i*PI/16+m/7.);tx=x;ty=y*cx+z*sx;tz=y*(-sx)+z*(cx);tz+=30+8*sin(i*PI/16);x=tx*80/tz;y=ty*80/tz;tz=(tz=1400-tz*tz)>255?255:tz<0?0:tz;B(y+H/2,x+W/2)=tz;}}C;}
 //I j;D i,a,b,c,x,y,m,rx,rz,z,sz,t[]={30,32,65,67};PG;rx=0;rz=0;sz=20;for(i=0;i<23;i++){for(rx=rz;rx<rz+sz;rx++){z=0;for(j=0;j<4;j+=2){if(rx>=PI*t[j] && rx<=PI*t[j+1])z=1;}if(z){for(a=rx;a<rx+1;a+=.1){b=80*sin(a);for(x=a-1;x<a+1;x++){for(y=0;y<H;y++){c=sqrt(pow(a-x,2)+pow(b+H/2-y,2));if(c<3){B(y,x)=255-c*30;}}}}}else{B(H/2,rx)=0xFF;{L{m=B(iy,ix);m-=2;if(m<0)m=0;B(iy,ix)=m;}}}}rz+=sz;F;}
-	if(0)
-	{
-		I j,x,y,a,b;
-		D m;
-		{L{B(iy,ix)=15;}}
-		j=0;x=100;y=10;
-		U8 *f=(U8*)DOSCHAR;
-		for(j=0;j<5;j++){
-		y=10;
-		x=110+j*20;
-		m=2.8;
-		for(a=0;a<8*m;a++)
-			for(b=0;b<8*m;b++)
-				if(f["SORNY"[j]*8+(I)(b/m)]&(0x80>>(I)(a/m)))
-					B(y+b,x+a)=104;
-		}
-		for(j=0;j<8;j++){
-		y=180;
-		x=110+j*14;
-		m=2.1;
-		for(a=0;a<8*m;a++)
-			for(b=0;b<8*m;b++)
-				if(f["BUTTHOLE"[j]*8+(I)(b/m)]&(0x80>>(I)(a/m)))
-					B(y+b,x+a)=104;
-		}
-		F;
-	}
-	{
+//I i,j,k,a,b,x,y,w;for(i=0;i<256;i++){P=149+i/10;P=5+i/1.8;P=0;}for(i=0;i<3;i++)P[0][i]=0xFF;for(i=0;i<64;i++){w=0;{L{B(iy,ix)=0;}}for(x=W/4;x<W*.75;x++){if(x<W/2)w+=2;else w-=2;for(j=0;j<w;j++){B(H/2-w/2+j,x)=1+abs(j-w/2)*3.1;}}k=i;if(k>41)k=41;for(a=0;a<2;a++){D b[]={-1,W/4,1,W*.745};w=0;for(x=0;x<W/4-k/1.1;x++){w+=2;for(j=0;j<w;j++){B(H/2-w/2+j+k/2*b[a*2],b[1+a*2]-(x+k)*b[a*2])=x*(3+k/18.)+1;}}}F;}
+{//START BLOCK
 
-I i,j,k,a,b,x,y,w;
+I i,j,a,b,PT[300]={0};
+D x,y,z,r,c,d;
 
-for(i=0;i<256;i++){
-	P=149+i/10;
-	P=5+i/1.8;
-	P=0;
+for(i=0;i<300;){
+	PT[i++]=rand()%W;
+	PT[i++]=rand()%(H/3);
+	PT[i++]=rand()%100;
 }
-for(i=0;i<3;i++)
-	P[0][i]=0xFF;
 for(i=0;i<64;i++){
-	w=0;
-{L{B(iy,ix)=0;}}
-
-	for(x=W/4;x<W*.75;x++){
-		if(x<W/2)
-			w+=2;
+	c=sin(i/PI+2*cos(i/PI));
+	for(j=0;j<300;){
+		x=PT[j++];
+		y=PT[j++];
+		z=PT[j++];
+		r=0;
+		if(z<50)
+			z=32;
 		else
-			w-=2;
-		for(j=0;j<w;j++){
-			B(H/2-w/2+j,x)=1+abs(j-w/2)*3.1;
+			z=176;
+		for(d=0;d<10;d+=.1){
+						
+			B(H-y,x)=z+j%16;
+			x+=sin(r);
+			y+=cos(r);
+			r+=c/50.;
 		}
 	}
-	k=i;
-	if(k>41)k=41;
-	for(a=0;a<2;a++){
-		D b[]={-1,W/4,1,W*.745};
-		w=0;
-		for(x=0;x<W/4-k/1.1;x++){
-			w+=2;
-			for(j=0;j<w;j++){
-				B(H/2-w/2+j+k/2*b[a*2],b[1+a*2]-(x+k)*b[a*2])=x*(3+k/18.)+1;
-			}
-		}
-
-	}
-	/*
-	U8 *f=(U8*)DOSCHAR;
-	for(j=0;j<5;j++){
-	y=2;
-	x=100+j*20;
-	m=2.5;
-	for(a=0;a<8*m;a++)
-		for(b=0;b<8*m;b++)
-			if(f["SORNY"[j]*8+(I)(b/m)]&(0x80>>(I)(a/m)))
-				B(y+b,x+a)=1;
-	}
-	*/
-	F;
-
+	C;
 }
 
-	}
+
+}//END BLOCK
 #else
 //	PG;D i,j,k,t=0,q=0;for(i=0;i<64;i++){t+=PI/8;for(j=0;j<200;j++){q+=.06;for(k=0;k<200;k++){D x,y,z;y=j*2;x=sin(q+t+k/20)*30+100;z=k+200;if(z>0){x=x*256/z;y=y*256/z;I c;z/=2;if(z>255)c=255;else c=z;B(x,y)=c;}}}C;}
 
