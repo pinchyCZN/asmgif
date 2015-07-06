@@ -85,6 +85,7 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 	static int max_delay=150;
 	static int show_vga_pal=FALSE;
 	static int mx=0,my=0;
+#define Y_OFFSET 30
 	switch(msg){
 	case WM_INITDIALOG:
 		SendDlgItemMessage(hwnd,IDC_SLIDER,TBM_SETRANGE,TRUE,MAKELONG(0,63));
@@ -145,7 +146,7 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 				bmi.bmiHeader.biHeight=H;
 				bmi.bmiHeader.biPlanes=1;
 				bmi.bmiHeader.biSize=sizeof(bmi);
-				SetDIBitsToDevice(hdc,0,30,W,H,0,0,0,H,buffer,&bmi,DIB_RGB_COLORS);
+				SetDIBitsToDevice(hdc,0,Y_OFFSET,W,H,0,0,0,H,buffer,&bmi,DIB_RGB_COLORS);
 				EndPaint(hwnd,&ps);
 				if(animate){
 					char str[80];
@@ -197,8 +198,13 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 		{
 			mx=LOWORD(lparam);
 			my=HIWORD(lparam);
-			if(show_vga_pal)
+			if(show_vga_pal){
 				InvalidateRect(hwnd,0,0);
+			}else if((!animate) && mx<=W && my>=Y_OFFSET && my<=(Y_OFFSET+H)){
+				char str[80];
+				sprintf(str,"x=%03i y=%03i",mx,my-Y_OFFSET);
+				SetDlgItemText(hwnd,IDC_TEXT,str);
+			}
 			break;
 		}
 		break;

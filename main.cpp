@@ -215,33 +215,19 @@ for(f=0; f<64; f++){
 //I i,j,k,a,b,x,y,w;for(i=0;i<256;i++){P=149+i/10;P=5+i/1.8;P=0;}for(i=0;i<3;i++)P[0][i]=0xFF;for(i=0;i<64;i++){w=0;{L{B(iy,ix)=0;}}for(x=W/4;x<W*.75;x++){if(x<W/2)w+=2;else w-=2;for(j=0;j<w;j++){B(H/2-w/2+j,x)=1+abs(j-w/2)*3.1;}}k=i;if(k>41)k=41;for(a=0;a<2;a++){D b[]={-1,W/4,1,W*.745};w=0;for(x=0;x<W/4-k/1.1;x++){w+=2;for(j=0;j<w;j++){B(H/2-w/2+j+k/2*b[a*2],b[1+a*2]-(x+k)*b[a*2])=x*(3+k/18.)+1;}}}F;}
 {//START BLOCK
 
-I i,j,a,b,PT[300]={0};
-D x,y,z,r,c,d;
+I i,j,a;
+D d,d2,P[80];
 
-for(i=0;i<300;){
-	PT[i++]=rand()%W;
-	PT[i++]=rand()%(H/3);
-	PT[i++]=rand()%100;
-}
-for(i=0;i<64;i++){
-	c=sin(i/PI+2*cos(i/PI));
-	for(j=0;j<300;){
-		x=PT[j++];
-		y=PT[j++];
-		z=PT[j++];
-		r=0;
-		if(z<50)
-			z=32;
-		else
-			z=176;
-		for(d=0;d<10;d+=.1){
-						
-			B(H-y,x)=z+j%16;
-			x+=sin(r);
-			y+=cos(r);
-			r+=c/50.;
-		}
-	}
+for(i=0;i<1;i++){
+	{L{
+		d=sqrt(pow(ix-W/2,2)+pow(iy-H/2,2));
+		d2=sqrt(pow(ix-W/2,2)+pow(iy-H/3,2));
+		if(d<40 && d2<40)
+			B(iy,ix)=32;
+		if(ix>185 && ix<205 && iy>(100-(ix-185)) && iy<(100+ix-185))
+			B(iy,320-ix)=32;
+
+	}}
 	C;
 }
 
