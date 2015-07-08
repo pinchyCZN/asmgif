@@ -215,33 +215,46 @@ for(f=0; f<64; f++){
 //I i,j,k,a,b,x,y,w;for(i=0;i<256;i++){P=149+i/10;P=5+i/1.8;P=0;}for(i=0;i<3;i++)P[0][i]=0xFF;for(i=0;i<64;i++){w=0;{L{B(iy,ix)=0;}}for(x=W/4;x<W*.75;x++){if(x<W/2)w+=2;else w-=2;for(j=0;j<w;j++){B(H/2-w/2+j,x)=1+abs(j-w/2)*3.1;}}k=i;if(k>41)k=41;for(a=0;a<2;a++){D b[]={-1,W/4,1,W*.745};w=0;for(x=0;x<W/4-k/1.1;x++){w+=2;for(j=0;j<w;j++){B(H/2-w/2+j+k/2*b[a*2],b[1+a*2]-(x+k)*b[a*2])=x*(3+k/18.)+1;}}}F;}
 {//START BLOCK
 
-I i,j,P[30],tx,ty,f;
-D d,e;
+I i;
+D cz,sz,r,tx,ty,a,b,s,t;
+/*
+cz=cos(rz/(57.2957795));
 
-for(i=0;i<30;){
-	P[i++]=(rand()%W)-W/2;
-	P[i++]=(rand()%H)-H/2;
-	P[i++]=i&1;
-}
-for(i=0;i<64;i++){
-	for(j=0;j<10;j++){
-		tx=P[j*3];
-		ty=P[j*3+1];
-		f=P[j*3+2];
-		{L{
-			d=sqrt(pow(ix-W/2,2)+pow(iy-H/2,2));
-			e=sqrt(pow(ix-W/2,2)+pow(iy-H/3,2));
-			if(d<40 && e<40)
-				B(iy+ty,ix+tx)=32;
-			if(ix>185 && ix<205 && iy>(100-(ix-185)) && iy<(100+ix-185))
-				B(iy+ty,tx+(f?ix:320-ix))=32;
+sx=0
+sy=0
+sz=sin(rz/(57.2957795));
 
-		}}
-		tx+=8*(f?-1:1);
-		P[j*3]=tx;
+tx=x*cz+y*sz;
+ty=x*(-sz)+y*(cz);
+*/
+t=s=0;
+r=PI*11/8;
+for(i=0;i<32;i++){
+
+	cz=cos(r);
+	sz=sin(r);
+	{L{
+		a=ix;
+		b=iy/4.;
+		tx=a*cz+b*sz;
+		ty=-sz*a+b*cz;
+		if(s)
+			B(H-ty-t*H/4,tx)=15;
+		else
+			B(H-ty-t*H/4,W-tx)=15;
+	}}
+	{L{
+		B(H+iy-t*H/4,ix)=15;
+	}}
+	if(i<25)
+	r+=PI/8;
+	if(r>=PI*17/8){
+		r=PI*11/8;
+		s=!s;
+		t++;
 	}
-
 	C;
+	
 }
 
 

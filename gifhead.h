@@ -165,7 +165,7 @@ extern void SaveFrame(bool clear);
 
 #define L2 for(D y=-1;y<1;y+=(2.0/H))for(D x=-1/0.75;x<1/0.75;x+=(2/0.75)/W)
 
-#define L3 for(I iy=0;y<W;y++)for(I ix=0;x<W;x++){ D y=2*iy/H, x=2*ix/W;
+#define L3 for(I iy=0;iy<W;iy++)for(I ix=0;ix<W;ix++){ D y=2*iy/H, x=2*ix/W;
 
 //y=2*iy/W;
 #define L D x=-1,y=-1/0.75;for(I iy=0;iy<H;iy++,y=-1+2.0*iy/H)for(I ix=0;ix<W;ix++,x=-1/0.75+2.0*ix/H)
