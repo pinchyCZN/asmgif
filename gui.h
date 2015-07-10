@@ -79,7 +79,7 @@ int display_vga_pal(HWND hwnd,int mx,int my)
 int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 {
 	static int current_frame=0;
-	static int frame_delay=66;
+	static int frame_delay=100; //66;
 	static int timer;
 	static int animate=FALSE;
 	static int max_delay=150;
