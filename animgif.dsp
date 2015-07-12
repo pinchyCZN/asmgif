@@ -96,6 +96,10 @@ SOURCE=.\gifsave89.c
 
 SOURCE=.\main.cpp
 # End Source File
+# Begin Source File
+
+SOURCE=.\utils.c
+# End Source File
 # End Group
 # Begin Group "Header Files"
 

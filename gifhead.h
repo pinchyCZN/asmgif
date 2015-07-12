@@ -163,6 +163,14 @@ extern void SaveFrame(bool clear);
 #define PG P.G()
 #define X(_Y_,_X_) B.d(_Y_,_X_)
 
+template<typename T>
+void ROT( T&x, T&y, double a) {
+    T ca = cos(a); T sa = sin(a);
+    T u = x * ca - y * sa;
+    T v = x * sa + y * ca;
+    x = u; y = v;
+}
+
 #define L2 for(D y=-1;y<1;y+=(2.0/H))for(D x=-1/0.75;x<1/0.75;x+=(2/0.75)/W)
 
 #define L3 for(I iy=0;iy<W;iy++)for(I ix=0;ix<W;ix++){ D y=2*iy/H, x=2*ix/W;

@@ -1,6 +1,7 @@
 #include "gifhead.h"
 #include "vgapal.h"
 #include <setjmp.h>
+#include <stdio.h>
 
 jmp_buf jb;
 int frame_count=0;
@@ -125,7 +126,31 @@ int rotate_3d(float x,float y,float z,float rx,float ry,float rz)
 */
 
 /*===============================================*/
+int printbits(int v,int count)
+{
+	FILE *f;
+	int i;
+	static int done=0;
+	return 0;
+	if(done==0){
+		done=1;
+		f=fopen("b:\\out2.txt","wb");
+		if(f)
+			fclose(f);
 
+	}
+	f=fopen("b:\\out2.txt","a+");
+	if(f==0)
+		return 0;
+	for(i=0;i<count;i++){
+		int c=v>>(count-1-i);
+		c&=1;
+		fprintf(f,"%i",c);
+	}
+	fprintf(f,"\n");
+	fclose(f);
+	return 0;
+}
 int test()
 {
 /*
@@ -217,54 +242,38 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 //I i,j,k,a,b,x,y,w;for(i=0;i<256;i++){P=149+i/10;P=5+i/1.8;P=0;}for(i=0;i<3;i++)P[0][i]=0xFF;for(i=0;i<64;i++){w=0;{L{B(iy,ix)=0;}}for(x=W/4;x<W*.75;x++){if(x<W/2)w+=2;else w-=2;for(j=0;j<w;j++){B(H/2-w/2+j,x)=1+abs(j-w/2)*3.1;}}k=i;if(k>41)k=41;for(a=0;a<2;a++){D b[]={-1,W/4,1,W*.745};w=0;for(x=0;x<W/4-k/1.1;x++){w+=2;for(j=0;j<w;j++){B(H/2-w/2+j+k/2*b[a*2],b[1+a*2]-(x+k)*b[a*2])=x*(3+k/18.)+1;}}}F;}
 ///*amiga blocks*/ I i;D cz,sz,r,tx,ty,a,b,s,t;t=s=0;r=PI*11/8;for(i=0;i<32;i++){cz=cos(r);sz=sin(r);{L{a=ix;b=iy/4.;tx=a*cz+b*sz;ty=-sz*a+b*cz;if(s)B(H-ty-t*H/4,tx)=15;else B(H-ty-t*H/4,W-tx)=15;}}{L{B(H+iy-t*H/4,ix)=15;}}if(i<25)r+=PI/8;if(r>=PI*17/8){r=PI*11/8;s=!s;t++;}C;}
 {//START BLOCK
-
-char *s="1B2(0 /).!0< >2,'!0!>#<.#0#:)8-!0< ?0<%)$& &4+!82 +(7!8*082 +(/!4'B8#8,% %4'0:%0?!8'08* +(/B4&!:%8,% B8.1.%(,!8*0<) 0!/B4'0:%05B0/ 8B %86#<&0>#(.#4+1($ #84!8/0:'04!4* >% ('B0+!.#(.#<& >%(,B<( &!.# 5B8/08#8,!4*!.B # 5$<'!8%8,B4&!.B % ?B86 >% ?B 0'1(#86B<& ># ?B0'1(B %8<B8.B>' 0#8";
+char *s="1--b )+b08b8,#(>:10.# 0%08'6% <&! +b<.#(<*18/#1($!,+18/#1.'!<.% 0'3$<,b =%1.+b47# 0#:<22<8b8/)*<'2 '#<6#9*+#<(b8/'0:'488.+!<>#9*3!0(.;!5,& .+88+308$<<,(#0";
 I i,j,x,y,c,t,a;
-x=y=0;
-i=3;
-while(1){
-	j=(s[i/8]>>(7-(i%8)))&1;
-	if(j){
-		a=0;
-		i++;
-		if(i%8==0)
-			i+=3;
-		for(t=0;t<2;t++){
-			a<<=1;
-			a|=(s[i/8]>>(7-(i%8)))&1;
-			i++;
-			if(i%8==0)
-				i+=3;
-		}
-		c=a;
-		c=c;
 
-	}else{
-		a=0;
-		i++;
-		if(i%8==0)
-			i+=3;
-		for(t=0;t<4;t++){
-			a<<=1;
-			a|=(s[i/8]>>(7-(i%8)))&1;
-			i++;
-			if(i%8==0)
-				i+=3;
-		}
+i=3;
+x=y=0;
+for(;;){
+	if(i%8==0)i+=3;		
+	j=s[i/8]>>7-(i++%8)&1;
+	j=3-j;
+	a=0;
+	for(t=0;t<j;t++){
+		a<<=1;
+		if(i%8==0)i+=3;		
+		a|=s[i/8]>>7-(i++%8)&1;
+	}
+	if(j==2)
+		c=a;
+	else{
 		if(a==0){
 			x=0;
 			y++;
 		}
-		if(a==15)
+		if(a==7)
 			break;
-		for(;a>=0;a--)
-			B(y,x++)=c;
-		
+		for(;a>0;a--){
+			for(j=0;j<64;j++)
+				B(y*8+j/8,x*8+j%8)=c*32;
+			x++;
+		}
 	}
-	if(i>strlen(s))
-		break;
 }
-F;
+C;
 
 }//END BLOCK
 #else
