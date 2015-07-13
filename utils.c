@@ -73,23 +73,37 @@ int emit_stuff(int color,int len,unsigned char *str,int *bitcount)
 	logdata(str+*bitcount,5);
 	*bitcount=index;
 }
-
+int folder_exists(char *path)
+{
+	int attr;
+	int result=FALSE;
+	attr=GetFileAttributes(path);
+	if(attr!=0xFFFFFFFF){
+		if(attr&FILE_ATTRIBUTE_DIRECTORY)
+			result=TRUE;
+	}
+	return result;
+}
 int export_image()
 {
 
 	FILE *f,*fout;
+	char *path="b:\\";
+	if(folder_exists(path))
+		SetCurrentDirectory(path);
+	else
+		SetCurrentDirectory("c:\\temp\\");
 
+	DeleteFile("out.txt");
 
-	DeleteFile("B:\\out.txt");
-
-	f=fopen("B:\\zelda2.raw","rb");
+	f=fopen("bike.raw","rb");
 	if(f){
 		int colors[100]={0};
 		int current_color=0;
 		int bitcount=0;
 		int streak=0;
 		int x=0;
-		int IMAGE_WIDTH=13;
+		int IMAGE_WIDTH=20;
 		int MAX_STREAK=6;
 		unsigned char str[2000]={0};
 		unsigned char data[0x1000]={0};
@@ -147,6 +161,8 @@ int export_image()
 			}
 		}
 	}
+	else
+		printf("unable to open file\n");
 	printf("\ndone\n");
 	getch();
 	exit(0);
