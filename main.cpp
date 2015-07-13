@@ -3,6 +3,9 @@
 #include <setjmp.h>
 #include <stdio.h>
 
+
+extern "C" int export_image();
+
 jmp_buf jb;
 int frame_count=0;
 unsigned char buffers[64*W*H];
@@ -242,38 +245,36 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 //I i,j,k,a,b,x,y,w;for(i=0;i<256;i++){P=149+i/10;P=5+i/1.8;P=0;}for(i=0;i<3;i++)P[0][i]=0xFF;for(i=0;i<64;i++){w=0;{L{B(iy,ix)=0;}}for(x=W/4;x<W*.75;x++){if(x<W/2)w+=2;else w-=2;for(j=0;j<w;j++){B(H/2-w/2+j,x)=1+abs(j-w/2)*3.1;}}k=i;if(k>41)k=41;for(a=0;a<2;a++){D b[]={-1,W/4,1,W*.745};w=0;for(x=0;x<W/4-k/1.1;x++){w+=2;for(j=0;j<w;j++){B(H/2-w/2+j+k/2*b[a*2],b[1+a*2]-(x+k)*b[a*2])=x*(3+k/18.)+1;}}}F;}
 ///*amiga blocks*/ I i;D cz,sz,r,tx,ty,a,b,s,t;t=s=0;r=PI*11/8;for(i=0;i<32;i++){cz=cos(r);sz=sin(r);{L{a=ix;b=iy/4.;tx=a*cz+b*sz;ty=-sz*a+b*cz;if(s)B(H-ty-t*H/4,tx)=15;else B(H-ty-t*H/4,W-tx)=15;}}{L{B(H+iy-t*H/4,ix)=15;}}if(i<25)r+=PI/8;if(r>=PI*17/8){r=PI*11/8;s=!s;t++;}C;}
 {//START BLOCK
-char *s="1--b )+b08b8,#(>:10.# 0%08'6% <&! +b<.#(<*18/#1($!,+18/#1.'!<.% 0'3$<,b =%1.+b47# 0#:<22<8b8/)*<'2 '#<6#9*+#<(b8/'0:'488.+!<>#9*3!0(.;!5,& .+88+308$<<,(#0";
-I i,j,x,y,c,t,a;
+//MAX length 439
+//export_image();
+char *g,*s="END@DNJC@BQAI^IAQA@BQA^ZAQA@BRYQIRIQYRA@BRYQYRYQYRA@CVTYA@CJRZRJYA@A]TJ[@ZQ\\MQZ@YSZQZJSY@ZQ[QI\\S@ZQ[QZLQA@^QMC@AUYB[C@D[FB@G",*e="DNC@CNJB@AQAI^IAQ@AQA^ZAQ@ARYQIRIQYR@ARYQYRYQYR@BVTY@CIRZRIZ@A]SKQ@ZQ\\MQ@YSZQZJYA@ZQ[QI[IA@ZQ[QZKA@^QKYB@AUB[B@FB[B@G";
+I i,j,x,y,c,t,f;
 
-i=3;
-x=y=0;
-for(;;){
-	if(i%8==0)i+=3;		
-	j=s[i/8]>>7-(i++%8)&1;
-	j=3-j;
-	a=0;
-	for(t=0;t<j;t++){
-		a<<=1;
-		if(i%8==0)i+=3;		
-		a|=s[i/8]>>7-(i++%8)&1;
-	}
-	if(j==2)
-		c=a;
-	else{
-		if(a==0){
+for(f=0;f<64;f++){
+	i=x=y=0;
+	for(;;){
+		f&1?g=e:g=s;
+		c=g[i++];
+		t=c&7;
+		c>>=3;
+		if(t==0){
 			x=0;
 			y++;
-		}
-		if(a==7)
-			break;
-		for(;a>0;a--){
-			for(j=0;j<64;j++)
-				B(y*8+j/8,x*8+j%8)=c*32;
-			x++;
+		}else{
+			if(t==7)
+				break;
+			for(;t>0;t--){
+				B(y+f*4,x++)=c*32;
+				/*
+				for(j=0;j<64;j++)
+					B(y*8+j/8,x*8+j%8)=c*32;
+				x++;
+				*/
+			}
 		}
 	}
+	C;
 }
-C;
 
 }//END BLOCK
 #else
