@@ -11,7 +11,7 @@ int addcolor(int color,int *colors)
 {
 	int i,result=0;
 	for(i=0;i<100;i++){
-		if(colors[i]==0){
+		if(colors[i]==-1){
 			colors[i]=color;
 			result=i;
 			break;
@@ -96,18 +96,19 @@ int export_image()
 
 	DeleteFile("out.txt");
 
-	f=fopen("bike.raw","rb");
+	f=fopen("5.raw","rb");
 	if(f){
-		int colors[100]={0};
-		int current_color=0;
+		int colors[100];
+		int current_color=-1;
 		int bitcount=0;
 		int streak=0;
 		int x=0;
-		int IMAGE_WIDTH=20;
+		int IMAGE_WIDTH=6;
 		int MAX_STREAK=6;
 		unsigned char str[2000]={0};
 		unsigned char data[0x1000]={0};
 		int len,i;
+		memset(colors,-1,sizeof(colors));
 		len=fread(data,1,0x1000,f);
 		for(i=0;i<len;i+=3){
 			int c;

@@ -247,15 +247,18 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 {//START BLOCK
 //MAX length 439
 //export_image();
-char *s="FBLFB@FAMQFA@FALSF@FAS[FA@FALYIFA@FAYRLF@FJSFC@EJYRIFC@EIYIUAYE@EIYJSYQYE@EIZICJYE@BSJZIARITB@EZIYJRJCQA@BZSYIYISJZB@AZASYKRAJAZA@ZBRYISYAZIBZ@YBYBJSYAYAJBY@YBLYSBYBIBY@ZCZUAZCZ@AZAZRYAYCZAZA@B[BSE[B@G";
-I i,j,x,y,c,t,f;
+	char *a[4]={"F@ALA@AJQB@BSA@BQYB@BQYB@BQYB@BZB@AQZB@BRB@G",
+		"BIAIA@AKB@AJQB@BSA@BQYB@AQZB@AQZAQ@BZAQ@AZAQA@ARC@G",
+		"F@AIAIB@AKB@BIQB@BSA@ARYB@AQZB@R[A@A\\A@RBR@G",
+		"F@BJB@AJQIA@AISA@BQYB@BQYB@AQZB@BZB@Q\\A@QBRA@G"};
+I i,j,x,y,s,t,f;
 
-for(f=0;f<64;f++){
+for(f=0;f<50;f++){
 	i=x=y=0;
 	for(;;){
-		c=s[i++];
-		t=c&7;
-		c>>=3;
+		s=a[f%4][i++]&31;
+		t=s&7;
+		s>>=3;
 		if(t==0){
 			x=0;
 			y++;
@@ -263,9 +266,8 @@ for(f=0;f<64;f++){
 			if(t==7)
 				break;
 			for(;t>0;t--){
-				//B(y+H/2,f*4+x++)=c*31;
 				for(j=0;j<64;j++)
-					B(y*8+j/8,-W/2+f*8+x*8+j%8)=c*32;
+					B(y*8+j/8,-60+f*8+x*8+j%8)=s*32;
 				x++;
 			}
 		}
