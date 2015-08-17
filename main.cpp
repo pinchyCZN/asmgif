@@ -247,69 +247,36 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 {//START BLOCK
 //MAX length 439
 //export_image();
-/*
-PG;
-I  i,j;
-D u,v,w,r,a,b,z,s,d,k;
-for(i=0;i<4;i++){
-	r=0+i/4.;
-	{L{
-		for(s=j=0;j<10;j++){
-			u=x;
-			w=s;
-			ROT(u,w,r);
-			a=max(fabs(u)-0.3,0);
-			b=max(fabs(y)-0.3,0);
-			z=max(fabs(w)-0.3,0);
-			//z=0;
-			d=sqrt(a*a+b*b+z*z);
-			if( d<.05){
-				k=b;
-				k*=100;
-				//if(k>1)
-				//printf("%f\n",k);
-				k=sqrt(k);
-				if(k>255)
-					k=255;
-				if(k<1)
-					k=50;
-				B.d(y,x)=k;
-				break;
-			}
-			else
-				a=a;
-			s+=a;
 
+
+
+I i,j,k;
+D a,b,c,s,T[6];
+for(i=0;i<6;i+=2){
+	T[i]=cos(i*PI*2/3);
+	T[i+1]=sin(i*PI*2/3);
+}
+for(i=0;i<32;i++){
+	for(j=0;j<6;j+=2)
+		ROT(T[j],T[j+1],PI/8.);
+	{L{
+		for(a=0;a<20;a++){
+			D l[12];
+			for(k=0;k<3;k++)
+				for(j=0;j<4;j++)
+					l[k*4+j]=T[(k*4+j)%6]+a/20.;
+			
+			I r[3];
+			for(j=0;j<3;j++){
+				k=j*4;
+				r[j]=((x-l[k+2])*(l[k+1]-l[k+3])-(l[k]-l[k+2])*(y-l[k+3]))<0.;
+			}
+			if(r[0]==r[1] && r[1]==r[2])
+				B.d(y/10.+a/9.,x/10.+a/9.)=39+a;
 		}
 	}}
 	C;
 }
-*/
-I i,j,k,c,d,e,f;
-D a,b;
-a=rand()%(W/2)+W/4;
-b=rand()%(H/2)+H/4;
-for(k=i=0;i<64;i++){
-	srand(0);
-	for(c=d=j=0;j<i*30000;j++){
-		c+=(rand()%3)-1;
-		d+=(rand()%3)-1;
-		a+c>=W?c--:a+c<=0?c++:c;
-		b+d>=H?d--:b+d<=0?d++:d;
-		if(B(b+d,a+c)==0)
-		{
-			B(b+d,a+c)=j/180%256;
-		}
-
-	}
-	C;
-}
-
-
-
-
-
-
 
 
 }//END BLOCK
