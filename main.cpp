@@ -249,33 +249,39 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 //export_image();
 
 
-
-I i,j,k;
-D a,b,c,s,T[6];
-for(i=0;i<6;i+=2){
-	T[i]=cos(i*PI*2/3);
-	T[i+1]=sin(i*PI*2/3);
-}
-for(i=0;i<32;i++){
-	for(j=0;j<6;j+=2)
-		ROT(T[j],T[j+1],PI/8.);
-	{L{
-		for(a=0;a<20;a++){
-			D l[12];
-			for(k=0;k<3;k++)
-				for(j=0;j<4;j++)
-					l[k*4+j]=T[(k*4+j)%6]+a/20.;
-			
-			I r[3];
-			for(j=0;j<3;j++){
-				k=j*4;
-				r[j]=((x-l[k+2])*(l[k+1]-l[k+3])-(l[k]-l[k+2])*(y-l[k+3]))<0.;
-			}
-			if(r[0]==r[1] && r[1]==r[2])
-				B.d(y/10.+a/9.,x/10.+a/9.)=39+a;
+	
+PG;
+I n,i;
+D f,t,d,u,v,w,a,b,c,p,q,r,l,k;
+for(n=0; n<1; ++n) {
+	//f=n/64.*3.14;
+	f=38/64.*3.14;
+	L {
+		l=1/sqrt(x*x+y*y+1*1);
+		t=0;
+		for(i=0; i<16; ++i) {
+			u=x*l*t;
+			v=y*l*t;
+			w=t*l-2.5;
+			ROT(u,v,f*2);
+			ROT(u,w,f*3);
+			p=u<-1?-1:(u>1?1:u);
+			q=v<-1?-1:(v>1?1:v);
+			r=w<-1?-1:(w>1?1:w);
+			a=u-p;
+			b=v-q;
+			c=w-r;
+			d=sqrt(a*a+b*b+c*c);
+			t+=d;
+			k=I(u*50)^I(v*50)^I(w*50);
+			k=t;
+			//if(d<.03)
+			//	break;
 		}
-	}}
-	C;
+		t=1/(1+t*t+d*100+k/50);
+		B[iy][ix]=t*255;
+	} 
+	F;
 }
 
 
