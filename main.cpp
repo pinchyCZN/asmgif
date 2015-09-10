@@ -253,32 +253,42 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 PG;
 I n,i;
 D f,t,d,u,v,w,a,b,c,p,q,r,l,k;
-for(n=0; n<1; ++n) {
+for(i=0;i<768;i++)
+P=i%3==0?i:0;
+for(n=0; n<32; ++n) {
 	//f=n/64.*3.14;
-	f=38/64.*3.14;
+	f=n/32.*3.14;
+	k=sin(PI*n/16.);
 	L {
-		l=1/sqrt(x*x+y*y+1*1);
+		
+		l=.8;
 		t=0;
-		for(i=0; i<16; ++i) {
-			u=x*l*t;
-			v=y*l*t;
-			w=t*l-2.5;
-			ROT(u,v,f*2);
+		for(i=0; i<8; i++) {
+			u=x*l*t+k*8;
+			v=y*l*t+k*4;
+			w=t*l-8.5;
+			ROT(u,v,f*2*k);
 			ROT(u,w,f*3);
+			
 			p=u<-1?-1:(u>1?1:u);
 			q=v<-1?-1:(v>1?1:v);
 			r=w<-1?-1:(w>1?1:w);
 			a=u-p;
 			b=v-q;
 			c=w-r;
-			d=sqrt(a*a+b*b+c*c);
+			p=a*a+b*b+c*c;
+			if(p>2000)
+				break;
+
+			d=sqrt(p);
 			t+=d;
-			k=I(u*50)^I(v*50)^I(w*50);
-			k=t;
-			//if(d<.03)
-			//	break;
+			if(d<.03)
+				break;
 		}
-		t=1/(1+t*t+d*100+k/50);
+		t=1/(1+t*t+d*100);
+		t*=20;
+		
+		t=t>1?1:t;
 		B[iy][ix]=t*255;
 	} 
 	F;
@@ -390,5 +400,11 @@ wxEntry(0,0,0,SW_SHOWNORMAL);
 	DialogBox(0,(LPSTR)IDD_DIALOG1,0,dlg);
 #endif
 #endif // USEWX
+	return 0;
+}
+int CALLBACK WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR     lpCmdLine,int       nCmdShow)
+{
+	open_console();
+	main(0,0);
 	return 0;
 }

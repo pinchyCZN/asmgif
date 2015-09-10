@@ -2,7 +2,45 @@
 
 #include <windows.h>
 #include <commctrl.h>
+#include <fcntl.h>
+#include <io.h>
 #include "resource.h"
+
+void open_console()
+{
+	char title[MAX_PATH]={0};
+	HWND hcon;
+	FILE *hf;
+	static BYTE consolecreated=FALSE;
+	static int hcrt=0;
+
+	if(consolecreated==TRUE)
+	{
+		GetConsoleTitle(title,sizeof(title));
+		if(title[0]!=0){
+			hcon=FindWindow(NULL,title);
+			ShowWindow(hcon,SW_SHOW);
+		}
+		hcon=(HWND)GetStdHandle(STD_INPUT_HANDLE);
+		FlushConsoleInputBuffer(hcon);
+		return;
+	}
+	AllocConsole();
+	hcrt=_open_osfhandle((long)GetStdHandle(STD_OUTPUT_HANDLE),_O_TEXT);
+
+	fflush(stdin);
+	hf=_fdopen(hcrt,"w");
+	*stdout=*hf;
+	setvbuf(stdout,NULL,_IONBF,0);
+	GetConsoleTitle(title,sizeof(title));
+	if(title[0]!=0){
+		hcon=FindWindow(NULL,title);
+		ShowWindow(hcon,SW_SHOW);
+		SetForegroundWindow(hcon);
+	}
+	consolecreated=TRUE;
+}
+
 int display_vga_pal(HWND hwnd,int mx,int my)
 {
 	extern unsigned char vgapal[];
