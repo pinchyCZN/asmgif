@@ -250,28 +250,27 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 
 
 	
-PG;
-I n,i;
+I n,i,j;
 D f,t,d,u,v,w,a,b,c,p,q,r,l,k;
 for(i=0;i<768;i++)
-P=i%3==0?i:0;
-for(n=0; n<32; ++n) {
+P=i%3==1?i:0;
+for(n=0;n<16;++n) {
 	//f=n/64.*3.14;
 	f=n/32.*3.14;
 	k=sin(PI*n/16.);
+	l=.7;
 	L {
 		
-		l=.8;
 		t=0;
 		for(i=0; i<8; i++) {
-			u=x*l*t+k*8;
-			v=y*l*t+k*4;
+			u=x*l*t;
+			v=y*l*t;
 			w=t*l-8.5;
 			ROT(u,v,f*2*k);
 			ROT(u,w,f*3);
-			
-			p=u<-1?-1:(u>1?1:u);
-			q=v<-1?-1:(v>1?1:v);
+			r=1+2.*sin(PI*n/8.);
+			p=u<-r?-r:(u>r?r:u);
+			q=v<-1?-1:(v>r?r:v);
 			r=w<-1?-1:(w>1?1:w);
 			a=u-p;
 			b=v-q;
