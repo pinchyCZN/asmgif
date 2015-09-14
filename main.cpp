@@ -248,48 +248,47 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 //MAX length 439
 //export_image();
 
-
-	
-I n,i,j;
-D f,t,d,u,v,w,a,b,c,p,q,r,l,k;
-for(i=0;i<768;i++)
-P=i%3==1?i:0;
-for(n=0;n<16;++n) {
-	//f=n/64.*3.14;
-	f=n/32.*3.14;
-	k=sin(PI*n/16.);
-	l=.7;
-	L {
-		
-		t=0;
-		for(i=0; i<8; i++) {
-			u=x*l*t;
-			v=y*l*t;
-			w=t*l-8.5;
-			ROT(u,v,f*2*k);
-			ROT(u,w,f*3);
-			r=1+2.*sin(PI*n/8.);
-			p=u<-r?-r:(u>r?r:u);
-			q=v<-1?-1:(v>r?r:v);
-			r=w<-1?-1:(w>1?1:w);
-			a=u-p;
-			b=v-q;
-			c=w-r;
-			p=a*a+b*b+c*c;
-			if(p>2000)
-				break;
-
-			d=sqrt(p);
-			t+=d;
-			if(d<.03)
-				break;
+//ffcc99
+//cc9966
+D a,b,c;
+I i,j,k,t=0;
+for(i=0;i<64;i++){
+	{L{
+		a=sin(PI*x*3.);
+		b=-sin(PI*y*3.);
+		a=a*b;
+		if(a>0)
+			B(iy,ix)=21;
+		else
+			B(iy,ix)=6;
+	}}
+		if(i>12 && t<6*14)
+			t+=6;
+	L{
+		for(j=3;j>0;j--){
+			b=j>1?.004:.04;
+			c=j>1?12:0;
+			a=x*x+y*y;
+			if(a<b && !(j==1 && y>-.1))
+				B(iy-j*c+90-t,ix+100)=255;
 		}
-		t=1/(1+t*t+d*100);
-		t*=20;
-		
-		t=t>1?1:t;
-		B[iy][ix]=t*255;
-	} 
+	}
+
+	if(t>80 && (i&1))
+	{
+		U8 *f=(U8*)DOSCHAR;
+		//U8 *f=(U8*)0xFFA6E;
+		x=99;
+		y=20;
+		while(k="M,cUZZQ^,U_,e[a--"[j++]){
+			k-=12;
+			x+=8;
+			for(a=0;a<8;a++)
+				for(b=0;b<8;b++)
+					if(f[k*8+(I)b]&(0x80>>(I)a))
+						B(y+b,x+a)=0;
+		}
+	}
 	F;
 }
 
