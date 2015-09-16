@@ -248,32 +248,55 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 //MAX length 439
 //export_image();
 
+
+
+
 //ffcc99
 //cc9966
 D a,b,c;
-I i,j,k,t=0;
+I i,j,k,s=120,t=0,w[]={0xFF,0xCC,0x99,0xCC,0x99,0x66};
+for(i=0;i<6;i++)
+P=w[i];
 for(i=0;i<64;i++){
 	{L{
 		a=sin(PI*x*3.);
 		b=-sin(PI*y*3.);
 		a=a*b;
 		if(a>0)
-			B(iy,ix)=21;
+			B(iy,ix)=1;
 		else
-			B(iy,ix)=6;
+			B(iy,ix)=0;
 	}}
 		if(i>12 && t<6*14)
 			t+=6;
 	L{
-		for(j=3;j>0;j--){
-			b=j>1?.004:.04;
-			c=j>1?12:0;
-			a=x*x+y*y;
-			if(a<b && !(j==1 && y>-.1))
-				B(iy-j*c+90-t,ix+100)=255;
+		w[0]=t;
+		w[1]=s;
+		for(k=0;k<2;k++){
+			for(j=3;j>0;j--){
+				b=j>1?.004:.04;
+				c=j>1?12:0;
+				a=x*x+y*y;
+				if(a<b && !(j==1 && y>-.1))
+					B(iy-j*c+90-w[k],ix+100)=255;
+			}
+		}
+	}
+	if(i>28){
+		if(i&1){
+		L{
+			B(iy,ix)=255;
+		}
+		}
+	}
+	if(i>40){
+		L{
+			if(iy<((i-40)*8))
+			B(iy,ix)=255;
 		}
 	}
 
+	/*
 	if(t>80 && (i&1))
 	{
 		U8 *f=(U8*)DOSCHAR;
@@ -289,6 +312,7 @@ for(i=0;i<64;i++){
 						B(y+b,x+a)=0;
 		}
 	}
+	*/
 	F;
 }
 
