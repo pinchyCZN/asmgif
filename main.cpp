@@ -247,54 +247,105 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 {//START BLOCK
 //MAX length 439
 //export_image();
-
-
-
-
+ 
+/*
+	{
 I n,i,j;
 D f,t,d,u,v,w,a,b,c,p,q,r,l,k;
 for(i=0;i<768;i++)
 P=i%3==1?i:0;
-for(n=0;n<4;++n) {
+for(n=0;n<16;++n) {
 	//f=n/64.*3.14;
 	f=n/32.*3.14;
+	k=sin(PI*n/16.);
 	l=.7;
 	L {
 		
-		for(j=0;j<3;j++){
-			x+=j*.3;
-			t=0;
-			for(i=0; i<8; i++) {
-				u=x*l*t;
-				v=y*l*t;
-				w=t*l-8.5;
-				ROT(u,v,f*2);
-				ROT(u,w,f*3);
-				p=u<-1?-1:(u>1?1:u);
-				q=v<-1?-1:(v>1?1:v);
-				r=w<-1?-1:(w>1?1:w);
-				a=u-p;
-				b=v-q;
-				c=w-r;
-				p=a*a+b*b+c*c;
-				if(p>2000)
-					break;
+		t=0;
+		for(i=0; i<8; i++) {
+			u=x*l*t;
+			v=y*l*t;
+			w=t*l-8.5;
+			ROT(u,v,f*2*k);
+			ROT(u,w,f*3);
+			r=1+2.*sin(PI*n/8.);
+			p=u<-r?-r:(u>r?r:u);
+			q=v<-1?-1:(v>r?r:v);
+			r=w<-1?-1:(w>1?1:w);
+			a=u-p;
+			b=v-q;
+			c=w-r;
+			p=a*a+b*b+c*c;
+			if(p>2000)
+				break;
 
-				d=sqrt(p);
-				t+=d;
-				if(d<.03)
-					break;
-			}
-			t=1/(1+t*t+d*100);
-			t*=20;
-			
-			t=t>1?1:t;
-			a=B[iy][ix];
-			b=t*255;
-			if(a<b)
-				B[iy][ix]=b;
+			d=sqrt(p);
+			t+=d;
+			if(d<.03)
+				break;
 		}
+		t=1/(1+t*t+d*100);
+		t*=20;
+		
+		t=t>1?1:t;
+		B[iy][ix]=t*255;
 	} 
+	F;
+}
+
+return 0;
+
+	}
+*/
+
+I i,j,k,m,n,o,p;
+D t,u,v,w,a,b,c,r,d;
+PG;
+for(i=0;i<4;i++) {
+	r=PI/8.*i; 
+	//r=PI/32.*sin(PI/2.*i);
+	//r=12*PI/16.;
+	L{
+		//for(p=0;p<5;p++)
+		p=0;
+		for(m=0;m<8;m++)
+			for(n=0;n<8;n++){
+				o=f8["EBOLA"[p]*8+7-n]&(1<<m);
+				t=10;
+				if(o)
+				while(t>0){
+					u=x*20.;
+					v=y*20.;
+					w=t;
+					//ROT(u,v,0);
+					ROT(u,w,r);
+					u+=m*3.2-12;//-p*20;
+					v+=n*3.2-12;
+					a=u<-1?-1:u>1?1:u;
+					b=v<-1?-1:v>1?1:v;
+					c=w<-1?-1:w>1?1:w;
+					a=a-u;
+					b=b-v;
+					c=c-w;
+					a=a*a+b*b+c*c;
+					d=sqrt(a);
+					if(d<.1){
+						//d=255.*(t+5)*.09;
+						d=255.*t*.10;
+						a=B(iy,ix);
+						if(a>d)
+							d=a;
+						if(d>255)
+							d=255;
+						if(d>0)
+						B(iy,ix)=d;
+						break;
+					}
+					t-=(d);
+				}
+			}
+		
+	}
 	C;
 }
 
