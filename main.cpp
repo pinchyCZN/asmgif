@@ -244,111 +244,50 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 //I j;D i,a,b,c,x,y,m,rx,rz,z,sz,t[]={30,32,65,67};PG;rx=0;rz=0;sz=20;for(i=0;i<23;i++){for(rx=rz;rx<rz+sz;rx++){z=0;for(j=0;j<4;j+=2){if(rx>=PI*t[j] && rx<=PI*t[j+1])z=1;}if(z){for(a=rx;a<rx+1;a+=.1){b=80*sin(a);for(x=a-1;x<a+1;x++){for(y=0;y<H;y++){c=sqrt(pow(a-x,2)+pow(b+H/2-y,2));if(c<3){B(y,x)=255-c*30;}}}}}else{B(H/2,rx)=0xFF;{L{m=B(iy,ix);m-=2;if(m<0)m=0;B(iy,ix)=m;}}}}rz+=sz;F;}
 //I i,j,k,a,b,x,y,w;for(i=0;i<256;i++){P=149+i/10;P=5+i/1.8;P=0;}for(i=0;i<3;i++)P[0][i]=0xFF;for(i=0;i<64;i++){w=0;{L{B(iy,ix)=0;}}for(x=W/4;x<W*.75;x++){if(x<W/2)w+=2;else w-=2;for(j=0;j<w;j++){B(H/2-w/2+j,x)=1+abs(j-w/2)*3.1;}}k=i;if(k>41)k=41;for(a=0;a<2;a++){D b[]={-1,W/4,1,W*.745};w=0;for(x=0;x<W/4-k/1.1;x++){w+=2;for(j=0;j<w;j++){B(H/2-w/2+j+k/2*b[a*2],b[1+a*2]-(x+k)*b[a*2])=x*(3+k/18.)+1;}}}F;}
 ///*amiga blocks*/ I i;D cz,sz,r,tx,ty,a,b,s,t;t=s=0;r=PI*11/8;for(i=0;i<32;i++){cz=cos(r);sz=sin(r);{L{a=ix;b=iy/4.;tx=a*cz+b*sz;ty=-sz*a+b*cz;if(s)B(H-ty-t*H/4,tx)=15;else B(H-ty-t*H/4,W-tx)=15;}}{L{B(H+iy-t*H/4,ix)=15;}}if(i<25)r+=PI/8;if(r>=PI*17/8){r=PI*11/8;s=!s;t++;}C;}
+//green cube I n,i,j;D f,t,d,u,v,w,a,b,c,p,q,r,l,k;for(i=0;i<768;i++)P=i%3==1?i:0;for(n=0;n<16;++n){f=n/32.*3.14;k=sin(PI*n/16.);l=.7;L {t=0;for(i=0;i<8;i++){u=x*l*t;v=y*l*t;w=t*l-8.5;ROT(u,v,f*2*k);ROT(u,w,f*3);r=1+2.*sin(PI*n/8.);p=u<-r?-r:(u>r?r:u);q=v<-1?-1:(v>r?r:v);r=w<-1?-1:(w>1?1:w);a=u-p;b=v-q;c=w-r;p=a*a+b*b+c*c;if(p>2000)break;d=sqrt(p);t+=d;if(d<.03)break;}t=1/(1+t*t+d*100);t*=20;t=t>1?1:t;B[iy][ix]=t*255;}F;}
+//cube letters I i,j,k,m,n,o;D t,u,v,w,a,b,c,r,d;PG;for(i=0;i<16;i++){r=PI/16.*i;L{for(m=0;m<8;m++)for(n=0;n<8;n++){o=f8['Q'*8+7-n]&(1<<m);if(!o)continue;t=10;while(t>0){u=x*12.;v=y*12.;w=t;ROT(u,v,0);ROT(u,w,r);u+=m*3.2-12;v+=n*3.2-12;a=u<-1?-1:u>1?1:u;b=v<-1?-1:v>1?1:v;c=w<-1?-1:w>1?1:w;a=a-u;b=b-v;c=c-w;a=a*a+b*b+c*c;d=sqrt(a);if(d<.1){d=255.*t*.12;d+=B(iy,ix);if(d<0)d=0;if(d>255)d=255;B(iy,ix)=d;break;}t-=(d);}}}C;}
 {//START BLOCK
 //MAX length 439
 //export_image();
- 
-/*
-	{
-I n,i,j;
-D f,t,d,u,v,w,a,b,c,p,q,r,l,k;
-for(i=0;i<768;i++)
-P=i%3==1?i:0;
-for(n=0;n<16;++n) {
-	//f=n/64.*3.14;
-	f=n/32.*3.14;
-	k=sin(PI*n/16.);
-	l=.7;
-	L {
-		
-		t=0;
-		for(i=0; i<8; i++) {
-			u=x*l*t;
-			v=y*l*t;
-			w=t*l-8.5;
-			ROT(u,v,f*2*k);
-			ROT(u,w,f*3);
-			r=1+2.*sin(PI*n/8.);
-			p=u<-r?-r:(u>r?r:u);
-			q=v<-1?-1:(v>r?r:v);
-			r=w<-1?-1:(w>1?1:w);
-			a=u-p;
-			b=v-q;
-			c=w-r;
-			p=a*a+b*b+c*c;
-			if(p>2000)
-				break;
 
-			d=sqrt(p);
-			t+=d;
-			if(d<.03)
-				break;
-		}
-		t=1/(1+t*t+d*100);
-		t*=20;
-		
-		t=t>1?1:t;
-		B[iy][ix]=t*255;
-	} 
-	F;
-}
-
-return 0;
-
-	}
-*/
-
-I i,j,k,m,n,o,p;
-D t,u,v,w,a,b,c,r,d;
+I i,j,k,x,y;
+I dx,dy,tmp,d,clen;
+vector<char*>lt;
+vector<int>ld;
+char *str;
 PG;
-for(i=0;i<4;i++) {
-	r=PI/8.*i; 
-	//r=PI/32.*sin(PI/2.*i);
-	//r=12*PI/16.;
-	L{
-		//for(p=0;p<5;p++)
-		p=0;
-		for(m=0;m<8;m++)
-			for(n=0;n<8;n++){
-				o=f8["EBOLA"[p]*8+7-n]&(1<<m);
-				t=10;
-				if(o)
-				while(t>0){
-					u=x*20.;
-					v=y*20.;
-					w=t;
-					//ROT(u,v,0);
-					ROT(u,w,r);
-					u+=m*3.2-12;//-p*20;
-					v+=n*3.2-12;
-					a=u<-1?-1:u>1?1:u;
-					b=v<-1?-1:v>1?1:v;
-					c=w<-1?-1:w>1?1:w;
-					a=a-u;
-					b=b-v;
-					c=c-w;
-					a=a*a+b*b+c*c;
-					d=sqrt(a);
-					if(d<.1){
-						//d=255.*(t+5)*.09;
-						d=255.*t*.10;
-						a=B(iy,ix);
-						if(a>d)
-							d=a;
-						if(d>255)
-							d=255;
-						if(d>0)
-						B(iy,ix)=d;
-						break;
-					}
-					t-=(d);
-				}
-			}
-		
+x=W/2;y=H/2;
+k=0;
+for(i=0;i<1;i++){
+	lt.insert(0,"FX");
+	ld.insert(0,100);
+#	define LEFT  tmp = -dy; dy = dx; dx = tmp
+#	define RIGHT tmp = dy; dy = -dx; dx = tmp
+	d=100;
+	dx=1;dy=0;
+	while(k>=0){
+LOOP:
+	str=lt.at(k);
+	d=ld.at(k);
+	while (*str!= '\0') {
+		switch(*(str++)) {
+		case 'X':	if (d){ lt.push_back("X+YF+");ld.push_back(--d);k++; goto LOOP;}
+		case 'Y':	if (d){lt.push_back("-FX-Y");ld.push_back(--d);k++; goto LOOP;}
+		case '+':	RIGHT; continue;
+		case '-':	LEFT;  continue;
+		case 'F':
+				clen ++;
+				B(y,x)=0xFF;
+				x += dx; y += dy;
+				continue;
+		}
 	}
-	C;
-}
+	k--;
+	}
+	F;
 
+
+}
 
 }//END BLOCK
 #else

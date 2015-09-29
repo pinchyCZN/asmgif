@@ -51,18 +51,18 @@ int display_vga_pal(HWND hwnd,int mx,int my)
 	int yoffset=30;
 	int hover=0;
 	int inside=FALSE;
-#define	size 16
-#define _height (size*16)
-#define _width (size*16)
-	static char buffer[size*size*256*3];
+#define	_size 16
+#define _height (_size*16)
+#define _width (_size*16)
+	static char buffer[_size*_size*256*3];
 	{
 		int c;
 		char str[80]={0};
-		x=mx/size;
-		y=(my-yoffset)/size;
-		i=x+y*size;
+		x=mx/_size;
+		y=(my-yoffset)/_size;
+		i=x+y*_size;
 		hover=c=(vgapal[i*3]<<16)|(vgapal[i*3+1]<<8)|(vgapal[i*3+2]);
-		if(my>=yoffset && my<=yoffset+size*16 && mx<=size*16){
+		if(my>=yoffset && my<=yoffset+_size*16 && mx<=_size*16){
 			sprintf(str,"index=%i c=%06X %i,%i",i,c,mx,my);
 			inside=TRUE;
 		}
@@ -72,17 +72,17 @@ int display_vga_pal(HWND hwnd,int mx,int my)
 	}
 	x=y=0;
 	for(i=0;i<256;i++){
-		for(j=0;j<size;j++){
-			for(k=0;k<size;k++){
+		for(j=0;j<_size;j++){
+			for(k=0;k<_size;k++){
 				buffer[x*3+y*_width*3+j*3+k*_width*3]=vgapal[i*3+2];
 				buffer[x*3+y*_width*3+j*3+k*_width*3+1]=vgapal[i*3+1];
 				buffer[x*3+y*_width*3+j*3+k*_width*3+2]=vgapal[i*3+0];
 			}
 		}
-		x+=size;
+		x+=_size;
 		if(x>=_width){
 			x=0;
-			y+=size;
+			y+=_size;
 		}
 		if(y>=_height)
 			break;
