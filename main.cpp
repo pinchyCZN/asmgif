@@ -250,44 +250,52 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 //MAX length 439
 //export_image();
 
-I i,j,k,x,y;
-I dx,dy,tmp,d,clen;
-vector<char*>lt;
-vector<int>ld;
-char *str;
-PG;
+I k,l,x,y,dx,dy,t,d,a;
+class Q{public:U8 *s;I i;};
+vector<void*>ld;
+U8 *s;
+//PG;
 x=W/2;y=H/2;
-k=0;
-for(i=0;i<1;i++){
-	lt.insert(0,"FX");
-	ld.insert(0,100);
-#	define LEFT  tmp = -dy; dy = dx; dx = tmp
-#	define RIGHT tmp = dy; dy = -dx; dx = tmp
-	d=100;
+	l=k=0;
+	Q *q=new Q;
+	q->s=(U8*)"FX";
+	q->i=20;
+	ld.insert(0,q);
 	dx=1;dy=0;
-	while(k>=0){
-LOOP:
-	str=lt.at(k);
-	d=ld.at(k);
-	while (*str!= '\0') {
-		switch(*(str++)) {
-		case 'X':	if (d){ lt.push_back("X+YF+");ld.push_back(--d);k++; goto LOOP;}
-		case 'Y':	if (d){lt.push_back("-FX-Y");ld.push_back(--d);k++; goto LOOP;}
-		case '+':	RIGHT; continue;
-		case '-':	LEFT;  continue;
-		case 'F':
-				clen ++;
-				B(y,x)=0xFF;
-				x += dx; y += dy;
-				continue;
+
+N:	do{
+	q=(Q*)ld.at(k);
+	d=q->i;
+	s=q->s;
+		while((a=*(s++))!=0){
+				if(d && a>'F'){
+					q->s=s;
+					q->i=d;
+					ld.at(k)=q;
+					s=(U8*)(a=='X'?"X+YF+":"-FX-Y");
+					q=new Q;
+					q->i=--d;
+					q->s=s;
+					ld.push_back(q);
+					k++;goto N;
+				}
+				if(a<'F'){
+					a=a=='+'?1:-1;
+					t=a*dy;
+					dy=-a*dx;
+					dx=t;
+				}
+				if(a=='F'){
+				l++;
+				B(y,x)=l/4;
+				x+=dx;y+=dy;
+				}
 		}
-	}
+	ld.pop_back();
 	k--;
-	}
+	}while(k>=0);
 	F;
 
-
-}
 
 }//END BLOCK
 #else
