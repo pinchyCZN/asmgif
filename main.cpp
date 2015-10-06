@@ -251,19 +251,21 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 //export_image();
 
 I k,l,x,y,dx,dy,t,d,a;
-class Q{public:U8 *s;I i;};
+//class Q{public:U8 *s;I i;};
+struct Q{U8 *s;I i;};
 vector<void*>ld;
 U8 *s;
 //PG;
-x=W/2;y=H/2;
+y=x=W/2;
 	l=k=0;
 	Q *q=new Q;
 	q->s=(U8*)"FX";
 	q->i=20;
-	ld.insert(0,q);
+	ld.insert(ld.begin(),q);
 	dx=1;dy=0;
 
-N:	do{
+N:	
+	do{
 	q=(Q*)ld.at(k);
 	d=q->i;
 	s=q->s;
@@ -285,15 +287,15 @@ N:	do{
 					dy=-a*dx;
 					dx=t;
 				}
-				if(a=='F'){
-				l++;
-				B(y,x)=l/4;
+				//if(a=='F'){
+				else{
+				B(y,x)=l++/4;
 				x+=dx;y+=dy;
 				}
 		}
 	ld.pop_back();
 	k--;
-	}while(k>=0);
+	}while(k);
 	F;
 
 
