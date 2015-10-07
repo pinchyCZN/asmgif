@@ -246,6 +246,7 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 ///*amiga blocks*/ I i;D cz,sz,r,tx,ty,a,b,s,t;t=s=0;r=PI*11/8;for(i=0;i<32;i++){cz=cos(r);sz=sin(r);{L{a=ix;b=iy/4.;tx=a*cz+b*sz;ty=-sz*a+b*cz;if(s)B(H-ty-t*H/4,tx)=15;else B(H-ty-t*H/4,W-tx)=15;}}{L{B(H+iy-t*H/4,ix)=15;}}if(i<25)r+=PI/8;if(r>=PI*17/8){r=PI*11/8;s=!s;t++;}C;}
 //green cube I n,i,j;D f,t,d,u,v,w,a,b,c,p,q,r,l,k;for(i=0;i<768;i++)P=i%3==1?i:0;for(n=0;n<16;++n){f=n/32.*3.14;k=sin(PI*n/16.);l=.7;L {t=0;for(i=0;i<8;i++){u=x*l*t;v=y*l*t;w=t*l-8.5;ROT(u,v,f*2*k);ROT(u,w,f*3);r=1+2.*sin(PI*n/8.);p=u<-r?-r:(u>r?r:u);q=v<-1?-1:(v>r?r:v);r=w<-1?-1:(w>1?1:w);a=u-p;b=v-q;c=w-r;p=a*a+b*b+c*c;if(p>2000)break;d=sqrt(p);t+=d;if(d<.03)break;}t=1/(1+t*t+d*100);t*=20;t=t>1?1:t;B[iy][ix]=t*255;}F;}
 //cube letters I i,j,k,m,n,o;D t,u,v,w,a,b,c,r,d;PG;for(i=0;i<16;i++){r=PI/16.*i;L{for(m=0;m<8;m++)for(n=0;n<8;n++){o=f8['Q'*8+7-n]&(1<<m);if(!o)continue;t=10;while(t>0){u=x*12.;v=y*12.;w=t;ROT(u,v,0);ROT(u,w,r);u+=m*3.2-12;v+=n*3.2-12;a=u<-1?-1:u>1?1:u;b=v<-1?-1:v>1?1:v;c=w<-1?-1:w>1?1:w;a=a-u;b=b-v;c=c-w;a=a*a+b*b+c*c;d=sqrt(a);if(d<.1){d=255.*t*.12;d+=B(iy,ix);if(d<0)d=0;if(d>255)d=255;B(iy,ix)=d;break;}t-=(d);}}}C;}
+//dragon curve I k,l,x,y,dx,dy,t,d,a;struct Q{U8 *s;I i;};vector<void*>z;U8 *s;y=x=W/3;l=k=0;Q *q=new Q;q->s=(U8*)"FX";q->i=20;z.insert(z.begin(),q);dx=1;dy=0;N:do{q=(Q*)z.at(k);d=q->i;s=q->s;while((a=*s++)!=0){a-='F';if(d&&a>0){q->s=s;q->i=d;z.at(k)=q;s=(U8*)(a==18?"X+YF+":"-FX-Y");q=new Q;q->i=--d;q->s=s;z.push_back(q);k++;goto N;}if(a<0){a=a==-27?1:-1;t=a*dy;dy=-a*dx;dx=t;}if(!a){B(y,x)=l++/99;x+=dx;y+=dy;}}z.pop_back();k--;}while(k);F;
 {//START BLOCK
 //MAX length 439
 //export_image();
@@ -253,47 +254,48 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 I k,l,x,y,dx,dy,t,d,a;
 //class Q{public:U8 *s;I i;};
 struct Q{U8 *s;I i;};
-vector<void*>ld;
+vector<void*>z;
 U8 *s;
 //PG;
-y=x=W/2;
+y=x=W/3;
 	l=k=0;
 	Q *q=new Q;
 	q->s=(U8*)"FX";
 	q->i=20;
-	ld.insert(ld.begin(),q);
+	z.insert(z.begin(),q);
 	dx=1;dy=0;
 
 N:	
 	do{
-	q=(Q*)ld.at(k);
+	q=(Q*)z.at(k);
 	d=q->i;
 	s=q->s;
-		while((a=*(s++))!=0){
-				if(d && a>'F'){
+		while((a=*s++)!=0){
+				a-='F';
+				if(d&&a>0){
 					q->s=s;
 					q->i=d;
-					ld.at(k)=q;
-					s=(U8*)(a=='X'?"X+YF+":"-FX-Y");
+					z.at(k)=q;
+					s=(U8*)(a==18?"X+YF+":"-FX-Y");
 					q=new Q;
 					q->i=--d;
 					q->s=s;
-					ld.push_back(q);
+					z.push_back(q);
 					k++;goto N;
 				}
-				if(a<'F'){
-					a=a=='+'?1:-1;
+				if(a<0){
+					a=a==-27?1:-1;
 					t=a*dy;
 					dy=-a*dx;
 					dx=t;
 				}
-				//if(a=='F'){
-				else{
-				B(y,x)=l++/4;
+				if(!a){
+				//else{
+				B(y,x)=l++/99;
 				x+=dx;y+=dy;
 				}
 		}
-	ld.pop_back();
+	z.pop_back();
 	k--;
 	}while(k);
 	F;
