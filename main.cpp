@@ -251,54 +251,40 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 //MAX length 439
 //export_image();
 
-I k,l,x,y,dx,dy,t,d,a;
-//class Q{public:U8 *s;I i;};
-struct Q{U8 *s;I i;};
-vector<void*>z;
-U8 *s;
-//PG;
-y=x=W/3;
-	l=k=0;
-	Q *q=new Q;
-	q->s=(U8*)"FX";
-	q->i=20;
-	z.insert(z.begin(),q);
-	dx=1;dy=0;
+I i,j,k,l,m;
+D a,b,c,d,e,x,y,z;
 
-N:	
-	do{
-	q=(Q*)z.at(k);
-	d=q->i;
-	s=q->s;
-		while((a=*s++)!=0){
-				a-='F';
-				if(d&&a>0){
-					q->s=s;
-					q->i=d;
-					z.at(k)=q;
-					s=(U8*)(a==18?"X+YF+":"-FX-Y");
-					q=new Q;
-					q->i=--d;
-					q->s=s;
-					z.push_back(q);
-					k++;goto N;
-				}
-				if(a<0){
-					a=a==-27?1:-1;
-					t=a*dy;
-					dy=-a*dx;
-					dx=t;
-				}
-				if(!a){
-				//else{
-				B(y,x)=l++/99;
-				x+=dx;y+=dy;
-				}
-		}
-	z.pop_back();
-	k--;
-	}while(k);
-	F;
+for(a=0;a<256;a++){
+	P=a/7;
+	P=a/1;
+	P=a/1;
+}
+for(m=i=0;i<24;i++){
+	for(k=0;k<64;k++)
+	for(j=0;j<6;j++)
+	for(x=0;x<100;x++){
+		y=88;
+		z=0;
+		a=x-50;
+		b=y;
+		c=z;
+		ROT(a,b,PI/3*j);
+		a-=200;
+		ROT(a,c,PI/32*k-PI/48*i);
+		c=c+500;
+		a=a*500/c;
+		b=b*500/c;
+		e=700-c;
+		e/=1;
+		e=e<0?0:e>255?255:e;
+		//e=255;
+		if(c>320)
+		B(b+H/2,a+400)=e;
+
+	}
+	
+	C;
+}
 
 
 }//END BLOCK
