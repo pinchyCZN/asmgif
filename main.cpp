@@ -154,6 +154,57 @@ int printbits(int v,int count)
 	fclose(f);
 	return 0;
 }
+/*
+#define noiseWidth W
+#define noiseHeight H
+
+double noise[noiseWidth][noiseHeight]; //the noise array
+
+double smoothNoise(double x, double y)
+{  
+   //get fractional part of x and y
+   double fractX = x - int(x);
+   double fractY = y - int(y);
+   
+   //wrap around
+   int x1 = (int(x) + noiseWidth) % noiseWidth;
+   int y1 = (int(y) + noiseHeight) % noiseHeight;
+   
+   //neighbor values
+   int x2 = (x1 + noiseWidth - 1) % noiseWidth;
+   int y2 = (y1 + noiseHeight - 1) % noiseHeight;
+
+   //smooth the noise with bilinear interpolation
+   double value = 0.0;
+   value += fractX       * fractY       * noise[x1][y1];
+   value += fractX       * (1 - fractY) * noise[x1][y2];
+   value += (1 - fractX) * fractY       * noise[x2][y1];
+   value += (1 - fractX) * (1 - fractY) * noise[x2][y2];
+
+   return value;
+}
+void generateNoise()
+{
+    for (int x = 0; x < noiseWidth; x++)
+    for (int y = 0; y < noiseHeight; y++)
+    {
+        //noise[x][y] = (rand() % 32768) / 32768.0;
+		noise[x][y] = rand() % 32768;
+    }
+}
+double turbulence(double x, double y, double size)
+{
+    double value = 0.0, initialSize = size;
+    
+    while(size >= 1)
+    {
+        value += smoothNoise(x / size, y / size) * size;
+        size /= 2.0;
+    }
+    
+    return(128.0 * value / initialSize);
+}
+*/
 int test()
 {
 /*
@@ -247,40 +298,102 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 //green cube I n,i,j;D f,t,d,u,v,w,a,b,c,p,q,r,l,k;for(i=0;i<768;i++)P=i%3==1?i:0;for(n=0;n<16;++n){f=n/32.*3.14;k=sin(PI*n/16.);l=.7;L {t=0;for(i=0;i<8;i++){u=x*l*t;v=y*l*t;w=t*l-8.5;ROT(u,v,f*2*k);ROT(u,w,f*3);r=1+2.*sin(PI*n/8.);p=u<-r?-r:(u>r?r:u);q=v<-1?-1:(v>r?r:v);r=w<-1?-1:(w>1?1:w);a=u-p;b=v-q;c=w-r;p=a*a+b*b+c*c;if(p>2000)break;d=sqrt(p);t+=d;if(d<.03)break;}t=1/(1+t*t+d*100);t*=20;t=t>1?1:t;B[iy][ix]=t*255;}F;}
 //cube letters I i,j,k,m,n,o;D t,u,v,w,a,b,c,r,d;PG;for(i=0;i<16;i++){r=PI/16.*i;L{for(m=0;m<8;m++)for(n=0;n<8;n++){o=f8['Q'*8+7-n]&(1<<m);if(!o)continue;t=10;while(t>0){u=x*12.;v=y*12.;w=t;ROT(u,v,0);ROT(u,w,r);u+=m*3.2-12;v+=n*3.2-12;a=u<-1?-1:u>1?1:u;b=v<-1?-1:v>1?1:v;c=w<-1?-1:w>1?1:w;a=a-u;b=b-v;c=c-w;a=a*a+b*b+c*c;d=sqrt(a);if(d<.1){d=255.*t*.12;d+=B(iy,ix);if(d<0)d=0;if(d>255)d=255;B(iy,ix)=d;break;}t-=(d);}}}C;}
 //dragon curve I k,l,x,y,dx,dy,t,d,a;struct Q{U8 *s;I i;};vector<void*>z;U8 *s;y=x=W/3;l=k=0;Q *q=new Q;q->s=(U8*)"FX";q->i=20;z.insert(z.begin(),q);dx=1;dy=0;N:do{q=(Q*)z.at(k);d=q->i;s=q->s;while((a=*s++)!=0){a-='F';if(d&&a>0){q->s=s;q->i=d;z.at(k)=q;s=(U8*)(a==18?"X+YF+":"-FX-Y");q=new Q;q->i=--d;q->s=s;z.push_back(q);k++;goto N;}if(a<0){a=a==-27?1:-1;t=a*dy;dy=-a*dx;dx=t;}if(!a){B(y,x)=l++/99;x+=dx;y+=dy;}}z.pop_back();k--;}while(k);F;
+//hex tunnel I i,j,k,l,m;D a,b,c,d,e,x,y,z;for(a=0;a<256;a++){P=a/7;P=a/1;P=a/1;}for(m=i=0;i<24;i++){for(k=0;k<64;k++)for(j=0;j<6;j++)for(x=0;x<100;x++){y=88;z=0;a=x-50;b=y;c=z;ROT(a,b,PI/3*j);a-=200;ROT(a,c,PI/32*k-PI/48*i);c=c+500;a=a*500/c;b=b*500/c;e=700-c;e/=1;e=e<0?0:e>255?255:e;if(c>320)B(b+H/2,a+400)=e;}C;}
 {//START BLOCK
 //MAX length 439
 //export_image();
 
-I i,j,k,l,m;
-D a,b,c,d,e,x,y,z;
+I i,f,g,h,j;
+D a,b,c,d,e,l,m,p,q,r,s,v;
 
-for(a=0;a<256;a++){
-	P=a/7;
-	P=a/1;
-	P=a/1;
-}
-for(m=i=0;i<24;i++){
-	for(k=0;k<64;k++)
-	for(j=0;j<6;j++)
-	for(x=0;x<100;x++){
-		y=88;
-		z=0;
-		a=x-50;
-		b=y;
-		c=z;
-		ROT(a,b,PI/3*j);
-		a-=200;
-		ROT(a,c,PI/32*k-PI/48*i);
-		c=c+500;
-		a=a*500/c;
-		b=b*500/c;
-		e=700-c;
-		e/=1;
-		e=e<0?0:e>255?255:e;
-		//e=255;
-		if(c>320)
-		B(b+H/2,a+400)=e;
+PG;
+D n[W*H];
+for(i=0;i<4;i++){
+	{L{
+        n[ix+iy*W]=rand()%32768;
+		//(rand() % 32768) / 32768.0;
+	}}
+	//generateNoise();
+	//xPeriod and yPeriod together define the angle of the lines
+	//xPeriod and yPeriod both 0 ==> it becomes a normal clouds or turbulence pattern
+	//double xPeriod = 1.0; //defines repetition of marble lines in x direction
+	//double yPeriod = 1.0+i; //defines repetition of marble lines in y direction
+	//turbPower = 0 ==> it becomes a normal sine pattern
+	//double turbPower = 2.0+i; //makes twists
+	//double turbSize = 72.0; //initial size of the turbulence
+	a=1; //xperiod
+	b=1+i; //yperiod
+	c=2+i; //turbpower
+	d=72; //turbsize
+    
+	{L
+    {    
+		//I noiseHeight=H,noiseWidth=W;
+        ////double xyValue = x * xPeriod / noiseHeight + y * yPeriod / noiseWidth + turbPower * turbulence(x, y, turbSize) / 256.0;
+		//double xyValue = ix * xPeriod / noiseHeight + iy * yPeriod / noiseWidth + turbPower;
+		//double value = 0.0;
+		e=ix*a/H+iy*b/W+c; //xyvalue
+		v=0;
+    
+		//size=turbSize;
+		s=d;
+		//while(size >= 1)
+		while(s>=1)
+		{
+			//value += smoothNoise(x / size, y / size) * size;
+			/*
+			D _x=ix/s,_y=iy/s,_value=0;
+			//get fractional part of x and y
+			double fractX = _x - int(_x);
+			double fractY = _y - int(_y);
 
+			//wrap around
+			int x1 = (int(_x) + noiseWidth) % noiseWidth;
+			int y1 = (int(_y) + noiseHeight) % noiseHeight;
+
+			//neighbor values
+			int x2 = (x1 + noiseWidth - 1) % noiseWidth;
+			int y2 = (y1 + noiseHeight - 1) % noiseHeight;
+
+			//smooth the noise with bilinear interpolation
+			//double value = 0.0;
+			_value += fractX       * fractY       * noise[x1+y1*W];
+			_value += fractX       * (1 - fractY) * noise[x1+y2*W];
+			_value += (1 - fractX) * fractY       * noise[x2+y1*W];
+			_value += (1 - fractX) * (1 - fractY) * noise[x2+y2*W];
+			value+=_value*s;
+			*/
+
+			p=ix/s; //_x
+			q=iy/s; //_y
+			l=p-(I)p; //fracX
+			m=q-(I)q; //fracY
+			f=((I)p+W)%W; //x1
+			g=((I)q+H)%H; //y1
+			h=(f+W-1)%W; //x2
+			j=(g+H-1)%H; //y2
+			r=l*m*n[f+g*W];
+			r+=l*(1-m)*n[f+j*W];
+			r+=(1-l)*m*n[h+g*W];
+			r+=(1-l)*(1-m)*n[h+j*W];
+			v+=r*s;
+
+
+
+			//size /= 2.0;
+			s/=2;
+		}
+		//xyValue*=(128.0 * value / turbSize)/256.;
+		e*=(128*v/d)/256;
+
+//		* turbulence(x, y, turbSize) / 256.0;
+//		xyValue/=32768;
+		e/=32768;
+		e=256*fabs(sin(PI*e));
+		//e=xyValue;
+        //double sineValue = 256 * fabs(sin(PI*e));
+        B(iy, ix)=e;
+    }
 	}
 	
 	C;
