@@ -126,6 +126,15 @@ int rotate_3d(float x,float y,float z,float rx,float ry,float rz)
 		y1=y*scale/(z1);
 		x1+=BUF_WIDTH/2;
 		y1+=BUF_HEIGHT/2;
+
+a1 a2 a3
+b1 b2 b3
+c1 c2 c3
+
+det A=a1*b2*c2+a2*b3*c1+a3*b1*c2-a3*b1*c1-a2*b1*c3-a1*b3*c2
+inv A=(b2*c3-c2*b3)(a3*c2-c3*a2)(a2*b3-b2*a3)
+	  (b3*c1-c3*b1)(a1*c3-c1*a3)(a3*b1-b3*a1)
+	  (b1*c2-c1*b3)(a2*c1-c2*a1)(a1*b2-b1*a2)
 */
 
 /*===============================================*/
@@ -303,102 +312,94 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 //MAX length 439
 //export_image();
 
-I i,f,g,h,j;
-D a,b,c,d,e,l,m,p,q,r,s,v;
+I i,j;
+D x,y,a,b,c,d,e,u,v,r;
 
-PG;
-D n[W*H];
-for(i=0;i<4;i++){
-	{L{
-        n[ix+iy*W]=rand()%32768;
-		//(rand() % 32768) / 32768.0;
-	}}
-	//generateNoise();
-	//xPeriod and yPeriod together define the angle of the lines
-	//xPeriod and yPeriod both 0 ==> it becomes a normal clouds or turbulence pattern
-	//double xPeriod = 1.0; //defines repetition of marble lines in x direction
-	//double yPeriod = 1.0+i; //defines repetition of marble lines in y direction
-	//turbPower = 0 ==> it becomes a normal sine pattern
-	//double turbPower = 2.0+i; //makes twists
-	//double turbSize = 72.0; //initial size of the turbulence
-	a=1; //xperiod
-	b=1+i; //yperiod
-	c=2+i; //turbpower
-	d=72; //turbsize
-    
-	{L
-    {    
-		//I noiseHeight=H,noiseWidth=W;
-        ////double xyValue = x * xPeriod / noiseHeight + y * yPeriod / noiseWidth + turbPower * turbulence(x, y, turbSize) / 256.0;
-		//double xyValue = ix * xPeriod / noiseHeight + iy * yPeriod / noiseWidth + turbPower;
-		//double value = 0.0;
-		e=ix*a/H+iy*b/W+c; //xyvalue
-		v=0;
-    
-		//size=turbSize;
-		s=d;
-		//while(size >= 1)
-		while(s>=1)
-		{
-			//value += smoothNoise(x / size, y / size) * size;
-			/*
-			D _x=ix/s,_y=iy/s,_value=0;
-			//get fractional part of x and y
-			double fractX = _x - int(_x);
-			double fractY = _y - int(_y);
-
-			//wrap around
-			int x1 = (int(_x) + noiseWidth) % noiseWidth;
-			int y1 = (int(_y) + noiseHeight) % noiseHeight;
-
-			//neighbor values
-			int x2 = (x1 + noiseWidth - 1) % noiseWidth;
-			int y2 = (y1 + noiseHeight - 1) % noiseHeight;
-
-			//smooth the noise with bilinear interpolation
-			//double value = 0.0;
-			_value += fractX       * fractY       * noise[x1+y1*W];
-			_value += fractX       * (1 - fractY) * noise[x1+y2*W];
-			_value += (1 - fractX) * fractY       * noise[x2+y1*W];
-			_value += (1 - fractX) * (1 - fractY) * noise[x2+y2*W];
-			value+=_value*s;
-			*/
-
-			p=ix/s; //_x
-			q=iy/s; //_y
-			l=p-(I)p; //fracX
-			m=q-(I)q; //fracY
-			f=((I)p+W)%W; //x1
-			g=((I)q+H)%H; //y1
-			h=(f+W-1)%W; //x2
-			j=(g+H-1)%H; //y2
-			r=l*m*n[f+g*W];
-			r+=l*(1-m)*n[f+j*W];
-			r+=(1-l)*m*n[h+g*W];
-			r+=(1-l)*(1-m)*n[h+j*W];
-			v+=r*s;
+//for(i=0;i<1;i++)
+{
+/*
+	{
+	D p[]={
+128.6613213834577,115.30930478216203,
+130.2254956418043,90.28251664861641,
+129.44340851263098,71.5124255484572,
 
 
 
-			//size /= 2.0;
-			s/=2;
-		}
-		//xyValue*=(128.0 * value / turbSize)/256.;
-		e*=(128*v/d)/256;
+		
 
-//		* turbulence(x, y, turbSize) / 256.0;
-//		xyValue/=32768;
-		e/=32768;
-		e=256*fabs(sin(PI*e));
-		//e=xyValue;
-        //double sineValue = 256 * fabs(sin(PI*e));
-        B(iy, ix)=e;
-    }
+	};
+	for(j=0;j<sizeof(p)/sizeof(p[0]);j+=6){
+		x=pow(p[j+2],2)+pow(p[j+3],2)-p[j]*p[j]-pow(p[j+1],2);
+		y=pow(p[j+4],2)+pow(p[j+5],2)-pow(p[j+2],2)-pow(p[j+3],2);
+		a=2*p[j+2]-2*p[j];
+		b=2*p[j+3]-2*p[j+1];
+		c=2*p[j+4]-2*p[j+2];
+		d=2*p[j+5]-2*p[j+3];
+		e=1/(a*d-c*b);
+		u=d*x-b*y;
+		v=-c*x+a*y;
+		x=e*u;
+		y=e*v;
+		r=sqrt(pow(p[j+4]-x,2)+pow(p[j+5]-y,2));
+		a=atan2(p[j+1]-y,p[j]-x);
+		if(a<0)
+			a+=2*PI;
+		b=atan2(p[j+3]-y,p[j+2]-x);
+		if(b<0)
+			b+=2*PI;
+		c=atan2(p[j+5]-y,p[j+4]-x);
+		if(c<0)
+			c+=2*PI;
+		d=min(min(b,c),a);
+		b=max(max(b,c),a);
+		a=d;
+		d=b-a;
+		//printf("x=%f y=%f r=%f min=%f rot=%f\n",x,y,r,a*180/PI,b*180/PI);
+		printf("%.1f,%.1f,%.1f,%.1f,%.1f,\n",x,y,r,a*180/PI,b*180/PI);
 	}
-	
+	}
+*/
+	D p[]={
+174,160,111,153,286,
+96,189,30,-1,135,
+188,170,63,163,254,
+199,88,35,70,144,
+187,144,32,-40,3,
+226,128,17,-61,100,
+238,109,5,-76,100,
+240,98,6,-90,80,
+211,81,28,-99,130,
+109,185,8,0,360,
+83,187,8,0,360,
+93,176,4,0,360,
+98,196,14,280,343,
+69,198,17,293,348,
+89,339,171,261,279,
+//-80,89,210,-6,5,
+	};
+	for(j=0;j<15*5;j+=5){
+		for(a=p[j+3];a<=p[j+4];a+=.1){
+			b=p[j+2];
+			c=PI/180;
+			x=cos(a*c)*b;
+			y=sin(a*c)*b;
+			B(H-(p[j+1]+y),p[j]+x)=15;
+		}
+	}
+	/*
+	for(;j<4);j+=4)
+	{
+		x=p[j];
+		y=p[j+1];
+		for(a=0;a<p[j+3];a++){
+			b=p[j+2]*PI/180;
+			B(y+sin(b)*a,x+cos(b)*a)=15;
+		}
+	}
+*/
 	C;
 }
-
 
 }//END BLOCK
 #else
