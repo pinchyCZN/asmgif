@@ -25,7 +25,8 @@ int addcolor(int color,int *colors)
 int logdata(unsigned char *str,int count)
 {
 	FILE *f;
-	f=fopen("b:\\out.txt","a+");
+	static int warn_once=TRUE;
+	f=fopen("out.txt","a+");
 	if(f){
 		int i;
 		for(i=0;i<count;i++){
@@ -33,6 +34,9 @@ int logdata(unsigned char *str,int count)
 		}
 		fprintf(f,"\n");
 		fclose(f);
+	}else if(warn_once){
+		warn_once=FALSE;
+		printf("error:unable to log data\n");
 	}
 }
 int emit_color(int color,unsigned char *str,int *bitcount)
@@ -84,6 +88,33 @@ int folder_exists(char *path)
 	}
 	return result;
 }
+int copy_str_clipboard(char *str)
+{
+	int len,result=FALSE;
+	HGLOBAL hmem;
+	char *lock;
+	len=strlen(str);
+	if(len==0)
+		return result;
+	len++;
+	hmem=GlobalAlloc(GMEM_MOVEABLE,len);
+	if(hmem!=0){
+		lock=GlobalLock(hmem);
+		if(lock!=0){
+			memcpy(lock,str,len);
+			GlobalUnlock(hmem);
+			if(OpenClipboard(NULL)!=0){
+				EmptyClipboard();
+				SetClipboardData(CF_TEXT,hmem);
+				CloseClipboard();
+				result=TRUE;
+			}
+		}
+		if(!result)
+			GlobalFree(hmem);
+	}
+	return result;
+}
 int export_image()
 {
 
@@ -96,15 +127,15 @@ int export_image()
 
 	DeleteFile("out.txt");
 
-	f=fopen("5.raw","rb");
+	f=fopen("Clipboard01.raw","rb");
 	if(f){
 		int colors[100];
 		int current_color=-1;
 		int bitcount=0;
 		int streak=0;
 		int x=0;
-		int IMAGE_WIDTH=6;
-		int MAX_STREAK=6;
+		int IMAGE_WIDTH=16;
+		int MAX_STREAK=7;
 		unsigned char str[2000]={0};
 		unsigned char data[0x1000]={0};
 		int len,i;
@@ -147,8 +178,9 @@ int export_image()
 		}
 		fclose(f);
 		{
-			int i;
+			int i,index=0;
 			int BITLEN=5;
+			char tmp[256]={0};
 			for(i=0;i<bitcount;i+=BITLEN){
 				int j,a=0;
 				for(j=0;j<BITLEN;j++){
@@ -159,6 +191,17 @@ int export_image()
 				if(a=='\\')
 					printf("%c",a);
 				printf("%c",a);
+				tmp[index++]=a;
+				if(index>=sizeof(tmp)){
+					printf("\nmax buf size exceeded\n");
+					break;
+				}
+			}
+			tmp[sizeof(tmp)-1]=0;
+			i=strlen(tmp);
+			if(i>0){
+				printf("\ncopied string to clipbard\n");
+				copy_str_clipboard(tmp);
 			}
 		}
 	}
@@ -167,4 +210,10 @@ int export_image()
 	printf("\ndone\n");
 	getch();
 	exit(0);
+}
+
+
+int main(int argc,char **argv)
+{
+	export_image();
 }

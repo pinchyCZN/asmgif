@@ -159,7 +159,15 @@ int printbits(int v,int count)
 #define noiseHeight H
 
 double noise[noiseWidth][noiseHeight]; //the noise array
-
+void generateNoise()
+{
+    for (int x = 0; x < noiseWidth; x++)
+    for (int y = 0; y < noiseHeight; y++)
+    {
+        //noise[x][y] = (rand() % 32768) / 32768.0;
+		noise[x][y] = rand() % 32768;
+    }
+}
 double smoothNoise(double x, double y)
 {  
    //get fractional part of x and y
@@ -182,15 +190,6 @@ double smoothNoise(double x, double y)
    value += (1 - fractX) * (1 - fractY) * noise[x2][y2];
 
    return value;
-}
-void generateNoise()
-{
-    for (int x = 0; x < noiseWidth; x++)
-    for (int y = 0; y < noiseHeight; y++)
-    {
-        //noise[x][y] = (rand() % 32768) / 32768.0;
-		noise[x][y] = rand() % 32768;
-    }
 }
 double turbulence(double x, double y, double size)
 {
@@ -302,103 +301,37 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 {//START BLOCK
 //MAX length 439
 //export_image();
-
-I i,f,g,h,j;
-D a,b,c,d,e,l,m,p,q,r,s,v;
-
-PG;
-D n[W*H];
-for(i=0;i<4;i++){
-	{L{
-        n[ix+iy*W]=rand()%32768;
-		//(rand() % 32768) / 32768.0;
-	}}
-	//generateNoise();
-	//xPeriod and yPeriod together define the angle of the lines
-	//xPeriod and yPeriod both 0 ==> it becomes a normal clouds or turbulence pattern
-	//double xPeriod = 1.0; //defines repetition of marble lines in x direction
-	//double yPeriod = 1.0+i; //defines repetition of marble lines in y direction
-	//turbPower = 0 ==> it becomes a normal sine pattern
-	//double turbPower = 2.0+i; //makes twists
-	//double turbSize = 72.0; //initial size of the turbulence
-	a=1; //xperiod
-	b=1+i; //yperiod
-	c=2+i; //turbpower
-	d=72; //turbsize
-    
-	{L
-    {    
-		//I noiseHeight=H,noiseWidth=W;
-        ////double xyValue = x * xPeriod / noiseHeight + y * yPeriod / noiseWidth + turbPower * turbulence(x, y, turbSize) / 256.0;
-		//double xyValue = ix * xPeriod / noiseHeight + iy * yPeriod / noiseWidth + turbPower;
-		//double value = 0.0;
-		e=ix*a/H+iy*b/W+c; //xyvalue
-		v=0;
-    
-		//size=turbSize;
-		s=d;
-		//while(size >= 1)
-		while(s>=1)
-		{
-			//value += smoothNoise(x / size, y / size) * size;
-			/*
-			D _x=ix/s,_y=iy/s,_value=0;
-			//get fractional part of x and y
-			double fractX = _x - int(_x);
-			double fractY = _y - int(_y);
-
-			//wrap around
-			int x1 = (int(_x) + noiseWidth) % noiseWidth;
-			int y1 = (int(_y) + noiseHeight) % noiseHeight;
-
-			//neighbor values
-			int x2 = (x1 + noiseWidth - 1) % noiseWidth;
-			int y2 = (y1 + noiseHeight - 1) % noiseHeight;
-
-			//smooth the noise with bilinear interpolation
-			//double value = 0.0;
-			_value += fractX       * fractY       * noise[x1+y1*W];
-			_value += fractX       * (1 - fractY) * noise[x1+y2*W];
-			_value += (1 - fractX) * fractY       * noise[x2+y1*W];
-			_value += (1 - fractX) * (1 - fractY) * noise[x2+y2*W];
-			value+=_value*s;
-			*/
-
-			p=ix/s; //_x
-			q=iy/s; //_y
-			l=p-(I)p; //fracX
-			m=q-(I)q; //fracY
-			f=((I)p+W)%W; //x1
-			g=((I)q+H)%H; //y1
-			h=(f+W-1)%W; //x2
-			j=(g+H-1)%H; //y2
-			r=l*m*n[f+g*W];
-			r+=l*(1-m)*n[f+j*W];
-			r+=(1-l)*m*n[h+g*W];
-			r+=(1-l)*(1-m)*n[h+j*W];
-			v+=r*s;
-
-
-
-			//size /= 2.0;
-			s/=2;
-		}
-		//xyValue*=(128.0 * value / turbSize)/256.;
-		e*=(128*v/d)/256;
-
-//		* turbulence(x, y, turbSize) / 256.0;
-//		xyValue/=32768;
-		e/=32768;
-		e=256*fabs(sin(PI*e));
-		//e=xyValue;
-        //double sineValue = 256 * fabs(sin(PI*e));
-        B(iy, ix)=e;
-    }
+I i,j,k,l,p;
+D a,y;
+for(i=0;i<64;i++){
+	I spr[]={
+	0x0838181c,0x18180c0c,
+	0x10181818,0x18180c0c,
+	0x20241c3c,0x38180c0c,
+	0x04442418,0x5e380c0c};
+	y=0;
+	l=i%4;
+	if(i>10 && i<40){
+		y=40*sin(PI/30*(i-10));
+		l=3;
 	}
-	
+	for(j=0;j<32;j++)
+		for(k=0;k<32;k++){
+			a=l*2+j/16;
+			p=spr[l*2+j/16];
+			p=p>>(8*(3-((j/4)%4)));
+			p&=1<<(7-k/4);
+			if(p)
+				B(H/2-j-y,W/2+k)=55;
+		}
+	for(j=0;j<W;j++)
+		B(H/2,j)=22;
+	for(j=0;j<20;j++)
+		for(k=0;k<40;k++){
+			B(H/2-j,W-i*8+k)=11;
+		}
 	C;
 }
-
 
 }//END BLOCK
 #else
