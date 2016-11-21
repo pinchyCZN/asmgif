@@ -308,98 +308,35 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 //cube letters I i,j,k,m,n,o;D t,u,v,w,a,b,c,r,d;PG;for(i=0;i<16;i++){r=PI/16.*i;L{for(m=0;m<8;m++)for(n=0;n<8;n++){o=f8['Q'*8+7-n]&(1<<m);if(!o)continue;t=10;while(t>0){u=x*12.;v=y*12.;w=t;ROT(u,v,0);ROT(u,w,r);u+=m*3.2-12;v+=n*3.2-12;a=u<-1?-1:u>1?1:u;b=v<-1?-1:v>1?1:v;c=w<-1?-1:w>1?1:w;a=a-u;b=b-v;c=c-w;a=a*a+b*b+c*c;d=sqrt(a);if(d<.1){d=255.*t*.12;d+=B(iy,ix);if(d<0)d=0;if(d>255)d=255;B(iy,ix)=d;break;}t-=(d);}}}C;}
 //dragon curve I k,l,x,y,dx,dy,t,d,a;struct Q{U8 *s;I i;};vector<void*>z;U8 *s;y=x=W/3;l=k=0;Q *q=new Q;q->s=(U8*)"FX";q->i=20;z.insert(z.begin(),q);dx=1;dy=0;N:do{q=(Q*)z.at(k);d=q->i;s=q->s;while((a=*s++)!=0){a-='F';if(d&&a>0){q->s=s;q->i=d;z.at(k)=q;s=(U8*)(a==18?"X+YF+":"-FX-Y");q=new Q;q->i=--d;q->s=s;z.push_back(q);k++;goto N;}if(a<0){a=a==-27?1:-1;t=a*dy;dy=-a*dx;dx=t;}if(!a){B(y,x)=l++/99;x+=dx;y+=dy;}}z.pop_back();k--;}while(k);F;
 //hex tunnel I i,j,k,l,m;D a,b,c,d,e,x,y,z;for(a=0;a<256;a++){P=a/7;P=a/1;P=a/1;}for(m=i=0;i<24;i++){for(k=0;k<64;k++)for(j=0;j<6;j++)for(x=0;x<100;x++){y=88;z=0;a=x-50;b=y;c=z;ROT(a,b,PI/3*j);a-=200;ROT(a,c,PI/32*k-PI/48*i);c=c+500;a=a*500/c;b=b*500/c;e=700-c;e/=1;e=e<0?0:e>255?255:e;if(c>320)B(b+H/2,a+400)=e;}C;}
+//zelda char *g,*s="END@DNJC@BQAI^IAQA@BQA^ZAQA@BRYQIRIQYRA@BRYQYRYQYRA@CVTYA@CJRZRJYA@A]TJ[@ZQ\\MQZ@YSZQZJSY@ZQ[QI\\S@ZQ[QZLQA@^QMC@AUYB[C@D[FB@G",*e="DNC@CNJB@AQAI^IAQ@AQA^ZAQ@ARYQIRIQYR@ARYQYRYQYR@BVTY@CIRZRIZ@A]SKQ@ZQ\\MQ@YSZQZJYA@ZQ[QI[IA@ZQ[QZKA@^QKYB@AUB[B@FB[B@G";I i,j,x,y,c,t,f;for(f=0;f<64;f++){i=x=y=0;for(;;){f&1?g=e:g=s;c=g[i++];t=c&7;c>>=3;if(t==0){x=0;y++;}else{if(t==7)break;for(;t>0;t--){B(y+f*4,W/2+x++)=c*32;}}}C;}
 {//START BLOCK
 //MAX length 439
 //export_image();
+//return 0;
 
-I i,j;
-D x,y,a,b,c,d,e,u,v,r;
-
-//for(i=0;i<1;i++)
-{
-/*
-	{
-	D p[]={
-128.6613213834577,115.30930478216203,
-130.2254956418043,90.28251664861641,
-129.44340851263098,71.5124255484572,
-
-
-
-		
-
-	};
-	for(j=0;j<sizeof(p)/sizeof(p[0]);j+=6){
-		x=pow(p[j+2],2)+pow(p[j+3],2)-p[j]*p[j]-pow(p[j+1],2);
-		y=pow(p[j+4],2)+pow(p[j+5],2)-pow(p[j+2],2)-pow(p[j+3],2);
-		a=2*p[j+2]-2*p[j];
-		b=2*p[j+3]-2*p[j+1];
-		c=2*p[j+4]-2*p[j+2];
-		d=2*p[j+5]-2*p[j+3];
-		e=1/(a*d-c*b);
-		u=d*x-b*y;
-		v=-c*x+a*y;
-		x=e*u;
-		y=e*v;
-		r=sqrt(pow(p[j+4]-x,2)+pow(p[j+5]-y,2));
-		a=atan2(p[j+1]-y,p[j]-x);
-		if(a<0)
-			a+=2*PI;
-		b=atan2(p[j+3]-y,p[j+2]-x);
-		if(b<0)
-			b+=2*PI;
-		c=atan2(p[j+5]-y,p[j+4]-x);
-		if(c<0)
-			c+=2*PI;
-		d=min(min(b,c),a);
-		b=max(max(b,c),a);
-		a=d;
-		d=b-a;
-		//printf("x=%f y=%f r=%f min=%f rot=%f\n",x,y,r,a*180/PI,b*180/PI);
-		printf("%.1f,%.1f,%.1f,%.1f,%.1f,\n",x,y,r,a*180/PI,b*180/PI);
-	}
-	}
-*/
-	D p[]={
-174,160,111,153,286,
-96,189,30,-1,135,
-188,170,63,163,254,
-199,88,35,70,144,
-187,144,32,-40,3,
-226,128,17,-61,100,
-238,109,5,-76,100,
-240,98,6,-90,80,
-211,81,28,-99,130,
-109,185,8,0,360,
-83,187,8,0,360,
-93,176,4,0,360,
-98,196,14,280,343,
-69,198,17,293,348,
-89,339,171,261,279,
-//-80,89,210,-6,5,
-	};
-	for(j=0;j<15*5;j+=5){
-		for(a=p[j+3];a<=p[j+4];a+=.1){
-			b=p[j+2];
-			c=PI/180;
-			x=cos(a*c)*b;
-			y=sin(a*c)*b;
-			B(H-(p[j+1]+y),p[j]+x)=15;
+char *s="CCAGGAFCCCAEKKEJECCBEJGGIGCCEJEKKEKECBEKGGIGFCEKFMRMFMRMEBFKEMSMEMSMEAEIEKIGFIGFBEIEKJGKGBFKKKIEIEKEAEKKKFKFIEAEKKKWWWUEKKIV[[ZUBEKJUZWWWUAEKIEWUKKIECEKIFKKJECBEKKKKECCAFKKJFCCCAGGFCC@";
+I i,j,x,y,c,t,f,a,b,k[7]={0,167,72,15,8,6,12};
+for(f=0;f<64;f++) {
+    i=x=y=0;
+    while(c=s[i++]) {
+        t=c&3;
+        c>>=2;
+		c&=7;
+		for(j=0;j<t;j++){
+			for(a=0;a<8;a++)
+				for(b=0;b<8;b++)
+					B(y*8+a,x*8+b)=k[c];
+			x++;
+			if(x>19){
+				x=0;
+				y++;
+			}
 		}
-	}
-	/*
-	for(;j<4);j+=4)
-	{
-		x=p[j];
-		y=p[j+1];
-		for(a=0;a<p[j+3];a++){
-			b=p[j+2]*PI/180;
-			B(y+sin(b)*a,x+cos(b)*a)=15;
-		}
-	}
-*/
-	C;
+
+    }
+    C;
 }
+
 
 }//END BLOCK
 #else
