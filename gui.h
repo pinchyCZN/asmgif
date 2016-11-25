@@ -127,7 +127,8 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 	switch(msg){
 	case WM_INITDIALOG:
 		SendDlgItemMessage(hwnd,IDC_SLIDER,TBM_SETRANGE,TRUE,MAKELONG(0,63));
-		SendDlgItemMessage(hwnd,IDC_ANIMATE,BM_CLICK,0,0);
+		if(frame_count>1)
+			SendDlgItemMessage(hwnd,IDC_ANIMATE,BM_CLICK,0,0);
 		{
 			char title[200];
 			HANDLE hConWnd;
@@ -240,7 +241,13 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 				InvalidateRect(hwnd,0,0);
 			}else if((!animate) && mx<=W && my>=Y_OFFSET && my<=(Y_OFFSET+H)){
 				char str[80];
-				sprintf(str,"x=%03i y=%03i",mx,my-Y_OFFSET);
+				double x,y;
+				int ix,iy;
+				ix=mx;
+				iy=my-Y_OFFSET;
+				x=-1/0.75+2.0*ix/H;
+				y=-1+2.0*iy/H;
+				sprintf(str,"ix=%03i iy=%03i x=%.3f y=%.3f",ix,iy,x,y);
 				SetDlgItemText(hwnd,IDC_TEXT,str);
 			}
 			break;

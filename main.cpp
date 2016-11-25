@@ -309,33 +309,36 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 //dragon curve I k,l,x,y,dx,dy,t,d,a;struct Q{U8 *s;I i;};vector<void*>z;U8 *s;y=x=W/3;l=k=0;Q *q=new Q;q->s=(U8*)"FX";q->i=20;z.insert(z.begin(),q);dx=1;dy=0;N:do{q=(Q*)z.at(k);d=q->i;s=q->s;while((a=*s++)!=0){a-='F';if(d&&a>0){q->s=s;q->i=d;z.at(k)=q;s=(U8*)(a==18?"X+YF+":"-FX-Y");q=new Q;q->i=--d;q->s=s;z.push_back(q);k++;goto N;}if(a<0){a=a==-27?1:-1;t=a*dy;dy=-a*dx;dx=t;}if(!a){B(y,x)=l++/99;x+=dx;y+=dy;}}z.pop_back();k--;}while(k);F;
 //hex tunnel I i,j,k,l,m;D a,b,c,d,e,x,y,z;for(a=0;a<256;a++){P=a/7;P=a/1;P=a/1;}for(m=i=0;i<24;i++){for(k=0;k<64;k++)for(j=0;j<6;j++)for(x=0;x<100;x++){y=88;z=0;a=x-50;b=y;c=z;ROT(a,b,PI/3*j);a-=200;ROT(a,c,PI/32*k-PI/48*i);c=c+500;a=a*500/c;b=b*500/c;e=700-c;e/=1;e=e<0?0:e>255?255:e;if(c>320)B(b+H/2,a+400)=e;}C;}
 //zelda char *g,*s="END@DNJC@BQAI^IAQA@BQA^ZAQA@BRYQIRIQYRA@BRYQYRYQYRA@CVTYA@CJRZRJYA@A]TJ[@ZQ\\MQZ@YSZQZJSY@ZQ[QI\\S@ZQ[QZLQA@^QMC@AUYB[C@D[FB@G",*e="DNC@CNJB@AQAI^IAQ@AQA^ZAQ@ARYQIRIQYR@ARYQYRYQYR@BVTY@CIRZRIZ@A]SKQ@ZQ\\MQ@YSZQZJYA@ZQ[QI[IA@ZQ[QZKA@^QKYB@AUB[B@FB[B@G";I i,j,x,y,c,t,f;for(f=0;f<64;f++){i=x=y=0;for(;;){f&1?g=e:g=s;c=g[i++];t=c&7;c>>=3;if(t==0){x=0;y++;}else{if(t==7)break;for(;t>0;t--){B(y+f*4,W/2+x++)=c*32;}}}C;}
+//fractal I f;D i,a,b,c,d;for(i=0;i<64;i++){d=i*i+.8;{L{f=0;a=b=0;while((a*a+b*b)<4 && f<100){c=a*a-b*b+(x-.5-i*i*1.497)/d;b=2*a*b+(y)/d;a=c;f++;}B.d(y,x)=(f*2%71)+16;}}C;}
+//burnship I f;D i,a,b,c,d,tx,ty;PG;for(i=0;i<64;i++){d=1+i*i/8;{L{f=0;a=b=0;while((a*a+b*b)<10 && f<50){tx=3+x+i*i/4.3-1;ty=y;c=a*a-b*b-tx/d;b=2*fabs(a*b)-ty/d;a=c;f++;}B.d(-y,x)=f*3;}}C;}
 {//START BLOCK
 //MAX length 439
 //export_image();
 //return 0;
-
-char *s="CCAGGAFCCCAEKKEJECCBEJGGIGCCEJEKKEKECBEKGGIGFCEKFMRMFMRMEBFKEMSMEMSMEAEIEKIGFIGFBEIEKJGKGBFKKKIEIEKEAEKKKFKFIEAEKKKWWWUEKKIV[[ZUBEKJUZWWWUAEKIEWUKKIECEKIFKKJECBEKKKKECCAFKKJFCCCAGGFCC@";
-I i,j,x,y,c,t,f,a,b,k[7]={0,167,72,15,8,6,12};
-for(f=0;f<64;f++) {
-    i=x=y=0;
-    while(c=s[i++]) {
-        t=c&3;
-        c>>=2;
-		c&=7;
-		for(j=0;j<t;j++){
-			for(a=0;a<8;a++)
-				for(b=0;b<8;b++)
-					B(y*8+a,x*8+b)=k[c];
-			x++;
-			if(x>19){
-				x=0;
-				y++;
-			}
-		}
-
+I f;
+D i,a,b,c,d,tx,ty;
+PG;
+for(i=0;i<64;i++) {
+    d=1+i*i/8;
+    {
+        L{
+			f=0; 
+			a=b=0; 
+			while((a*a+b*b)<10 && f<50) 
+			{
+				tx=3+x+i*i/4.3-1;
+				ty=y;
+				c=a*a-b*b-tx/d;
+				b=2*fabs(a*b)-ty/d;
+				a=c;
+				f++;
+			} 
+			B.d(-y,x)=f*3;
+        }
     }
     C;
 }
+
 
 
 }//END BLOCK
