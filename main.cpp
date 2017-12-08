@@ -204,6 +204,15 @@ double turbulence(double x, double y, double size)
     return(128.0 * value / initialSize);
 }
 */
+double getsRGB(int x)
+{
+	double result,c;
+	c=x;
+	c=c/255;
+	c=(c <= 0.03928) ? c / 12.92 : pow(((c + 0.055) / 1.055), 2.4);
+	result=c;
+	return result;
+}
 int test()
 {
 /*
@@ -298,40 +307,57 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 //cube letters I i,j,k,m,n,o;D t,u,v,w,a,b,c,r,d;PG;for(i=0;i<16;i++){r=PI/16.*i;L{for(m=0;m<8;m++)for(n=0;n<8;n++){o=f8['Q'*8+7-n]&(1<<m);if(!o)continue;t=10;while(t>0){u=x*12.;v=y*12.;w=t;ROT(u,v,0);ROT(u,w,r);u+=m*3.2-12;v+=n*3.2-12;a=u<-1?-1:u>1?1:u;b=v<-1?-1:v>1?1:v;c=w<-1?-1:w>1?1:w;a=a-u;b=b-v;c=c-w;a=a*a+b*b+c*c;d=sqrt(a);if(d<.1){d=255.*t*.12;d+=B(iy,ix);if(d<0)d=0;if(d>255)d=255;B(iy,ix)=d;break;}t-=(d);}}}C;}
 //dragon curve I k,l,x,y,dx,dy,t,d,a;struct Q{U8 *s;I i;};vector<void*>z;U8 *s;y=x=W/3;l=k=0;Q *q=new Q;q->s=(U8*)"FX";q->i=20;z.insert(z.begin(),q);dx=1;dy=0;N:do{q=(Q*)z.at(k);d=q->i;s=q->s;while((a=*s++)!=0){a-='F';if(d&&a>0){q->s=s;q->i=d;z.at(k)=q;s=(U8*)(a==18?"X+YF+":"-FX-Y");q=new Q;q->i=--d;q->s=s;z.push_back(q);k++;goto N;}if(a<0){a=a==-27?1:-1;t=a*dy;dy=-a*dx;dx=t;}if(!a){B(y,x)=l++/99;x+=dx;y+=dy;}}z.pop_back();k--;}while(k);F;
 //hex tunnel I i,j,k,l,m;D a,b,c,d,e,x,y,z;for(a=0;a<256;a++){P=a/7;P=a/1;P=a/1;}for(m=i=0;i<24;i++){for(k=0;k<64;k++)for(j=0;j<6;j++)for(x=0;x<100;x++){y=88;z=0;a=x-50;b=y;c=z;ROT(a,b,PI/3*j);a-=200;ROT(a,c,PI/32*k-PI/48*i);c=c+500;a=a*500/c;b=b*500/c;e=700-c;e/=1;e=e<0?0:e>255?255:e;if(c>320)B(b+H/2,a+400)=e;}C;}
+
 {//START BLOCK
 //MAX length 439
 //export_image();
-I i,j,k,l,p;
-D a,y;
-for(i=0;i<64;i++){
-	I spr[]={
-	0x0838181c,0x18180c0c,
-	0x10181818,0x18180c0c,
-	0x20241c3c,0x38180c0c,
-	0x04442418,0x5e380c0c};
-	y=0;
-	l=i%4;
-	if(i>10 && i<40){
-		y=40*sin(PI/30*(i-10));
-		l=3;
-	}
-	for(j=0;j<32;j++)
-		for(k=0;k<32;k++){
-			a=l*2+j/16;
-			p=spr[l*2+j/16];
-			p=p>>(8*(3-((j/4)%4)));
-			p&=1<<(7-k/4);
-			if(p)
-				B(H/2-j-y,W/2+k)=55;
-		}
-	for(j=0;j<W;j++)
-		B(H/2,j)=22;
-	for(j=0;j<20;j++)
-		for(k=0;k<40;k++){
-			B(H/2-j,W-i*8+k)=11;
-		}
-	C;
+
+D x,y,r,s;
+I i=0,j,a,b,u,v,m,n;
+PG;
+D stars[500];
+for(i=0;i<500;i+=2){
+	stars[i]=rand()%W;
+	stars[i+1]=rand()%H;
 }
+i=0;
+while(i<64){
+	for(j=0;j<500;j+=2){
+		x=stars[j];
+		y=stars[j+1];
+		x-=W/2;
+		y-=H/2;
+		ROT(x,y,i*PI/500);
+		r=0;
+		ROT(x,r,i*PI/50);
+		x+=W/2;
+		y+=H/2;
+		u=x;
+		v=y;
+		for(a=-5;a<=5;a++){
+			for(b=-5;b<=5;b++){
+				m=u+a;
+				n=v+b;
+				r=m;
+				r-=x;
+				s=n;
+				s-=y;
+				r=sqrt(pow(r,2)+pow(s,2));
+				if(r<2){
+					r=2-r;
+					r=100*r;
+					s=B(n,m);
+					if(r>s)
+						B(n,m)=r;
+				}
+			}
+		}
+	}
+	C;
+	i++;
+}
+
+
 
 }//END BLOCK
 #else

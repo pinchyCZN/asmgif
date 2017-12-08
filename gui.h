@@ -114,6 +114,48 @@ int display_vga_pal(HWND hwnd,int mx,int my)
 	EndPaint(hwnd,&ps);
 	return 0;
 }
+struct CTRL_POS{
+	int id;
+	int x,y;
+};
+struct CTRL_POS ctrls[]={
+	{IDC_ANIMATE,0,0},
+	{IDC_SLIDER,0,0},
+	{IDC_TEXT,0,0},
+	{IDC_VGA,0,0}
+};
+int init_ctrl_pos(HWND hwnd)
+{
+	int i;
+	for(i=0;i<sizeof(ctrls)/sizeof(CTRL_POS);i++){
+		RECT rect={0};
+		HWND hctrl=GetDlgItem(hwnd,ctrls[i].id);
+		GetClientRect(hctrl,&rect);
+		MapWindowPoints(hctrl,hwnd,(POINT*)&rect,2);
+		ctrls[i].x=rect.left;
+		ctrls[i].y=rect.top;
+	}
+	return 0;
+}
+int move_ctrls(HWND hwnd,int dx,int dy)
+{
+	int i;
+	for(i=0;i<sizeof(ctrls)/sizeof(CTRL_POS);i++){
+		RECT rect={0};
+		HWND hctrl=GetDlgItem(hwnd,ctrls[i].id);
+		int x,y;
+		x=ctrls[i].x+dx;
+		y=ctrls[i].y+dy;
+		SetWindowPos(hctrl,NULL,x,y,0,0,SWP_NOSIZE|SWP_NOZORDER);
+	}
+	return 0;
+}
+int get_delta_rect(RECT *a,RECT *b,int *dw,int *dh)
+{
+	*dw=(b->right-b->left)-(a->right-a->left);
+	*dh=(b->bottom-b->top)-(a->bottom-a->top);
+	return 1;
+}
 int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 {
 	static int current_frame=0;
@@ -123,11 +165,14 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 	static int max_delay=150;
 	static int show_vga_pal=FALSE;
 	static int mx=0,my=0;
+	static RECT orig_rect={0};
 #define Y_OFFSET 30
 	switch(msg){
 	case WM_INITDIALOG:
 		SendDlgItemMessage(hwnd,IDC_SLIDER,TBM_SETRANGE,TRUE,MAKELONG(0,63));
 		SendDlgItemMessage(hwnd,IDC_ANIMATE,BM_CLICK,0,0);
+		GetWindowRect(hwnd,&orig_rect);
+		init_ctrl_pos(hwnd);
 		{
 			char title[200];
 			HANDLE hConWnd;
@@ -144,6 +189,71 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 			current_frame=(current_frame+1)%64;
 			if(current_frame>=frame_count)
 				current_frame=0;
+		}
+		break;
+	case WM_SIZE:
+		{
+			RECT rect={0};
+			int dw=0,dh=0;
+			GetWindowRect(hwnd,&rect);
+			get_delta_rect(&orig_rect,&rect,&dw,&dh);
+			move_ctrls(hwnd,dw,dh);
+			InvalidateRect(hwnd,NULL,TRUE);
+		}
+		break;
+	case WM_SIZING:
+		{
+			RECT *rect=(RECT*)lparam;
+			int w,h,nw,nh;
+			if(0==rect)
+				break;
+			w=orig_rect.right-orig_rect.left;
+			h=orig_rect.bottom-orig_rect.top;
+			nw=rect->right-rect->left;
+			nh=rect->bottom-rect->top;
+			switch(wparam){
+			case WMSZ_BOTTOM:
+				if(nh<h)
+					rect->bottom=rect->top+h;
+				break;
+			case WMSZ_BOTTOMLEFT:
+				if(nh<h)
+					rect->bottom=rect->top+h;
+				if(nw<w)
+					rect->left=rect->right-w;
+				break;
+			case WMSZ_BOTTOMRIGHT:
+				if(nh<h)
+					rect->bottom=rect->top+h;
+				if(nw<w)
+					rect->right=rect->left+w;
+				break;
+			case WMSZ_LEFT:
+				if(nw<w)
+					rect->left=rect->right-w;
+				break;
+			case WMSZ_RIGHT:
+				if(nw<w)
+					rect->right=rect->left+w;
+				break;
+			case WMSZ_TOP:
+				if(nh<h)
+					rect->top=rect->bottom-h;
+				break;
+			case WMSZ_TOPLEFT:
+				if(nh<h)
+					rect->top=rect->bottom-h;
+				if(nw<w)
+					rect->left=rect->right-w;
+				break;
+			case WMSZ_TOPRIGHT:
+				if(nh<h)
+					rect->top=rect->bottom-h;
+				if(nw<w)
+					rect->right=rect->left+w;
+				break;
+
+			}
 		}
 		break;
 	case WM_PAINT:
@@ -184,7 +294,16 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 				bmi.bmiHeader.biHeight=H;
 				bmi.bmiHeader.biPlanes=1;
 				bmi.bmiHeader.biSize=sizeof(bmi);
-				SetDIBitsToDevice(hdc,0,Y_OFFSET,W,H,0,0,0,H,buffer,&bmi,DIB_RGB_COLORS);
+				//SetDIBitsToDevice(hdc,0,Y_OFFSET,W,H,0,0,0,H,buffer,&bmi,DIB_RGB_COLORS);
+				{
+					RECT rect;
+					int dw=0,dh=0;
+					GetWindowRect(hwnd,&rect);
+					get_delta_rect(&orig_rect,&rect,&dw,&dh);
+					StretchDIBits(hdc,0,Y_OFFSET,W+dw,H+dh,0,0,W,H,buffer,&bmi,DIB_RGB_COLORS,SRCCOPY);
+
+				}
+
 				EndPaint(hwnd,&ps);
 				if(animate){
 					char str[80];
@@ -231,6 +350,12 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 				}
 			}
 		}
+		break;
+	case WM_LBUTTONDBLCLK:
+		if(IsZoomed(hwnd))
+			ShowWindow(hwnd,SW_RESTORE);
+		else
+			ShowWindow(hwnd,SW_MAXIMIZE);
 		break;
 	case WM_MOUSEMOVE:
 		{
