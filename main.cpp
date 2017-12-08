@@ -307,7 +307,9 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 //cube letters I i,j,k,m,n,o;D t,u,v,w,a,b,c,r,d;PG;for(i=0;i<16;i++){r=PI/16.*i;L{for(m=0;m<8;m++)for(n=0;n<8;n++){o=f8['Q'*8+7-n]&(1<<m);if(!o)continue;t=10;while(t>0){u=x*12.;v=y*12.;w=t;ROT(u,v,0);ROT(u,w,r);u+=m*3.2-12;v+=n*3.2-12;a=u<-1?-1:u>1?1:u;b=v<-1?-1:v>1?1:v;c=w<-1?-1:w>1?1:w;a=a-u;b=b-v;c=c-w;a=a*a+b*b+c*c;d=sqrt(a);if(d<.1){d=255.*t*.12;d+=B(iy,ix);if(d<0)d=0;if(d>255)d=255;B(iy,ix)=d;break;}t-=(d);}}}C;}
 //dragon curve I k,l,x,y,dx,dy,t,d,a;struct Q{U8 *s;I i;};vector<void*>z;U8 *s;y=x=W/3;l=k=0;Q *q=new Q;q->s=(U8*)"FX";q->i=20;z.insert(z.begin(),q);dx=1;dy=0;N:do{q=(Q*)z.at(k);d=q->i;s=q->s;while((a=*s++)!=0){a-='F';if(d&&a>0){q->s=s;q->i=d;z.at(k)=q;s=(U8*)(a==18?"X+YF+":"-FX-Y");q=new Q;q->i=--d;q->s=s;z.push_back(q);k++;goto N;}if(a<0){a=a==-27?1:-1;t=a*dy;dy=-a*dx;dx=t;}if(!a){B(y,x)=l++/99;x+=dx;y+=dy;}}z.pop_back();k--;}while(k);F;
 //hex tunnel I i,j,k,l,m;D a,b,c,d,e,x,y,z;for(a=0;a<256;a++){P=a/7;P=a/1;P=a/1;}for(m=i=0;i<24;i++){for(k=0;k<64;k++)for(j=0;j<6;j++)for(x=0;x<100;x++){y=88;z=0;a=x-50;b=y;c=z;ROT(a,b,PI/3*j);a-=200;ROT(a,c,PI/32*k-PI/48*i);c=c+500;a=a*500/c;b=b*500/c;e=700-c;e/=1;e=e<0?0:e>255?255:e;if(c>320)B(b+H/2,a+400)=e;}C;}
-
+//zelda char *g,*s="END@DNJC@BQAI^IAQA@BQA^ZAQA@BRYQIRIQYRA@BRYQYRYQYRA@CVTYA@CJRZRJYA@A]TJ[@ZQ\\MQZ@YSZQZJSY@ZQ[QI\\S@ZQ[QZLQA@^QMC@AUYB[C@D[FB@G",*e="DNC@CNJB@AQAI^IAQ@AQA^ZAQ@ARYQIRIQYR@ARYQYRYQYR@BVTY@CIRZRIZ@A]SKQ@ZQ\\MQ@YSZQZJYA@ZQ[QI[IA@ZQ[QZKA@^QKYB@AUB[B@FB[B@G";I i,j,x,y,c,t,f;for(f=0;f<64;f++){i=x=y=0;for(;;){f&1?g=e:g=s;c=g[i++];t=c&7;c>>=3;if(t==0){x=0;y++;}else{if(t==7)break;for(;t>0;t--){B(y+f*4,W/2+x++)=c*32;}}}C;}
+//fractal I f;D i,a,b,c,d;for(i=0;i<64;i++){d=i*i+.8;{L{f=0;a=b=0;while((a*a+b*b)<4 && f<100){c=a*a-b*b+(x-.5-i*i*1.497)/d;b=2*a*b+(y)/d;a=c;f++;}B.d(y,x)=(f*2%71)+16;}}C;}
+//burnship I f;D i,a,b,c,d,tx,ty;PG;for(i=0;i<64;i++){d=1+i*i/8;{L{f=0;a=b=0;while((a*a+b*b)<10 && f<50){tx=3+x+i*i/4.3-1;ty=y;c=a*a-b*b-tx/d;b=2*fabs(a*b)-ty/d;a=c;f++;}B.d(-y,x)=f*3;}}C;}
 {//START BLOCK
 //MAX length 439
 //export_image();
