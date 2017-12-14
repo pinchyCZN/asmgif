@@ -314,51 +314,34 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 //MAX length 439
 //export_image();
 
-D x,y,r,s;
-I i=0,j,a,b,u,v,m,n;
-PG;
-D stars[500];
-for(i=0;i<500;i+=2){
-	stars[i]=rand()%W;
-	stars[i+1]=rand()%H;
-}
-i=0;
-while(i<64){
-	for(j=0;j<500;j+=2){
-		x=stars[j];
-		y=stars[j+1];
-		x-=W/2;
-		y-=H/2;
-		ROT(x,y,i*PI/500);
-		r=0;
-		ROT(x,r,i*PI/50);
-		x+=W/2;
-		y+=H/2;
-		u=x;
-		v=y;
-		for(a=-5;a<=5;a++){
-			for(b=-5;b<=5;b++){
-				m=u+a;
-				n=v+b;
-				r=m;
-				r-=x;
-				s=n;
-				s-=y;
-				r=sqrt(pow(r,2)+pow(s,2));
-				if(r<2){
-					r=2-r;
-					r=100*r;
-					s=B(n,m);
-					if(r>s)
-						B(n,m)=r;
-				}
-			}
-		}
-	}
+I i=0;
+D r,s,t;
+while(1){
+	{L{
+		t=y+.2;
+		r=sqrt(x*x+t*t);
+		t=y+.5;
+		s=sin(t*37);
+		if(s>(.9-t*2))
+			r=1;
+		B.d(y,x)=35;
+		if(r<.7)
+			B(iy,ix)=iy<107?14:iy<128?38:113;
+
+		r=sin(x*PI/8+i*PI/12)/3;
+		if(y>r)
+			B(iy,ix)=33;
+		r=cos(x*PI/4+i*PI/12)/9;
+		if(y-.3>r)
+			B(iy,ix)=0;
+		r=sin(x*PI/2+i*PI/12)/9;
+		if(y-.6>r)
+			B(iy,ix)=79;
+	
+	}}
 	C;
 	i++;
 }
-
 
 
 }//END BLOCK
