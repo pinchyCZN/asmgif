@@ -311,33 +311,69 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 //zelda char *g,*s="END@DNJC@BQAI^IAQA@BQA^ZAQA@BRYQIRIQYRA@BRYQYRYQYRA@CVTYA@CJRZRJYA@A]TJ[@ZQ\\MQZ@YSZQZJSY@ZQ[QI\\S@ZQ[QZLQA@^QMC@AUYB[C@D[FB@G",*e="DNC@CNJB@AQAI^IAQ@AQA^ZAQ@ARYQIRIQYR@ARYQYRYQYR@BVTY@CIRZRIZ@A]SKQ@ZQ\\MQ@YSZQZJYA@ZQ[QI[IA@ZQ[QZKA@^QKYB@AUB[B@FB[B@G";I i,j,x,y,c,t,f;for(f=0;f<64;f++){i=x=y=0;for(;;){f&1?g=e:g=s;c=g[i++];t=c&7;c>>=3;if(t==0){x=0;y++;}else{if(t==7)break;for(;t>0;t--){B(y+f*4,W/2+x++)=c*32;}}}C;}
 //fractal I f;D i,a,b,c,d;for(i=0;i<64;i++){d=i*i+.8;{L{f=0;a=b=0;while((a*a+b*b)<4 && f<100){c=a*a-b*b+(x-.5-i*i*1.497)/d;b=2*a*b+(y)/d;a=c;f++;}B.d(y,x)=(f*2%71)+16;}}C;}
 //burnship I f;D i,a,b,c,d,tx,ty;PG;for(i=0;i<64;i++){d=1+i*i/8;{L{f=0;a=b=0;while((a*a+b*b)<10 && f<50){tx=3+x+i*i/4.3-1;ty=y;c=a*a-b*b-tx/d;b=2*fabs(a*b)-ty/d;a=c;f++;}B.d(-y,x)=f*3;}}C;}
+//spiral torus D a,b,c,f=0,i,r,s,t,l,m,n;while(f<6){{L{a=b=0;c=3;l=ix-W/2;m=iy-H/2;n=-80;r=sqrt(l*l+m*m+n*n);l/=r;m/=r;n/=r;for(i=0;i<64;i++){r=sqrt(a*a+c*c)-4;r=sqrt(r*r+b*b)-3;r=-r;a+=r*l;b+=r*m;c+=r*n;}r=atan(c/a*2);t=sqrt(a*a+c*c)-4;s=atan(b/t);a=8*(r+s+f/16)/PI;r=a-floor(a);s=77;if(r>.5)s=55;B(iy,ix)=s;}}C;f++;}
 {//START BLOCK
 //MAX length 439
 //export_image();
 //return 0;
-I f;
-D i,a,b,c,d,tx,ty;
-PG;
-for(i=0;i<64;i++) {
-    d=1+i*i/8;
+
+/*
+void mainImage( out vec4 fragColor, in vec2 fragCoord )
+{
+    vec2 px = (2.0*fragCoord-iResolution.xy)/iResolution.y;
+    
+    vec3 ro = vec3(0.0, 0.0, -0.9);
+    vec3 rd = normalize( vec3(px,1.0) );
+
+    vec3  po = ro;
+    float k;
+    for (int i = 0; i <50; i++)
     {
-        L{
-			f=0; 
-			a=b=0; 
-			while((a*a+b*b)<10 && f<50) 
-			{
-				tx=3+x+i*i/4.3-1;
-				ty=y;
-				c=a*a-b*b-tx/d;
-				b=2*fabs(a*b)-ty/d;
-				a=c;
-				f++;
-			} 
-			B.d(-y,x)=f*3;
-        }
+        k = length(po.xz) - 1.0;
+        float h = 0.75-length(vec2(k,po.y));
+        po += h * rd;
     }
-    C;
+
+    float f = iTime + atan(k*po.z + po.x*po.y,
+                                    k*po.x - po.z*po.y );
+
+    fragColor = vec4(8.0*sin(16.0*f));
 }
+*/
+D a,b,c,f=0,i,r,s,t,l,m,n;
+while(f<6){
+	{L{
+		a=b=0;
+		c=3;
+		l=ix-W/2;
+		m=iy-H/2;
+		n=-80;
+		r=sqrt(l*l+m*m+n*n);
+		l/=r;
+		m/=r;
+		n/=r;
+		for(i=0;i<64;i++){
+			r=sqrt(a*a+c*c)-4;
+			r=sqrt(r*r+b*b)-3;
+			r=-r;
+			a+=r*l;
+			b+=r*m;
+			c+=r*n;
+		}
+		r=atan(c/a*2);
+		t=sqrt(a*a+c*c)-4;
+		s=atan(b/t);
+		a=8*(r+s+f/16)/PI;
+		r=a-floor(a);
+		s=77;
+		if(r>.5)
+			s=55;
+		B(iy,ix)=s;
+	}}
+	C;
+	f++;
+}
+
 
 
 
