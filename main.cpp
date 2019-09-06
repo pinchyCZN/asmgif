@@ -312,69 +312,42 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 //fractal I f;D i,a,b,c,d;for(i=0;i<64;i++){d=i*i+.8;{L{f=0;a=b=0;while((a*a+b*b)<4 && f<100){c=a*a-b*b+(x-.5-i*i*1.497)/d;b=2*a*b+(y)/d;a=c;f++;}B.d(y,x)=(f*2%71)+16;}}C;}
 //burnship I f;D i,a,b,c,d,tx,ty;PG;for(i=0;i<64;i++){d=1+i*i/8;{L{f=0;a=b=0;while((a*a+b*b)<10 && f<50){tx=3+x+i*i/4.3-1;ty=y;c=a*a-b*b-tx/d;b=2*fabs(a*b)-ty/d;a=c;f++;}B.d(-y,x)=f*3;}}C;}
 //spiral torus D a,b,c,f=0,i,r,s,t,l,m,n;while(f<6){{L{a=b=0;c=3;l=ix-W/2;m=iy-H/2;n=-80;r=sqrt(l*l+m*m+n*n);l/=r;m/=r;n/=r;for(i=0;i<64;i++){r=sqrt(a*a+c*c)-4;r=sqrt(r*r+b*b)-3;r=-r;a+=r*l;b+=r*m;c+=r*n;}r=atan(c/a*2);t=sqrt(a*a+c*c)-4;s=atan(b/t);a=8*(r+s+f/16)/PI;r=a-floor(a);s=77;if(r>.5)s=55;B(iy,ix)=s;}}C;f++;}
+//flag D i,j,x,y,a,b;for(i=0;i<32;i++){B.c(40);{L2{a=sqrt(x*x+y*y);if(a<.9)B.d(y,x)=15;}}for(j=0;j<8;j++){for(y=0;y<18;y+=.4){for(x=0;x<70;x+=.4){a=x;if(j<4){a=x-10;b=y-80;}else{b=y-9;}ROT(a,b,j*PI/2+i*PI/32);a+=W/2;b+=H/2;B(b,a)=0;}}}C;}
 {//START BLOCK
 //MAX length 439
 //export_image();
 //return 0;
 
-/*
-void mainImage( out vec4 fragColor, in vec2 fragCoord )
-{
-    vec2 px = (2.0*fragCoord-iResolution.xy)/iResolution.y;
-    
-    vec3 ro = vec3(0.0, 0.0, -0.9);
-    vec3 rd = normalize( vec3(px,1.0) );
 
-    vec3  po = ro;
-    float k;
-    for (int i = 0; i <50; i++)
-    {
-        k = length(po.xz) - 1.0;
-        float h = 0.75-length(vec2(k,po.y));
-        po += h * rd;
-    }
 
-    float f = iTime + atan(k*po.z + po.x*po.y,
-                                    k*po.x - po.z*po.y );
-
-    fragColor = vec4(8.0*sin(16.0*f));
-}
-*/
-D a,b,c,f=0,i,r,s,t,l,m,n;
-while(f<6){
-	{L{
-		a=b=0;
-		c=3;
-		l=ix-W/2;
-		m=iy-H/2;
-		n=-80;
-		r=sqrt(l*l+m*m+n*n);
-		l/=r;
-		m/=r;
-		n/=r;
-		for(i=0;i<64;i++){
-			r=sqrt(a*a+c*c)-4;
-			r=sqrt(r*r+b*b)-3;
-			r=-r;
-			a+=r*l;
-			b+=r*m;
-			c+=r*n;
-		}
-		r=atan(c/a*2);
-		t=sqrt(a*a+c*c)-4;
-		s=atan(b/t);
-		a=8*(r+s+f/16)/PI;
-		r=a-floor(a);
-		s=77;
-		if(r>.5)
-			s=55;
-		B(iy,ix)=s;
+D i,j,x,y,a,b;
+for(i=0;i<32;i++){
+	B.c(40);
+	{L2{
+		a=sqrt(x*x+y*y);
+		if(a<.9)
+			B.d(y,x)=15;
 	}}
+	for(j=0;j<8;j++){
+		for(y=0;y<18;y+=.4){
+			for(x=0;x<70;x+=.4){
+				a=x;
+				if(j<4){
+					a=x-10;
+					b=y-80;
+				}
+				else{
+					b=y-9;
+				}
+				ROT(a,b,j*PI/2+i*PI/32);
+				a+=W/2;
+				b+=H/2;
+				B(b,a)=0;
+			}
+		}
+	}
 	C;
-	f++;
 }
-
-
 
 
 }//END BLOCK
