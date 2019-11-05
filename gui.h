@@ -169,7 +169,7 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 #define Y_OFFSET 30
 	switch(msg){
 	case WM_INITDIALOG:
-		SendDlgItemMessage(hwnd,IDC_SLIDER,TBM_SETRANGE,TRUE,MAKELONG(0,63));
+		SendDlgItemMessage(hwnd,IDC_SLIDER,TBM_SETRANGE,TRUE,MAKELONG(0,frame_count));
 		SendDlgItemMessage(hwnd,IDC_ANIMATE,BM_CLICK,0,0);
 		GetWindowRect(hwnd,&orig_rect);
 		init_ctrl_pos(hwnd);
@@ -186,7 +186,7 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 	case WM_TIMER:
 		if(animate){
 			InvalidateRect(hwnd,0,FALSE);
-			current_frame=(current_frame+1)%64;
+			current_frame++;
 			if(current_frame>=frame_count)
 				current_frame=0;
 		}
@@ -329,6 +329,7 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 			}
 			else{
 				static int last_scroll=0;
+				int frame_limit=frame_count-1;
 				if(GetKeyState(VK_RBUTTON)&0x8000){
 					if(scroll>last_scroll)
 						scroll+=10;
@@ -339,8 +340,8 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 				current_frame=scroll;
 				if(current_frame<0)
 					current_frame=0;
-				else if(current_frame>63)
-					current_frame=63;
+				else if(current_frame>frame_limit)
+					current_frame=frame_limit;
 				InvalidateRect(hwnd,0,FALSE);
 				last_scroll=scroll;
 				{
@@ -405,7 +406,7 @@ int CALLBACK  dlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 				if(timer)
 					KillTimer(hwnd,timer);
 				timer=0;
-				SendDlgItemMessage(hwnd,IDC_SLIDER,TBM_SETRANGE,TRUE,MAKELONG(0,63));
+				SendDlgItemMessage(hwnd,IDC_SLIDER,TBM_SETRANGE,TRUE,MAKELONG(0,frame_count));
 				SendDlgItemMessage(hwnd,IDC_SLIDER,TBM_SETPOS,TRUE,current_frame);
 			}
 			break;

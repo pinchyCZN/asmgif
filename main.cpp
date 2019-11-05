@@ -8,11 +8,12 @@ extern "C" int export_image();
 
 jmp_buf jb;
 int frame_count=0;
-unsigned char buffers[64*W*H];
+unsigned char *buffers=0;
 Palette P;
 Buffer B;
 
-unsigned char anim_palette[768*64];
+unsigned char *anim_palette=0;
+int MAX_FRAMES=FRAMES;
 
 #ifdef _WIN32
 #include "gui.h"
@@ -30,7 +31,13 @@ extern "C"{
 
 void SaveFrame(bool clear)
 {
-	if(frame_count<64){
+	if(0==buffers){
+		buffers=(unsigned char *)calloc(1,MAX_FRAMES*W*H);
+	}
+	if(0==anim_palette){
+		anim_palette=(unsigned char *)calloc(1,768*MAX_FRAMES);
+	}
+	if(frame_count<MAX_FRAMES){
 		unsigned char *b=B.Get();
 		unsigned char *p=P.Get();
 		memcpy(buffers+(frame_count*W*H),b,W*H);
@@ -39,7 +46,7 @@ void SaveFrame(bool clear)
 			memset(b,0,W*H);
 		frame_count++;
 	}
-	if(frame_count>=64)
+	if(frame_count>=MAX_FRAMES)
 		longjmp(jb,1);
 }
 /*
@@ -318,36 +325,88 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 //export_image();
 //return 0;
 
+	D f,i,j,a,b,c;
+	D x1,y1,x2,y2;
+	D s1,s2;
+	D xx1,yy1,xx2,yy2;
+	xx1=10;
+	yy1=10;
+	xx2=W-10;
+	yy2=H-20;
+	s1=PI*1.1;
+	//PI*1.5 //left
+	//s1=PI; //up
+	//s1=PI/2; //right
+	//s1=0; //down
+	D once=0;
+	MAX_FRAMES=128;
+	for(f=0;f<MAX_FRAMES;f++){
+		/*
+		x1=sin(PI/32*f)*10;
+		x1=0;
+		y1=sin(PI/32*f)*20;
+		x2=W/16;
+		y2=H/16;
+		*/
+		xx1+=20*sin(s1);
+		yy1+=20*cos(s1);
+		if(xx1>W/2||xx1<-W/2){
+			s1=2*PI-s1;
+		}
+		
+		if(yy1<-H/2||yy1>H/2){
+			s1=PI-s1;
+		}
+		x1=xx1+W/2;
+		y1=yy1+H/2;
+		x2=xx2;
+		y2=yy2;
 
 
-D i,j,x,y,a,b;
-for(i=0;i<32;i++){
-	B.c(40);
-	{L2{
-		a=sqrt(x*x+y*y);
-		if(a<.9)
-			B.d(y,x)=15;
-	}}
-	for(j=0;j<8;j++){
-		for(y=0;y<18;y+=.4){
-			for(x=0;x<70;x+=.4){
-				a=x;
-				if(j<4){
-					a=x-10;
-					b=y-80;
-				}
-				else{
-					b=y-9;
-				}
-				ROT(a,b,j*PI/2+i*PI/32);
-				a+=W/2;
-				b+=H/2;
-				B(b,a)=0;
+		D s,dx,dy;
+		if(x2<x1){
+			swap(x1,x2);
+			swap(y1,y2);
+		}
+		//y=mx+b
+		dx=x2-x1;
+		dy=y2-y1;
+		s=dy/dx;
+		if(1)
+		for(i=0;i<dx;i+=.1){
+			if(i>1000)
+				break;
+			a=s*i;
+			b=i;
+			//B.d((y1+a-H/2)/120,(x1+i-W/2)/864)=44;
+			B.d((y1+a-H/2)/H*2,(x1+b-W/2)/W*2.7)=44;
+		}
+
+		if(0)
+		for(j=-1;j<1;j+=.05){
+		for(i=-1.28;i<1.35;i+=.05){
+			B.d(j,i)=77;
+		}
+		}
+		if(y2<y1){
+			swap(x1,x2);
+			swap(y1,y2);
+		}
+		dx=x2-x1;
+		dy=y2-y1;
+		if(0)
+		for(i=0;i<dy;i++){
+			b=y1+i;
+			if(s){
+				a=i/s;
+				B(y1+i,x1+a)=44;
 			}
 		}
-	}
-	C;
-}
+
+		C;
+	}	
+
+
 
 
 }//END BLOCK
@@ -395,8 +454,6 @@ int vga()
 int main(int argc,char **argv)
 {
 	vga();
-	memset(buffers,0,sizeof(buffers));
-
 	if(setjmp(jb)!=0)
 		goto frame_limit;
 
