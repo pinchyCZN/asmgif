@@ -23,6 +23,165 @@ function isalpha(c){
 	else
 		return false;
 }
+
+function is_valid_word_char(c){
+	if(c>='a' && c<='z')
+		return true;
+	else if(c>='A' && c<='Z')
+		return true;
+	else if(c>='0' && c<='9')
+		return true;
+	else if(c=='_')
+		return true;
+	else
+		return false;
+	
+}
+function get_word(s){
+	var tmp="";
+	var i=0;
+	var start=0;
+	for(i=0;i<s.length;i++){
+		var a=s[i];
+		var valid=is_valid_word_char(a);
+		if(tmp.length>0){
+			if(!valid){
+				break;
+			}
+		}
+		if(valid){
+			if(0==tmp.length){
+				start=i;
+			}
+			tmp+=a;
+		}
+	}
+	return [tmp,i,start];
+}
+function get_next_non_WS(s){
+	
+}
+function is_c_keyword(s){
+	var list=[
+		"if","while","break","PG","ROT","L2","L3","int","char",
+		"DOSCHAR","const","rand","struct",
+	];
+	var x;
+	x=list.indexOf(s);
+	if(x>=0)
+		return true;
+	return false;
+}
+function replace_substr(s,pos,len,new_word){
+	var tmp;
+	tmp=s.slice(0,pos);
+	tmp+=new_word+s.slice(pos+len);
+	return tmp;
+}
+function optimize(input){
+	var output="";
+	var i=0;
+	var list=[];
+	var begin_var=false;
+	while(1){
+		var x;
+		var a="";
+		if(i>=input.length){
+			break;
+		}
+		a=input[i];
+		var res=get_word(input.slice(i));
+		var word;
+		x=res[1];
+		if(0==x)
+			break;
+		i+=x;
+		word=res[0];
+		if("D"==word || "I"==word){
+			begin_var=true;
+		}else if(";"==a){
+			begin_var=false;
+		}else{
+			if(word.length>0){
+				if(isalpha(word[0])){
+					if(begin_var){
+						var pos=list.indexOf(word);
+						if(pos==-1)
+							list.push(word);
+					}
+				}
+			}
+		}
+	}
+	var new_list=[];
+	for(i=0;i<list.length;i++){
+		var word=list[i];
+		if(word.length>1){
+			var j;
+			var replaced=false;
+			for(j=0;j<25;j++){
+				var s=String.fromCharCode(97+j);
+				var x;
+				x=list.indexOf(s);
+				if((-1)==x){
+					var k;
+					var add=true;
+					for(k=0;k<new_list.length;k++){
+						var n=new_list[k];
+						if(n[1]==s){
+							add=false;
+							break;
+						}
+					}
+					if(add){
+						new_list.push([word,s]);
+						replaced=true;
+						break;
+					}
+				}
+			}
+			if(!replaced){
+				new_list.push([word,word]);
+			}
+		}
+	}
+	i=0;
+	while(1){
+		var x;
+		var start;
+		if(i>=input.length){
+			break;
+		}
+		var slice;
+		var res;
+		var word;
+		slice=input.slice(i);
+		res=get_word(slice);
+		x=res[1];
+		if(0==x)
+			break;
+		word=res[0];
+		start=res[2]+i;
+		i+=x;
+		if(isalpha(word[0])){
+			if(word.length>1){
+				var j;
+				for(j=0;j<new_list.length;j++){
+					var t=new_list[j];
+					if(t[0]==word){
+						var tmp=t[1];
+						input=replace_substr(input,start,word.length,tmp);
+						i=start+tmp.length;
+						break;
+					}
+				}
+			}
+			
+		}
+	}
+	output=input;
+	return output;
+}
 function cstr_encode(input) {
 	var output = "";
 	var linecomment = false;
@@ -117,7 +276,11 @@ function cstr_encode(input) {
 function Convert() {
 	var output = cstr_encode(document.frmConvert.ed_input.value);
 	document.frmConvert.ed_output.value = output;
-	var gifstr='!gif '+output;
+	var gifstr=output;
+	if(document.frmConvert.optimize.checked){
+		gifstr=optimize(output);
+	}
+	gifstr="!gif "+gifstr;
 	document.frmConvert.gif_output.value = gifstr;
 	document.getElementById('stringlen').innerHTML="gif string length="+gifstr.length;
 }
@@ -141,6 +304,7 @@ function Convert() {
 			<textarea name="ed_output" rows="10" cols="67" style="width: 550px;"></textarea>          
 		</p>
 		<p id="stringlen">gif string</p>
+		<input type="checkbox" name="optimize" value="False">optimize code size<br>
 		<p>
 			<textarea name="gif_output" rows="10" cols="67" style="width: 550px;"></textarea>          
 		</p>
