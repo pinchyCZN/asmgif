@@ -325,88 +325,53 @@ for(a=0; a<8*s; a++)for(b=0; b<8*s; b++)if(f[c*8+(I)(b/s)]&(0x80>>(I)(a/s)))B(y+
 //export_image();
 //return 0;
 
-	D f,a,b;
-	I i;
-	D x1,y1,x2,y2;
-	D s1,s2;
-	D xx1,yy1,xx2,yy2;
-	xx1=10;
-	yy1=10;
-	xx2=W-10;
-	yy2=H-20;
-	s1=PI*1.1;
-	s2=PI*.4;
+	D f,a,b,i,x1,y1,x2,y2,
+		s1=PI*1.1,s2=PI*1.4,
+		xx1=1,yy1=1,
+		xx2=W,yy2=H,s,dx,dy;
 	//PI*1.5 //left
 	//s1=PI; //up
 	//s1=PI/2; //right
 	//s1=0; //down
-	D once=0;
-	MAX_FRAMES=128;
-	for(f=0;f<MAX_FRAMES;f++){
-		/*
-		x1=sin(PI/32*f)*10;
-		x1=0;
-		y1=sin(PI/32*f)*20;
-		x2=W/16;
-		y2=H/16;
-		*/
+	for(f=0;f<64;f++){
 		xx1+=20*sin(s1);
 		yy1+=20*cos(s1);
 		xx2+=10*sin(s2);
 		yy2+=10*cos(s2);
-		D px[2],py[2],*st[2];
-		px[0]=xx1;
-		py[0]=yy1;
-		px[1]=xx2;
-		py[1]=yy2;
-		st[0]=&s1;
-		st[1]=&s2;
-		for(i=0;i<2;i++){
-			x1=px[i];
-			y1=py[i];
-			D s=*st[i];
-			if(x1>W||x1<0){
-				s=2*PI-s;
-			}
-			if(y1<0||y1>H){
-				s=PI-s;
-			}
-			*st[i]=s;
-		}
-		/*
-		if(xx1>W/2||xx1<-W/2){
+		if(xx1>W||xx1<0){
 			s1=2*PI-s1;
 		}
-		if(yy1<-H/2||yy1>H/2){
+		if(yy1<0||yy1>H){
 			s1=PI-s1;
 		}
-		*/
+		if(xx2>W||xx2<0){
+			s2=2*PI-s2;
+		}
+		if(yy2<0||yy2>H){
+			s2=PI-s2;
+		}
 
-		//x1=xx1+W/2;
-		//y1=yy1+H/2;
 		x1=xx1;
 		y1=yy1;
 		x2=xx2;
 		y2=yy2;
 
-		D s,dx,dy;
 		if(x2<x1){
-			swap(x1,x2);
-			swap(y1,y2);
+			std::swap(x1,x2);
+			std::swap(y1,y2);
 		}
 		//y=mx+b
 		dx=x2-x1;
 		dy=y2-y1;
 		s=dy/dx;
-		if(1)
-		for(D i=0;i<dx;i+=.1){
+		for(i=0;i<dx;i+=.1){
 			if(i>1000)
 				break;
 			a=s*i;
 			b=i;
-			B.d((y1+a-H/2)/H*2,(x1+b-W/2)/W*2.7)=44;
+			B.d((y1+a-H/2)/H*2,(x1+b-W/2)/W*2.7)=44+f;
 		}
-		C;
+		F;
 	}	
 
 

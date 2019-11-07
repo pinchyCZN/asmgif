@@ -101,6 +101,16 @@ function optimize(input){
 			begin_var=true;
 		}else if(";"==a){
 			begin_var=false;
+		}else if("="==a){
+			var j;
+			for(j=i;j<input.length;j++){
+				a=input[j];
+				if(","==a || ";"==a){
+					i=j;
+					break;
+				}
+			}
+			continue;
 		}else{
 			if(word.length>0){
 				if(isalpha(word[0])){
@@ -304,7 +314,7 @@ function Convert() {
 			<textarea name="ed_output" rows="10" cols="67" style="width: 550px;"></textarea>          
 		</p>
 		<p id="stringlen">gif string</p>
-		<input type="checkbox" name="optimize" value="False">optimize code size<br>
+		<input type="checkbox" name="optimize" value="False" onchange="Convert()">optimize code size<br>
 		<p>
 			<textarea name="gif_output" rows="10" cols="67" style="width: 550px;"></textarea>          
 		</p>
